@@ -12,7 +12,6 @@ public class ObjetivoResponseDTO {
     private LocalDateTime fechaInicio;
     private LocalDateTime fechaFin;
     private Boolean completado;
-    private Integer usuarioId;
 
     public ObjetivoResponseDTO() {
     }
@@ -81,12 +80,6 @@ public class ObjetivoResponseDTO {
         this.completado = completado;
     }
 
-    public Integer getUsuarioId() {
-        return usuarioId;
-    }
 
-    public void setUsuarioId(Integer usuarioId) {
-        this.usuarioId = usuarioId;
-    }
 
 }

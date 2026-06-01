@@ -18,14 +18,20 @@ public class ScoreFinancieroServiceImpl implements IScoreFinancieroService{
     @Autowired
     private ScoreFinancieroMapper scoreFinancieroMapper;
 
+    // @Override
+    // public ScoreFinancieroResponseDTO calcularScore(ScoreFinancieroRequestDTO request) {
+        
+    //     ScoreFinancieroEntity entity = scoreFinancieroMapper.convertirAEntity(request);
+        
+    //     ScoreFinancieroEntity guardado = scoreFinancieroRepository.save(entity);
+        
+    //     return scoreFinancieroMapper.convertirADTO(guardado);
+    // }
+
     @Override
-    public ScoreFinancieroResponseDTO calcularScore(ScoreFinancieroRequestDTO request) {
-        
-        ScoreFinancieroEntity entity = scoreFinancieroMapper.convertirAEntity(request);
-        
-        ScoreFinancieroEntity guardado = scoreFinancieroRepository.save(entity);
-        
-        return scoreFinancieroMapper.convertirADTO(guardado);
+    public boolean calcularScoreFinanciero(int idUsuario) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'calcularScoreFinanciero'");
     }
 
 }

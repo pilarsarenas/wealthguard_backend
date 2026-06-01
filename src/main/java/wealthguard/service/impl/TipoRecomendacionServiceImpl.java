@@ -19,24 +19,37 @@ public class TipoRecomendacionServiceImpl implements ITipoRecomendacionService{
     @Autowired
     private TipoRecomendacionMapper tipoRecomendacionMapper;
 
+//     @Override
+//     public TipoRecomendacionResponseDTO crearTipoRecomendacion(TipoRecomendacionRequestDTO request) {
+        
+//         TipoRecomendacionEntity entity = tipoRecomendacionMapper.convertirAEntity(request);
+        
+//         TipoRecomendacionEntity guardado = tipoRecomendacionRepository.save(entity);
+        
+//         return tipoRecomendacionMapper.convertirADTo(Guardado);
+//     }
+
+//     @Override
+//     public boolean eliminarTipoRecomendacion(Integer idRecomendacion) {
+//         if (tipoRecomendacionRepository.existsById(idRecomendacion)) {
+//             tipoRecomendacionRepository.deleteById(idRecomendacion);
+//             return true;
+//         }else{
+//         return false;
+//     }
+
+// }
+
     @Override
-    public TipoRecomendacionResponseDTO crearTipoRecomendacion(TipoRecomendacionRequestDTO request) {
-        
-        TipoRecomendacionEntity entity = tipoRecomendacionMapper.convertirAEntity(request);
-        
-        TipoRecomendacionEntity guardado = tipoRecomendacionRepository.save(entity);
-        
-        return tipoRecomendacionMapper.convertirADTo(Guardado);
+    public String obtenerMensajeRecomendacion(Integer idTipoRecomendacion) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'obtenerMensajeRecomendacion'");
     }
 
     @Override
-    public boolean eliminarTipoRecomendacion(Integer idRecomendacion) {
-        if (tipoRecomendacionRepository.existsById(idRecomendacion)) {
-            tipoRecomendacionRepository.deleteById(idRecomendacion);
-            return true;
-        }else{
-        return false;
+    public String obtenerMensajeRecomendacionPorNombre(String nombreTipoRecomendacion) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'obtenerMensajeRecomendacionPorNombre'");
     }
 
 }
-
