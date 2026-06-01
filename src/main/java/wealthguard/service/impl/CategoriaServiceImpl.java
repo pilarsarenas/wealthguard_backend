@@ -23,20 +23,19 @@ public class CategoriaServiceImpl implements ICategoriaService {
     private CategoriaMapper categoriaMapper;
 
     @Override
-    public boolean eliminarCategoriaGlobal(int idCategoria) {
+    public boolean eliminarCategoria(int idCategoria) {
 
         if (categoriaRepository.existsById(idCategoria)) {
-            // Aquí se podría agregar lógica adicional para verificar si la categoría es "General" o "Sin categoría"
             categoriaRepository.deleteById(idCategoria);
             return true;
         } else {
-            return false; // No se encontró la categoría
+            return false;
 
         }
     }
 
     @Override
-    public CategoriaResponseDTO crearCategoriaGlobal(CategoriaRequestDTO nombreCategoria) {
+    public CategoriaResponseDTO crearCategoria(CategoriaRequestDTO nombreCategoria) {
 
         CategoriaEntity categoriaEntidad = categoriaMapper.convertirAEntity(nombreCategoria);
 
@@ -50,7 +49,7 @@ public class CategoriaServiceImpl implements ICategoriaService {
     }
 
     @Override
-    public List<CategoriaResponseDTO> obtenerCategoriasGlobales(Integer usuarioId, String nombreCategoria) {
+    public List<CategoriaResponseDTO> obtenerCategorias(Integer usuarioId, String nombreCategoria) {
         
         List<CategoriaEntity> categorias = categoriaRepository.buscarConFiltro(usuarioId, nombreCategoria);
 
@@ -60,7 +59,7 @@ public class CategoriaServiceImpl implements ICategoriaService {
     }
 
     @Override
-    public CategoriaResponseDTO editarCategoriaGlobal(int idCategoria, CategoriaRequestDTO categoriaRequest) {
+    public CategoriaResponseDTO editarCategoria(int idCategoria, CategoriaRequestDTO categoriaRequest) {
         
         CategoriaEntity categoriaEntidad = categoriaRepository.findById(idCategoria).orElseThrow(() -> new RuntimeException("Categoría no encontrada"));
 
