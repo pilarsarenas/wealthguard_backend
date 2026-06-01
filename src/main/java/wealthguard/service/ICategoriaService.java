@@ -8,38 +8,37 @@ import wealthguard.dto.CategoriaResponseDTO;
 public interface ICategoriaService {
 
     /**
-     * Elimina una categoría global del sistema. Solo se pueden eliminar
-     * categorías globales que no sean "General" o "Sin categoría".
+     * Elimina una categoría
      *
-     * @param idCategoria ID de la categoría global a eliminar
+     * @param idCategoria ID de la categoría a eliminar
      * @return true si la eliminación fue exitosa, false si no se encontró la
      * categoría
      */
-    public boolean eliminarCategoriaGlobal(int idCategoria);
+    public boolean eliminarCategoria(int idCategoria);
 
     /**
-     * Crea una nueva categoría global en el sistema.
+     * Crea una nueva categoría  en el sistema.
      *
-     * @param nombreCategoria DTO que contiene el nombre de la categoría global a crear
+     * @param nombreCategoria DTO que contiene el nombre de la categoría  a crear
      * @return true si la creación fue exitosa, false si ya existe una categoría
-     * global con el mismo nombre
+     * con el mismo nombre
      */
-    public CategoriaResponseDTO crearCategoriaGlobal(CategoriaRequestDTO nombreCategoria);
+    public CategoriaResponseDTO crearCategoria(CategoriaRequestDTO nombreCategoria);
 
     /**
-     * Obtiene la lista de categorías globales disponibles en el sistema.
+     * Obtiene la lista de categorías disponibles en el sistema.
      *
-     * @return Lista de nombres de categorías globales
+     * @return Lista de nombres de categorías
      */
-    public List<CategoriaResponseDTO> obtenerCategoriasGlobales(Integer usuarioId, String nombreCategoria);
+    public List<CategoriaResponseDTO> obtenerCategorias(Integer usuarioId, String nombreCategoria);
 
     /**
-     * Edita el nombre de una categoría global existente.
+     * Edita el nombre de una categoría existente.
      *
-     * @param idCategoria ID de la categoría global a editar
-     * @param nuevoNombre DTO que contiene el nuevo nombre para la categoría global
+     * @param idCategoria ID de la categoría a editar
+     * @param nuevoNombre DTO que contiene el nuevo nombre para la categoría
      * @return El objeto {@link CategoriaResponseDTO} con los datos actualizados de la categoría, o null si no se encontró la categoría
      */
-    public CategoriaResponseDTO editarCategoriaGlobal(int idCategoria, CategoriaRequestDTO nuevoNombre);
+    public CategoriaResponseDTO editarCategoria(int idCategoria, CategoriaRequestDTO nuevoNombre);
 
 }
