@@ -46,11 +46,11 @@ public class ObjetivoEntity {
         this.id = id;
     }
 
-    public Integer getUsuario() {
+    public Integer getUsuarioId() {
         return usuarioId;
     }
 
-    public void setUsuario(Integer usuarioId) {
+    public void setUsuarioId(Integer usuarioId) {
         this.usuarioId = usuarioId;
     }
 

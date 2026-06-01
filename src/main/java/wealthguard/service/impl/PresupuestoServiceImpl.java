@@ -3,16 +3,18 @@ package wealthguard.service.impl;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import wealthguard.dto.PresupuestoRequestDTO;
+import wealthguard.dto.PresupuestoResponseDTO;
 import wealthguard.entity.PresupuestoEntity;
 import wealthguard.service.IPresupuestoService;
 
 public class PresupuestoServiceImpl implements IPresupuestoService {
 
     @Override
-    public boolean crearPresupuesto(int idUsuario, int idCategoria, double limite, LocalDateTime fechaInicio,
-            LocalDateTime fechaFin) {
+    public PresupuestoResponseDTO crearPresupuesto(PresupuestoRequestDTO presupuestoRequest) {
         // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'crearPresupuesto'");
+        // throw new UnsupportedOperationException("Unimplemented method 'crearPresupuesto'");
+        return null;
     }
 
     @Override

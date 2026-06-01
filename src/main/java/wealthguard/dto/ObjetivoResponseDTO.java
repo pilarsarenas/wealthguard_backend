@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 public class ObjetivoResponseDTO {
 
     private Integer id;
+    private Integer usuarioId;
     private String nombre;
     private Double cantidadObjetivo;
     private Integer categoriaId;
@@ -22,6 +23,14 @@ public class ObjetivoResponseDTO {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public Integer getUsuarioId() {
+        return usuarioId;
+    }
+
+    public void setUsuarioId(Integer usuarioId) {
+        this.usuarioId = usuarioId;
     }
 
     public String getNombre() {

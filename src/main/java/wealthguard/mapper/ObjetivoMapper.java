@@ -16,7 +16,7 @@ public class ObjetivoMapper {
 
         ObjetivoEntity objetivoEntity = new ObjetivoEntity();
         
-        objetivoEntity.setUsuario(objetivoRequestDTO.getUsuarioId());
+        objetivoEntity.setUsuarioId(objetivoRequestDTO.getUsuarioId());
         objetivoEntity.setCantidadObjetivo(objetivoRequestDTO.getCantidadObjetivo());
         objetivoEntity.setCategoriaId(objetivoRequestDTO.getCategoriaId());
         objetivoEntity.setFechaInicio(objetivoRequestDTO.getFechaInicio());
@@ -33,7 +33,7 @@ public class ObjetivoMapper {
 
         ObjetivoResponseDTO objetivoResponseDTO = new ObjetivoResponseDTO();
 
-        objetivoResponseDTO.setUsuarioId(objetivoEntity.getUsuario());
+        objetivoResponseDTO.setUsuarioId(objetivoEntity.getUsuarioId());
         objetivoResponseDTO.setCantidadObjetivo(objetivoEntity.getCantidadObjetivo());
         objetivoResponseDTO.setCategoriaId(objetivoEntity.getCategoria());
         objetivoResponseDTO.setFechaInicio(objetivoEntity.getFechaInicio());

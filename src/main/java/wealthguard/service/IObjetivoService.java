@@ -14,8 +14,8 @@ public interface IObjetivoService {
      * fecha de inicio y fecha de fin. El campo "completado" se establece
      * inicialmente en false.
      *
-     * @param objetivoRequestDTO DTO que contiene los datos del nuevo objetivo, incluyendo el ID del usuario, ID de la categoría, nombre del objetivo, monto objetivo, fecha de inicio y fecha de fin
-     * @return
+     * @param objetivoRequestDTO Objeto que contiene los datos necesarios para crear el objetivo, incluyendo el ID del usuario, ID de la categoría, nombre del objetivo, monto objetivo, fecha de inicio y fecha de fin.
+     * @return El objeto ObjetivoResponseDTO con los datos del objetivo creado, incluyendo su ID generado y el estado de completado inicial.
      */
     public ObjetivoResponseDTO crearObjetivo(ObjetivoRequestDTO objetivoRequestDTO);
 
@@ -27,7 +27,7 @@ public interface IObjetivoService {
      * @return true si la eliminación fue exitosa, false si no se encontró el
      * objetivo o no pertenece al usuario
      */
-    public boolean eliminarObjetivo(int idObjetivo);
+    public boolean eliminarObjetivo(Integer idObjetivo);
 
     /**
      * Edita un objetivo financiero existente. Solo se puede editar un objetivo
@@ -35,11 +35,11 @@ public interface IObjetivoService {
      * campos del objetivo, incluyendo el nombre, monto, fechas y estado de
      * completado.
      *
-     * @param objetivoRequestDTO DTO que contiene los datos actualizados del objetivo, incluyendo su ID
+     * @param objetivoRequestDTO Objeto que contiene los datos actualizados del objetivo, incluyendo su ID, ID del usuario, ID de la categoría, nombre del objetivo, monto objetivo, fecha de inicio, fecha de fin y estado de completado.
      * @return true si la edición fue exitosa, false si no se encontró el
      * objetivo o no pertenece al usuario
      */
-    public ObjetivoResponseDTO editarObjetivo(Integer idObjetivo, ObjetivoRequestDTO objetivoRequestDTO);
+    public ObjetivoResponseDTO editarObjetivo(int idObjetivo, ObjetivoRequestDTO objetivoRequestDTO);
 
     /**
      * Obtiene la lista de objetivos financieros del usuario especificado. Cada
@@ -49,7 +49,7 @@ public interface IObjetivoService {
      * @param idUsuario ID del usuario
      * @return Lista de ObjetivoEntity que pertenecen al usuario
      */
-    public List<ObjetivoEntity> obtenerObjetivos(int idUsuario);
+    public List<ObjetivoEntity> obtenerObjetivos(Integer idUsuario);
 
     /**
      * Cambia el estado de completado de un objetivo financiero. Solo se puede
@@ -60,6 +60,6 @@ public interface IObjetivoService {
      * @return true si la actualización fue exitosa, false si no se encontró el
      * objetivo o no pertenece al usuario
      */
-    public boolean cambiarEstadoCompletado(int idObjetivo, Boolean completado);
+    public boolean cambiarEstadoCompletado(Integer idObjetivo, Boolean completado);
 
 }

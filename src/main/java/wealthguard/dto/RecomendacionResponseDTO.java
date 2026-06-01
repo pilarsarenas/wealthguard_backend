@@ -7,7 +7,7 @@ import wealthguard.entity.UsuarioEntity;
 
 public class RecomendacionResponseDTO {
 
-private Integer id;
+    private Integer id;
     private UsuarioEntity usuario;
     private TipoRecomendacionEntity tipoRecomendacion;
     private LocalDateTime fechaRecomendacion;
@@ -48,4 +48,3 @@ private Integer id;
     }
 
 }
-

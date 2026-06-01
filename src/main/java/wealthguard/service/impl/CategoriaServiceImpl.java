@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import wealthguard.dto.CategoriaRequestDTO;
 import wealthguard.dto.CategoriaResponseDTO;
@@ -12,6 +13,7 @@ import wealthguard.mapper.CategoriaMapper;
 import wealthguard.repository.CategoriaRepository;
 import wealthguard.service.ICategoriaService;
 
+@Service
 public class CategoriaServiceImpl implements ICategoriaService {
 
     @Autowired

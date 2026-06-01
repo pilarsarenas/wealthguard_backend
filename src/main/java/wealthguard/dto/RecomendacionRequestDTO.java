@@ -7,20 +7,11 @@ import wealthguard.entity.UsuarioEntity;
 
 public class RecomendacionRequestDTO {
 
-    private Integer id;
     private UsuarioEntity usuario;
     private TipoRecomendacionEntity tipoRecomendacion;
     private LocalDateTime fechaRecomendacion;
 
     public RecomendacionRequestDTO() {
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
     }
 
     public UsuarioEntity getUsuario() {

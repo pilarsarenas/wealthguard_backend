@@ -13,10 +13,10 @@ INSERT INTO `usuario` (
 -- ==========================================
 -- 2. CATEGORÍAS
 -- ==========================================
-INSERT INTO `categoria` (`nombre`) VALUES 
-('Vivienda'),
-('Ocio'),
-('Salario');
+INSERT INTO `categoria` (`nombre`,`usuario_id`) VALUES 
+('Vivienda', 1),
+('Ocio', 2),
+('Salario', 3);
 
 -- ==========================================
 -- 3. TIPOS DE RECOMENDACIÓN

@@ -21,8 +21,8 @@ public class CategoriaEntity {
     private String nombre;
 
     @ManyToOne
-    @JoinColumn(name = "usuario_id", nullable = true)
-    private Integer usuarioId;   // Permite null para categorías globales
+    @JoinColumn(name = "usuario_id", nullable = false)
+    private UsuarioEntity usuario;   // Permite null para categorías globales
 
     public Integer getId() {
         return id;
@@ -40,12 +40,12 @@ public class CategoriaEntity {
         this.nombre = nombre;
     }
 
-    public Integer getUsuarioId() {
-        return usuarioId;
+    public UsuarioEntity getUsuarioId() {
+        return usuario;
     }
 
-    public void setUsuarioId(Integer usuarioId) {
-        this.usuarioId = usuarioId;
+    public void setUsuarioId(UsuarioEntity usuarioId) {
+        this.usuario = usuarioId;
     }
     
 

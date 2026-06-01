@@ -17,9 +17,6 @@ public interface ObjetivoRepository extends JpaRepository<ObjetivoEntity, Intege
     List<ObjetivoEntity> buscarObjetivosActivosPorUsuario(@Param("idUsuario") Integer idUsuario);
 
     
-    // Devuelve todos los objetivos (activos o completados) de un usuario por su id
-    @Query("SELECT o FROM ObjetivoEntity o WHERE o.usuario.id = :usuarioId")
-    List<ObjetivoEntity> findByUsuarioId(@Param("usuarioId") Integer usuarioId);
 
 }
 

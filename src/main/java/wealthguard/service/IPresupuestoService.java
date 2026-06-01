@@ -3,6 +3,8 @@ package wealthguard.service;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import wealthguard.dto.PresupuestoRequestDTO;
+import wealthguard.dto.PresupuestoResponseDTO;
 import wealthguard.entity.PresupuestoEntity;
 
 public interface IPresupuestoService {
@@ -18,7 +20,7 @@ public interface IPresupuestoService {
      * @return true si el presupuesto se creó exitosamente, false en caso
      * contrario.
      */
-    public boolean crearPresupuesto(int idUsuario, int idCategoria, double limite, LocalDateTime fechaInicio, LocalDateTime fechaFin);
+    public PresupuestoResponseDTO crearPresupuesto(PresupuestoRequestDTO presupuestoRequest);
 
     /**
      * Elimina un presupuesto existente por su ID.

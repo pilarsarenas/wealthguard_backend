@@ -7,7 +7,6 @@ import wealthguard.entity.UsuarioEntity;
 
 public class PresupuestoRequestDTO {
 
-    private Integer id;
     private UsuarioEntity usuario;
     private CategoriaEntity categoria;
     private double limite;
@@ -16,15 +15,6 @@ public class PresupuestoRequestDTO {
 
 
     public PresupuestoRequestDTO() {
-    }
-
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
     }
 
     public UsuarioEntity getUsuario() {

@@ -22,7 +22,7 @@ public class ScoreFinancieroEntity {
 
     @ManyToOne
     @JoinColumn(name = "usuario_id", nullable = false)
-    private UsuarioEntity usuario;
+    private UsuarioEntity usuarioId;
 
     @Column(name = "valor_maximo", nullable = false)
     private Integer valorMaximo;
@@ -42,11 +42,11 @@ public class ScoreFinancieroEntity {
      }
 
      public UsuarioEntity getUsuario() {
-         return usuario;
+         return usuarioId;
      }
 
      public void setUsuario(UsuarioEntity usuario) {
-         this.usuario = usuario;
+         this.usuarioId = usuario;
      }
 
      public Integer getValorMaximo() {
