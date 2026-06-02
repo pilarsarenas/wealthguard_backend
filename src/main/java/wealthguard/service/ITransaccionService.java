@@ -67,7 +67,7 @@ public interface ITransaccionService {
      *
      * @param idTransaccion Identificador único de la transacción a eliminar.
      */
-    void eliminarTransaccion(Integer idTransaccion);
+    boolean eliminarTransaccion(Integer idTransaccion);
 
     /**
      * Calcula la tendencia de gastos de un usuario comparando el total de salidas

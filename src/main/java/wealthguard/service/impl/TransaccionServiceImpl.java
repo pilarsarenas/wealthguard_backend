@@ -95,8 +95,13 @@ public class TransaccionServiceImpl implements ITransaccionService {
 
     // Metodo para eliminar una transaccion
     @Override
-    public void eliminarTransaccion(Integer idTransaccion) {
-        transaccionRepository.deleteById(idTransaccion);
+    public boolean eliminarTransaccion(Integer idTransaccion) {
+        try {
+            transaccionRepository.deleteById(idTransaccion);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     // Metodo para obtener la tendencia de gastos de un usuario comparando el % del
@@ -189,7 +194,7 @@ public class TransaccionServiceImpl implements ITransaccionService {
         // Buscamos las transacciones de la meta actual
         List<TransaccionEntity> transaccionesMeta = transaccionRepository.buscarConFiltros(idUsuario,
                 metaActual.getFechaInicio(),
-                metaActual.getFechaFin(), metaActual.getCategoria(), true, null, null);
+                metaActual.getFechaFin(), metaActual.getCategoria().getId(), true, null, null);
 
         // Si la base de datos nos devolvio transacciones validas, las sumamos
         double progresoActual = 0.0;

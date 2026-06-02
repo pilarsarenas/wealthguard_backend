@@ -1,5 +1,7 @@
 CREATE TABLE `usuario` (
   `id` int NOT NULL AUTO_INCREMENT,
+  `activo` bit(1) NOT NULL DEFAULT b'1',
+  `cuenta_bloqueada` bit(1) NOT NULL DEFAULT b'0',
   `contador_intentos` int NOT NULL,
   `email` varchar(255) NOT NULL,
   `es_admin` bit(1) NOT NULL,
@@ -16,6 +18,22 @@ CREATE TABLE `usuario` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+CREATE TABLE `tipo_recomendacion` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `mensaje` varchar(255) NOT NULL,
+  `nombre` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+CREATE TABLE `categoria` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `nombre` varchar(255) NOT NULL,
+  `usuario_id` int NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `FK_categoria_usuario_id` (`usuario_id`),
+  CONSTRAINT `FK_categoria_usuario_id` FOREIGN KEY (`usuario_id`) REFERENCES `usuario` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
 CREATE TABLE `transaccion` (
   `id` int NOT NULL AUTO_INCREMENT,
   `cantidad` double NOT NULL,
@@ -29,14 +47,7 @@ CREATE TABLE `transaccion` (
   KEY `FKe4k4dkaj7tcpfnup7hkljdj4u` (`usuario_id`),
   CONSTRAINT `FKe4k4dkaj7tcpfnup7hkljdj4u` FOREIGN KEY (`usuario_id`) REFERENCES `usuario` (`id`),
   CONSTRAINT `FKk7db1p3y2mxyhrflylujs3bx7` FOREIGN KEY (`categoria_id`) REFERENCES `categoria` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
-
-CREATE TABLE `tipo_recomendacion` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `mensaje` varchar(255) NOT NULL,
-  `nombre` varchar(255) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `score_financiero` (
   `id` int NOT NULL AUTO_INCREMENT,
@@ -47,7 +58,7 @@ CREATE TABLE `score_financiero` (
   PRIMARY KEY (`id`),
   KEY `FK7b7dywrh3hvlta349lbjcwiog` (`usuario_id`),
   CONSTRAINT `FK7b7dywrh3hvlta349lbjcwiog` FOREIGN KEY (`usuario_id`) REFERENCES `usuario` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `recomendacion` (
   `id` int NOT NULL AUTO_INCREMENT,
@@ -59,7 +70,7 @@ CREATE TABLE `recomendacion` (
   KEY `FKne7a1ljufhhh9043x5dtwmbow` (`usuario_id`),
   CONSTRAINT `FKi4cen0nayxp6wh5sp59gsxdm2` FOREIGN KEY (`tipo_recomendacion_id`) REFERENCES `tipo_recomendacion` (`id`),
   CONSTRAINT `FKne7a1ljufhhh9043x5dtwmbow` FOREIGN KEY (`usuario_id`) REFERENCES `usuario` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `presupuesto` (
   `id` int NOT NULL AUTO_INCREMENT,
@@ -73,7 +84,7 @@ CREATE TABLE `presupuesto` (
   KEY `FKl902xsrmvqx3rsyrvu57eyno` (`usuario_id`),
   CONSTRAINT `FK3fglw7gm8tjjyxhpeq9s8hu1m` FOREIGN KEY (`categoria_id`) REFERENCES `categoria` (`id`),
   CONSTRAINT `FKl902xsrmvqx3rsyrvu57eyno` FOREIGN KEY (`usuario_id`) REFERENCES `usuario` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `objetivo` (
   `id` int NOT NULL AUTO_INCREMENT,
@@ -88,11 +99,4 @@ CREATE TABLE `objetivo` (
   KEY `FK8tgg8arf1nu6mtytgymba2leh` (`usuario_id`),
   CONSTRAINT `FK8tgg8arf1nu6mtytgymba2leh` FOREIGN KEY (`usuario_id`) REFERENCES `usuario` (`id`),
   CONSTRAINT `FKr4x1nb94de4vddrnptrcpgts0` FOREIGN KEY (`categoria_id`) REFERENCES `categoria` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
-
-CREATE TABLE `categoria` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `nombre` varchar(255) NOT NULL,
-  `usuario_id` int DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;

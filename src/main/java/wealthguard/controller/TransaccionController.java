@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,6 +26,7 @@ public class TransaccionController {
     @Autowired
     private ITransaccionService transaccionService;
 
+    // Metodo para listar transacciones con filtros dinamicos lista las transacciones de los ultimos 7 dias por defecto
     @GetMapping("/listar/{idUsuario}")
     public List<TransaccionResponseDTO> listarTransacciones(
             @PathVariable Integer idUsuario,
@@ -37,6 +39,7 @@ public class TransaccionController {
         return transaccionService.listarTransacciones(idUsuario, fechaInicio, fechaFin, idCategoria, tipo, cantidad, descripcion);
     }
 
+    // Metodo para listar todas las transacciones de un usuario sin filtros
     @GetMapping("/listar-todas/{idUsuario}")
     public List<TransaccionResponseDTO> listarTodasPorUsuario(@PathVariable Integer idUsuario) {
         return transaccionService.listarTodasPorUsuario(idUsuario);
@@ -53,8 +56,16 @@ public class TransaccionController {
     }
 
     @DeleteMapping("/eliminar/{id}")
-    public void eliminarTransaccion(@PathVariable Integer id) {
-        transaccionService.eliminarTransaccion(id);
+    // Usamos la clase ResponseEntity que es generica para devolver una respuesta HTTP, en este caso un booleano 
+    public ResponseEntity<Boolean> eliminarTransaccion(@PathVariable Integer id) {
+        boolean eliminado = transaccionService.eliminarTransaccion(id);
+        if (eliminado) {
+            // Si se eliminó correctamente, devolvemos un 200 OK con el valor true
+            return ResponseEntity.ok(true);
+        } else {
+            // Si no se pudo eliminar (por ejemplo, si no existe), devolvemos un 404 Not Found con el valor false
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @GetMapping("/tendencia/{idUsuario}")

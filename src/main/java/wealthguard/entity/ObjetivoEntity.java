@@ -20,11 +20,11 @@ public class ObjetivoEntity {
 
     @ManyToOne
     @JoinColumn(name = "usuario_id", nullable = false)
-    private Integer usuarioId;
+    private UsuarioEntity usuario;
 
     @ManyToOne
     @JoinColumn(name = "categoria_id", nullable = false)
-    private Integer categoriaId;
+    private CategoriaEntity categoria;
 
     @Column(name = "cantidad_objetivo", nullable = false)
     private double cantidadObjetivo;
@@ -46,20 +46,20 @@ public class ObjetivoEntity {
         this.id = id;
     }
 
-    public Integer getUsuarioId() {
-        return usuarioId;
+    public UsuarioEntity getUsuario() {
+        return usuario;
     }
 
-    public void setUsuarioId(Integer usuarioId) {
-        this.usuarioId = usuarioId;
+    public void setUsuario(UsuarioEntity usuario) {
+        this.usuario = usuario;
     }
 
-    public Integer getCategoria() {
-        return categoriaId;
+    public CategoriaEntity getCategoria() {
+        return categoria;
     }
 
-    public void setCategoriaId(Integer categoriaId) {
-        this.categoriaId = categoriaId;
+    public void setCategoria(CategoriaEntity categoria) {
+        this.categoria = categoria;
     }
 
     public double getCantidadObjetivo() {
