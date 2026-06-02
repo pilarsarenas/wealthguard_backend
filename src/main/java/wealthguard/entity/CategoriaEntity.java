@@ -21,8 +21,8 @@ public class CategoriaEntity {
     private String nombre;
 
     @ManyToOne
-    @JoinColumn(name = "usuario_id", nullable = false)
-    private UsuarioEntity usuario;   // Permite null para categorías globales
+    @JoinColumn(name = "usuario_id", nullable = true)
+    private UsuarioEntity usuario;   // Puede ser null para categorías globales
 
     public Integer getId() {
         return id;
