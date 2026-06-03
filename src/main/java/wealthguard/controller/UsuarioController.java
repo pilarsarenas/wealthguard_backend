@@ -16,9 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import wealthguard.dto.UsuarioRequestDTO;
 import wealthguard.dto.UsuarioResponseDTO;
-import wealthguard.entity.UsuarioEntity;
 import wealthguard.exception.UsuarioException;
-import wealthguard.mapper.UsuarioMapper;
 import wealthguard.service.IUsuarioService;
 
 @RestController
@@ -28,14 +26,26 @@ public class UsuarioController {
     @Autowired
     private IUsuarioService usuarioService;
 
-    @Autowired
-    private UsuarioMapper usuarioMapper;
+    @PostMapping("/crear")
+    public ResponseEntity<UsuarioResponseDTO> crearUsuario(@RequestBody UsuarioRequestDTO requestDTO) {
+        try {
+            UsuarioResponseDTO creado = usuarioService.crearUsuario(requestDTO);
+            return ResponseEntity.ok(creado);
+        } catch (UsuarioException e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    @GetMapping("/listar")
+    public List<UsuarioResponseDTO> listarUsuarios() {
+        return usuarioService.listarUsuarios();
+    }
 
     // Obtiene los datos del perfil del usuario autenticado
     @GetMapping("/perfil/{idUsuario}")
     public ResponseEntity<UsuarioResponseDTO> obtenerPerfil(@PathVariable int idUsuario) {
-        UsuarioEntity usuario = usuarioService.obtenerPerfil(idUsuario);
-        return ResponseEntity.ok(usuarioMapper.convertirADTO(usuario));
+        UsuarioResponseDTO usuario = usuarioService.obtenerPerfil(idUsuario);
+        return ResponseEntity.ok(usuario);
     }
 
     // Actualiza los datos del perfil. El ID se toma de la URL y se inyecta en el body
@@ -44,10 +54,8 @@ public class UsuarioController {
             @PathVariable int idUsuario,
             @RequestBody UsuarioRequestDTO requestDTO) {
         try {
-            UsuarioEntity entidad = usuarioMapper.convertirAEntity(requestDTO);
-            entidad.setId(idUsuario);
-            UsuarioEntity actualizado = usuarioService.actualizarUsuario(entidad);
-            return ResponseEntity.ok(usuarioMapper.convertirADTO(actualizado));
+            UsuarioResponseDTO actualizado = usuarioService.actualizarUsuario(idUsuario, requestDTO);
+            return ResponseEntity.ok(actualizado);
         } catch (UsuarioException e) {
             return ResponseEntity.badRequest().build();
         }

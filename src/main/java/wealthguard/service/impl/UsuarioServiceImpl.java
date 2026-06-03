@@ -12,9 +12,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import wealthguard.dto.UsuarioRequestDTO;
+import wealthguard.dto.UsuarioResponseDTO;
 import wealthguard.entity.CategoriaEntity;
 import wealthguard.entity.UsuarioEntity;
 import wealthguard.exception.UsuarioException;
+import wealthguard.mapper.UsuarioMapper;
 import wealthguard.repository.CategoriaRepository;
 import wealthguard.repository.UsuarioRepository;
 import wealthguard.service.IUsuarioService;
@@ -28,19 +31,59 @@ public class UsuarioServiceImpl implements IUsuarioService {
     @Autowired
     private CategoriaRepository categoriaRepository;
 
+    @Autowired
+    private UsuarioMapper usuarioMapper;
+
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-    // Actualiza los datos del perfil. Requiere que el usuario ya tenga ID.
     @Override
-    public UsuarioEntity actualizarUsuario(UsuarioEntity usuario) throws UsuarioException {
-        usuarioRepository.findById(usuario.getId())
-                .orElseThrow(() -> new UsuarioException());
-
-        if (usuarioRepository.existsByNickUsuarioAndIdNot(usuario.getNickUsuario(), usuario.getId())) {
+    public UsuarioResponseDTO crearUsuario(UsuarioRequestDTO usuarioRequestDTO) throws UsuarioException {
+        if (usuarioRepository.findByNickUsuario(usuarioRequestDTO.getNickUsuario()).isPresent()) {
             throw new UsuarioException();
         }
 
-        return usuarioRepository.save(usuario);
+        UsuarioEntity usuario = usuarioMapper.convertirAEntity(usuarioRequestDTO);
+        usuario.setPassword(passwordEncoder.encode(usuarioRequestDTO.getPassword()));
+        usuario.setFechaRegistro(LocalDateTime.now());
+        usuario.setFechaUltimoCambioPassword(LocalDateTime.now());
+        usuario.setActivo(true);
+        usuario.setEsAdmin(false);
+        usuario.setCuentaBloqueada(false);
+        usuario.setContadorIntentos(0);
+
+        UsuarioEntity guardado = usuarioRepository.save(usuario);
+        return usuarioMapper.convertirADTO(guardado);
+    }
+
+    // Actualiza los datos del perfil. Requiere que el usuario ya tenga ID.
+    @Override
+    public UsuarioResponseDTO actualizarUsuario(int idUsuario, UsuarioRequestDTO usuarioRequestDTO) throws UsuarioException {
+        UsuarioEntity existente = usuarioRepository.findById(idUsuario)
+                .orElseThrow(() -> new UsuarioException());
+
+        if (usuarioRepository.existsByNickUsuarioAndIdNot(usuarioRequestDTO.getNickUsuario(), idUsuario)) {
+            throw new UsuarioException();
+        }
+
+        UsuarioEntity usuario = usuarioMapper.convertirAEntity(usuarioRequestDTO);
+        usuario.setId(idUsuario);
+
+        // Conservamos campos de sistema que no llegan en el request de perfil.
+        usuario.setFechaRegistro(existente.getFechaRegistro());
+        usuario.setEsAdmin(existente.getEsAdmin());
+        usuario.setContadorIntentos(existente.getContadorIntentos());
+        usuario.setCuentaBloqueada(existente.getCuentaBloqueada());
+        usuario.setActivo(existente.getActivo());
+        usuario.setFechaUltimoCambioPassword(existente.getFechaUltimoCambioPassword());
+
+        if (usuarioRequestDTO.getPassword() != null && !usuarioRequestDTO.getPassword().isBlank()) {
+            usuario.setPassword(passwordEncoder.encode(usuarioRequestDTO.getPassword()));
+        } else {
+            usuario.setPassword(existente.getPassword());
+        }
+
+        UsuarioEntity actualizado = usuarioRepository.save(usuario);
+        return usuarioMapper.convertirADTO(actualizado);
     }
 
     // Elimina de forma permanente la cuenta del usuario y todos sus datos asociados.
@@ -90,9 +133,18 @@ public class UsuarioServiceImpl implements IUsuarioService {
 
     // Devuelve los datos del perfil del usuario para la pantalla de perfil.
     @Override
-    public UsuarioEntity obtenerPerfil(int idUsuario) {
-        return usuarioRepository.findById(idUsuario)
+    public UsuarioResponseDTO obtenerPerfil(int idUsuario) {
+        UsuarioEntity usuario = usuarioRepository.findById(idUsuario)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        return usuarioMapper.convertirADTO(usuario);
+    }
+
+    @Override
+    public List<UsuarioResponseDTO> listarUsuarios() {
+        return usuarioRepository.findAll()
+                .stream()
+                .map(usuarioMapper::convertirADTO)
+                .collect(Collectors.toList());
     }
 
     // Guarda los bytes de imagen en disco y actualiza la URL de fotoPerfil.
