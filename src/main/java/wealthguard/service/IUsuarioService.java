@@ -2,20 +2,31 @@ package wealthguard.service;
 
 import java.util.List;
 
-import wealthguard.entity.UsuarioEntity;
+import wealthguard.dto.UsuarioRequestDTO;
+import wealthguard.dto.UsuarioResponseDTO;
 import wealthguard.exception.UsuarioException;
 
 public interface IUsuarioService {
 
     /**
+     * Crea un nuevo usuario en el sistema.
+     *
+     * @param usuarioRequestDTO Datos de entrada del usuario
+     * @return UsuarioResponseDTO con los datos creados
+     * @throws UsuarioException si el nick ya está en uso
+     */
+    public UsuarioResponseDTO crearUsuario(UsuarioRequestDTO usuarioRequestDTO) throws UsuarioException;
+
+    /**
      * Actualiza los datos del perfil del usuario. El usuario DEBE tener ID para
      * poder actualizarse.
      *
-     * @param usuario Entidad con ID y datos nuevos a actualizar
-     * @return UsuarioEntity con los datos actualizados
+     * @param idUsuario ID del usuario a actualizar
+     * @param usuarioRequestDTO Datos nuevos del usuario
+     * @return UsuarioResponseDTO con los datos actualizados
      * @throws UsuarioException si el usuario no existe o el nick ya está en uso
      */
-    public UsuarioEntity actualizarUsuario(UsuarioEntity usuario) throws UsuarioException;
+    public UsuarioResponseDTO actualizarUsuario(int idUsuario, UsuarioRequestDTO usuarioRequestDTO) throws UsuarioException;
 
     /**
      * Elimina de forma permanente la cuenta del usuario y todos sus datos
@@ -56,9 +67,16 @@ public interface IUsuarioService {
      * Carga los datos del usuario para mostrarlos en la pantalla de perfil.
      *
      * @param idUsuario ID del usuario autenticado
-     * @return UsuarioEntity con todos sus datos, incluida la URL de fotoPerfil
+    * @return UsuarioResponseDTO con todos sus datos, incluida la URL de fotoPerfil
      */
-    public UsuarioEntity obtenerPerfil(int idUsuario);
+    public UsuarioResponseDTO obtenerPerfil(int idUsuario);
+
+    /**
+    * Lista los usuarios registrados en el sistema.
+    *
+    * @return Lista de UsuarioResponseDTO
+    */
+    public List<UsuarioResponseDTO> listarUsuarios();
 
     /**
      * Actualiza la foto de perfil del usuario. Guarda los bytes de la imagen en
