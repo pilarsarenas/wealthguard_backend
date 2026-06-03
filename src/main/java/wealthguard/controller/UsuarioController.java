@@ -44,8 +44,12 @@ public class UsuarioController {
     // Obtiene los datos del perfil del usuario autenticado
     @GetMapping("/perfil/{idUsuario}")
     public ResponseEntity<UsuarioResponseDTO> obtenerPerfil(@PathVariable int idUsuario) {
-        UsuarioResponseDTO usuario = usuarioService.obtenerPerfil(idUsuario);
-        return ResponseEntity.ok(usuario);
+        try {
+            UsuarioResponseDTO usuario = usuarioService.obtenerPerfil(idUsuario);
+            return ResponseEntity.ok(usuario);
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     // Actualiza los datos del perfil. El ID se toma de la URL y se inyecta en el body
@@ -89,11 +93,15 @@ public class UsuarioController {
     // Exporta los datos del usuario como fichero CSV (RGPD)
     @GetMapping("/exportar/{idUsuario}")
     public ResponseEntity<byte[]> exportarDatos(@PathVariable int idUsuario) {
-        byte[] datos = usuarioService.exportarDatos(idUsuario);
-        return ResponseEntity.ok()
-                .header("Content-Disposition", "attachment; filename=\"datos_usuario_" + idUsuario + ".csv\"")
-                .header("Content-Type", "text/csv")
-                .body(datos);
+        try {
+            byte[] datos = usuarioService.exportarDatos(idUsuario);
+            return ResponseEntity.ok()
+                    .header("Content-Disposition", "attachment; filename=\"datos_usuario_" + idUsuario + ".csv\"")
+                    .header("Content-Type", "text/csv")
+                    .body(datos);
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     // Actualiza la foto de perfil enviando los bytes de la imagen en el body
@@ -105,7 +113,7 @@ public class UsuarioController {
             String url = usuarioService.actualizarFotoPerfil(idUsuario, imagen);
             return ResponseEntity.ok(url);
         } catch (UsuarioException e) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.notFound().build();
         }
     }
 
@@ -120,11 +128,15 @@ public class UsuarioController {
     public ResponseEntity<Boolean> crearCategoriaUsuario(
             @PathVariable int idUsuario,
             @RequestParam String nombreCategoria) {
-        boolean creada = usuarioService.crearCategoriaUsuario(nombreCategoria, idUsuario);
-        if (creada) {
-            return ResponseEntity.ok(true);
-        } else {
-            return ResponseEntity.badRequest().body(false);
+        try {
+            boolean creada = usuarioService.crearCategoriaUsuario(nombreCategoria, idUsuario);
+            if (creada) {
+                return ResponseEntity.ok(true);
+            } else {
+                return ResponseEntity.badRequest().body(false);
+            }
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
         }
     }
 
