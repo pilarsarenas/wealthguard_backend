@@ -82,7 +82,7 @@ public class TransaccionServiceImpl implements ITransaccionService {
         // Buscamos la transaccion a editar en la base de datos
         TransaccionEntity transaccionExistente = transaccionRepository.findById(idTransaccion)
                 .orElseThrow(() -> new RuntimeException("Transaccion no encontrada"));
-        
+
         // Convertimos de DTO a entidad
         TransaccionEntity transaccionActualizada = transaccionMapper.convertirAEntity(transaccionRequestDTO);
         transaccionActualizada.setId(idTransaccion);
@@ -134,7 +134,8 @@ public class TransaccionServiceImpl implements ITransaccionService {
             balanceAnterior = 0.0;
         }
 
-        // Si el mes anterior era 0, la tendencia es 100% si subio o 0% si bajo o si se quedo igual
+        // Si el mes anterior era 0, la tendencia es 100% si subio o 0% si bajo o si se
+        // quedo igual
         if (balanceAnterior == 0.0) {
             if (balanceActual > 0)
                 return 100.0;
@@ -150,28 +151,58 @@ public class TransaccionServiceImpl implements ITransaccionService {
     // Metodo para obtener la categoria principal de un usuario
     @Override
     public String[] obtenerCategoriaPrincipal(int idUsuario) {
-        // Obtenemos los gastos agrupados por categoria
-        List<Object[]> gastosPorCategoria = transaccionRepository.obtenerGastosAgrupadosPorCategoria(idUsuario);
+    // Calculamos las fechas de este mes
+        java.time.YearMonth mesActual = java.time.YearMonth.now();
+        LocalDateTime inicioMes = mesActual.atDay(1).atStartOfDay();
+        LocalDateTime finMes = mesActual.atEndOfMonth().atTime(LocalTime.MAX);
 
-        // Realizamos la validación inicial
-        if (gastosPorCategoria == null || gastosPorCategoria.isEmpty()) {
+        // Buscamos las transacciones del usuario
+        List<TransaccionEntity> transacciones = transaccionRepository.findByUsuarioId(idUsuario);
+        
+        // Creamos un map para ir sumando el total de gasto por categoria
+        java.util.Map<String, Double> sumasPorCategoria = new java.util.HashMap<>();
+        double totalGastos = 0.0;
+
+        // Recorremos las transacciones para ir sumando el gasto por categoria
+        for (TransaccionEntity t : transacciones) {
+            
+            // Comprobamos si es un gasto y si es de este mes
+            boolean esGasto = t.getTipoTransaccion() != null && !t.getTipoTransaccion();
+            boolean esDeEsteMes = t.getFecha() != null && !t.getFecha().isBefore(inicioMes) && !t.getFecha().isAfter(finMes);
+
+            // Si cumple las dos condiciones, hacemos las sumas
+            if (esGasto && esDeEsteMes) {
+                String nombreCat = t.getCategoria().getNombre();
+                double cantidad = t.getCantidad();
+
+                totalGastos += cantidad;
+                
+                // Sumamos el gasto a la categoria correspondiente
+                double sumaAnterior = sumasPorCategoria.getOrDefault(nombreCat, 0.0);
+                sumasPorCategoria.put(nombreCat, sumaAnterior + cantidad);
+            }
+        }
+
+        // Si después de mirar todo no hay gastos este mes, salimos
+        if (totalGastos == 0.0) {
             return new String[] { "Sin datos", "0.0" };
         }
 
-        // Sumamos los gastos de cada categoria
-        double totalGastos = 0.0;
-        for (Object[] categoria : gastosPorCategoria) {
-            totalGastos += (Double) categoria[1];
+        // Sacamos la categoria con mas gasto y su cantidad
+        String categoriaPrincipal = "";
+        double maximoGasto = 0.0;
+
+        for (java.util.Map.Entry<String, Double> entrada : sumasPorCategoria.entrySet()) {
+            if (entrada.getValue() > maximoGasto) {
+                maximoGasto = entrada.getValue();
+                categoriaPrincipal = entrada.getKey();
+            }
         }
 
-        // Obtenemos el primer elemento de la lista, extraemos el nombre de la
-        // categoria, cogemos el total y calculamos el %
-        Object[] categoriaPrincipal = gastosPorCategoria.get(0);
-        String nombreCategoriaPrincipal = (String) categoriaPrincipal[0];
-        double porcentajeCategoriaPrincipal = (Double) categoriaPrincipal[1] / totalGastos * 100;
+        // Calculamos el porcentaje 
+        double porcentaje = (maximoGasto / totalGastos) * 100;
 
-        // Devolvemos el nombre de la categoria y el % formateado
-        return new String[] { nombreCategoriaPrincipal, String.format("%.2f", porcentajeCategoriaPrincipal) };
+        return new String[] { categoriaPrincipal, String.format("%.2f", porcentaje) };
 
     }
 
@@ -191,16 +222,27 @@ public class TransaccionServiceImpl implements ITransaccionService {
         ObjetivoEntity metaActual = objetivos.get(0);
         double cantidadMeta = metaActual.getCantidadObjetivo();
 
+        // Calculamos el rango del mes actual 
+        YearMonth mesActual = YearMonth.now();
+        LocalDateTime inicioMesActual = mesActual.atDay(1).atStartOfDay();
+        LocalDateTime finMesActual = mesActual.atEndOfMonth().atTime(LocalTime.MAX);
+
         // Buscamos las transacciones de la meta actual
         List<TransaccionEntity> transaccionesMeta = transaccionRepository.buscarConFiltros(idUsuario,
-                metaActual.getFechaInicio(),
-                metaActual.getFechaFin(), metaActual.getCategoria().getId(), true, null, null);
+                inicioMesActual,
+                finMesActual, null, null, null, null);
 
         // Si la base de datos nos devolvio transacciones validas, las sumamos
         double progresoActual = 0.0;
         if (transaccionesMeta != null) {
             for (TransaccionEntity transaccion : transaccionesMeta) {
-                progresoActual += transaccion.getCantidad();
+                if (transaccion.getTipoTransaccion() != null && transaccion.getTipoTransaccion()) {
+                    // Si es true (Ingreso), lo sumamos 
+                    progresoActual += transaccion.getCantidad();
+                } else {
+                    // Si es false (Gasto), lo restamos
+                    progresoActual -= transaccion.getCantidad();
+                }
             }
         }
 
@@ -227,7 +269,7 @@ public class TransaccionServiceImpl implements ITransaccionService {
     // Metodo para listar todas las transacciones de un usuario
     @Override
     public List<TransaccionResponseDTO> listarTodasPorUsuario(Integer idUsuario) {
-        
+
         List<TransaccionEntity> transacciones = transaccionRepository.findByUsuarioId(idUsuario);
         return transacciones.stream()
                 .map(transaccionMapper::convertirADTO).toList();
