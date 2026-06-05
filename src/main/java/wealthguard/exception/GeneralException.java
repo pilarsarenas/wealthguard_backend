@@ -1,6 +1,6 @@
 package wealthguard.exception;
 
-public class GeneralException extends Exception {
+public class GeneralException extends RuntimeException  {
 
     public GeneralException(int codigoDeError, String mensajeDeError) {
         super(mensajeDeError);
