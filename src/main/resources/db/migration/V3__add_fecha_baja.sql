@@ -1,0 +1,1 @@
+ALTER TABLE usuario ADD COLUMN fecha_baja datetime(6) DEFAULT NULL;

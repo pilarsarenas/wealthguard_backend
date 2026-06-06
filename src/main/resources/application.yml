@@ -3,22 +3,9 @@ spring:
     allow-circular-references: true
   application:
     name: wealthguard_backend
-  datasource:
-        url: jdbc:mysql://localhost:3306/wealthguard
-        username: root
-        password: admin
+  profiles:
+    active: dev
 
-  jpa:
-    hibernate:
-      ddl-auto: update
-    show-sql: true
-    properties:
-      hibernate:
-        format_sql: true
-  flyway:
-    enabled: false
-    locations: classpath:db/migration
-    baseline-on-migrate: true
 springdoc:
   swagger-ui:
     path: /api-docs.html
