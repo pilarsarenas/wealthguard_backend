@@ -1,9 +1,17 @@
 package wealthguard.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
+@Schema(description = "DTO de respuesta con los datos de un tipo de recomendación")
 public class TipoRecomendacionResponseDTO {
 
+    @Schema(description = "ID único del tipo de recomendación", example = "1")
     private Integer id;
+
+    @Schema(description = "Nombre del tipo de recomendación", example = "Reducir gastos en ocio")
     private String nombre;
+
+    @Schema(description = "Mensaje descriptivo de la recomendación", example = "Has superado tu límite de gasto en ocio este mes. Considera reducir estas salidas.")
     private String mensaje;
 
     public TipoRecomendacionResponseDTO() {
@@ -32,7 +40,4 @@ public class TipoRecomendacionResponseDTO {
     public void setMensaje(String mensaje) {
         this.mensaje = mensaje;
     }
-
 }
-
-
