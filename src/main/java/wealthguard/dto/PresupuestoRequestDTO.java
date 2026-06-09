@@ -24,9 +24,6 @@ public class PresupuestoRequestDTO {
     @Schema(description = "Fecha de fin del presupuesto", example = "2024-01-31T23:59:59")
     private LocalDateTime fechaFin;
 
-    public PresupuestoRequestDTO() {
-    }
-
     public UsuarioEntity getUsuario() {
         return usuario;
     }

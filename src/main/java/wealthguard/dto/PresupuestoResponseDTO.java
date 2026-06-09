@@ -6,26 +6,57 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import wealthguard.entity.CategoriaEntity;
 import wealthguard.entity.UsuarioEntity;
 
-@Schema(description = "DTO de respuesta con los datos de un presupuesto")
+@Schema(
+    name = "PresupuestoResponseDTO",
+    description = "Respuesta con la información de un presupuesto, incluyendo el gasto actual y el porcentaje consumido."
+)
 public class PresupuestoResponseDTO {
 
-    @Schema(description = "ID único del presupuesto", example = "1")
+    @Schema(
+        description = "Identificador único del presupuesto",
+        example = "1"
+    )
     private Integer id;
 
-    @Schema(description = "Usuario propietario del presupuesto")
+    @Schema(
+        description = "Usuario propietario del presupuesto"
+    )
     private UsuarioEntity usuario;
 
-    @Schema(description = "Categoría a la que aplica el presupuesto")
+    @Schema(
+        description = "Categoría asociada al presupuesto"
+    )
     private CategoriaEntity categoria;
 
-    @Schema(description = "Límite de gasto del presupuesto", example = "500.00")
+    @Schema(
+        description = "Límite máximo de gasto permitido para la categoría",
+        example = "500.00"
+    )
     private double limite;
 
-    @Schema(description = "Fecha de inicio del presupuesto", example = "2024-01-01T00:00:00")
+    @Schema(
+        description = "Fecha y hora de inicio del periodo presupuestario",
+        example = "2025-01-01T00:00:00"
+    )
     private LocalDateTime fechaInicio;
 
-    @Schema(description = "Fecha de fin del presupuesto", example = "2024-01-31T23:59:59")
+    @Schema(
+        description = "Fecha y hora de finalización del periodo presupuestario",
+        example = "2025-01-31T23:59:59"
+    )
     private LocalDateTime fechaFin;
+
+    @Schema(
+        description = "Importe total gastado actualmente en la categoría durante el periodo",
+        example = "275.50"
+    )
+    private double gastoActual;
+
+    @Schema(
+        description = "Porcentaje consumido del presupuesto calculado como (gastoActual / limite) * 100",
+        example = "55.10"
+    )
+    private double porcentaje;
 
     public PresupuestoResponseDTO() {
     }
@@ -76,5 +107,21 @@ public class PresupuestoResponseDTO {
 
     public void setFechaFin(LocalDateTime fechaFin) {
         this.fechaFin = fechaFin;
+    }
+
+    public double getGastoActual() {
+        return gastoActual;
+    }
+
+    public void setGastoActual(double gastoActual) {
+        this.gastoActual = gastoActual;
+    }
+
+    public double getPorcentaje() {
+        return porcentaje;
+    }
+
+    public void setPorcentaje(double porcentaje) {
+        this.porcentaje = porcentaje;
     }
 }
