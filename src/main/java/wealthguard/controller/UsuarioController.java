@@ -24,6 +24,9 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import wealthguard.dto.LoginErrorResponseDTO;
+import wealthguard.dto.LoginRequestDTO;
+import wealthguard.dto.LoginResponseDTO;
 import wealthguard.dto.UsuarioRequestDTO;
 import wealthguard.dto.UsuarioResponseDTO;
 import wealthguard.exception.UsuarioException;
@@ -33,7 +36,8 @@ import wealthguard.service.IUsuarioService;
 @RequestMapping("/usuarios")
 @Tag(name = "Usuarios", description = "Gestión de usuarios y cuentas de la aplicación")
 @CrossOrigin(origins = "http://localhost:4200", 
-allowedHeaders = "*", 
+allowedHeaders = {"Content-Type", "Authorization"},
+allowCredentials = "false",
 methods = {RequestMethod.OPTIONS, 
     RequestMethod.GET,
     RequestMethod.POST, 
@@ -43,6 +47,21 @@ public class UsuarioController {
 
     @Autowired
     private IUsuarioService usuarioService;
+
+    @Operation(summary = "Iniciar sesión por nick o email y contraseña")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Login correcto", content = @Content(schema = @Schema(implementation = LoginResponseDTO.class))),
+            @ApiResponse(responseCode = "401", description = "Credenciales inválidas", content = @Content(schema = @Schema(implementation = LoginErrorResponseDTO.class)))
+    })
+    @PostMapping("/login")
+    public ResponseEntity<Object> login(@RequestBody LoginRequestDTO requestDTO) {
+        try {
+            LoginResponseDTO response = usuarioService.login(requestDTO);
+            return ResponseEntity.ok(response);
+        } catch (UsuarioException e) {
+            return ResponseEntity.status(401).body(new LoginErrorResponseDTO("Credenciales inválidas"));
+        }
+    }
 
     @Operation(summary = "Crear un nuevo usuario")
     @ApiResponses({

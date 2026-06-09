@@ -2,11 +2,22 @@ package wealthguard.service;
 
 import java.util.List;
 
+import wealthguard.dto.LoginRequestDTO;
+import wealthguard.dto.LoginResponseDTO;
 import wealthguard.dto.UsuarioRequestDTO;
 import wealthguard.dto.UsuarioResponseDTO;
 import wealthguard.exception.UsuarioException;
 
 public interface IUsuarioService {
+
+    /**
+     * Autentica un usuario por nick o email y contraseña.
+     *
+     * @param loginRequestDTO Credenciales de acceso
+     * @return LoginResponseDTO con datos de sesión
+     * @throws UsuarioException si las credenciales no son válidas
+     */
+    public LoginResponseDTO login(LoginRequestDTO loginRequestDTO) throws UsuarioException;
 
     /**
      * Crea un nuevo usuario en el sistema.
