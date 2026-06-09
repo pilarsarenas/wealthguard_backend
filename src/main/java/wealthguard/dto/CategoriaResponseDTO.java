@@ -11,8 +11,8 @@ public class CategoriaResponseDTO {
     @Schema(description = "Nombre de la categoría", example = "Alimentación")
     private String nombre;
 
-    @Schema(description = "ID del usuario propietario de la categoría", example = "42")
-    private Integer usuarioId;
+    @Schema(description = "Icono representativo de la categoría (opcional)", example = "icono.svg")
+    private String icono;
 
     public CategoriaResponseDTO() {
     }
@@ -33,11 +33,12 @@ public class CategoriaResponseDTO {
         this.nombre = nombre;
     }
 
-    public Integer getUsuarioId() {
-        return usuarioId;
+    public String getIcono() {
+        return icono;
     }
 
-    public void setUsuarioId(Integer usuarioId) {
-        this.usuarioId = usuarioId;
+    public void setIcono(String icono) {
+        this.icono = icono;
     }
+
 }

@@ -8,6 +8,9 @@ public class CategoriaRequestDTO {
     @Schema(description = "Nombre de la categoría", example = "Alimentación")
     private String nombre;
 
+    @Schema(description = "Icono representativo de la categoría (opcional)", example = "icono.svg")
+    private String icono;
+
     public CategoriaRequestDTO() {
     }
 
@@ -18,4 +21,14 @@ public class CategoriaRequestDTO {
     public void setNombre(String nombre) {
         this.nombre = nombre;
     }
+
+    public String getIcono() {
+        return icono;
+    }
+
+    public void setIcono(String icono) {
+        this.icono = icono;
+    }
+
+
 }

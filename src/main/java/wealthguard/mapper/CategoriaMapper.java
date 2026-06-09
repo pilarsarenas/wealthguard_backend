@@ -17,6 +17,7 @@ public class CategoriaMapper {
         CategoriaEntity categoriaEntity = new CategoriaEntity();
         
         categoriaEntity.setNombre(categoriaRequestDTO.getNombre());
+        categoriaEntity.setIcono(categoriaRequestDTO.getIcono());
 
         return categoriaEntity;
     }
@@ -30,9 +31,7 @@ public class CategoriaMapper {
 
         categoriaResponseDTO.setId(categoriaEntity.getId());
         categoriaResponseDTO.setNombre(categoriaEntity.getNombre());
-        if (categoriaEntity.getUsuarioId() != null) {
-            categoriaResponseDTO.setUsuarioId(categoriaEntity.getUsuarioId().getId());
-        }
+        categoriaResponseDTO.setIcono(categoriaEntity.getIcono());
 
         return categoriaResponseDTO;
     }

@@ -49,9 +49,9 @@ public class CategoriaServiceImpl implements ICategoriaService {
     }
 
     @Override
-    public List<CategoriaResponseDTO> obtenerCategorias(Integer usuarioId, String nombreCategoria) {
+    public List<CategoriaResponseDTO> obtenerCategorias() {
         
-        List<CategoriaEntity> categorias = categoriaRepository.buscarConFiltro(usuarioId, nombreCategoria);
+        List<CategoriaEntity> categorias = categoriaRepository.listarCategorias();
 
         return categorias.stream()
                 .map(categoria -> categoriaMapper.convertirADTO(categoria))
