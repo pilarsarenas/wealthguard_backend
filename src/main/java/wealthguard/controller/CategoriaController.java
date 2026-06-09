@@ -13,12 +13,10 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -40,8 +38,8 @@ public class CategoriaController {
 
     @Operation(summary = "Crear una nueva categoría")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Categoría creada correctamente", content = @Content(schema = @Schema(implementation = CategoriaResponseDTO.class))),
-            @ApiResponse(responseCode = "400", description = "Datos de entrada inválidos", content = @Content)
+        @ApiResponse(responseCode = "200", description = "Categoría creada correctamente", content = @Content(schema = @Schema(implementation = CategoriaResponseDTO.class))),
+        @ApiResponse(responseCode = "400", description = "Datos de entrada inválidos", content = @Content)
     })
     @PostMapping("/crear")
     public CategoriaResponseDTO crearCategoria(
@@ -51,9 +49,9 @@ public class CategoriaController {
 
     @Operation(summary = "Editar una categoría existente")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Categoría actualizada correctamente", content = @Content(schema = @Schema(implementation = CategoriaResponseDTO.class))),
-            @ApiResponse(responseCode = "400", description = "Datos de entrada inválidos", content = @Content),
-            @ApiResponse(responseCode = "404", description = "Categoría no encontrada", content = @Content)
+        @ApiResponse(responseCode = "200", description = "Categoría actualizada correctamente", content = @Content(schema = @Schema(implementation = CategoriaResponseDTO.class))),
+        @ApiResponse(responseCode = "400", description = "Datos de entrada inválidos", content = @Content),
+        @ApiResponse(responseCode = "404", description = "Categoría no encontrada", content = @Content)
     })
     @PutMapping("/editar/{id}")
     public CategoriaResponseDTO editarCategoria(
@@ -64,8 +62,8 @@ public class CategoriaController {
 
     @Operation(summary = "Eliminar una categoría por ID")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Categoría eliminada correctamente", content = @Content(schema = @Schema(implementation = Boolean.class))),
-            @ApiResponse(responseCode = "404", description = "Categoría no encontrada", content = @Content)
+        @ApiResponse(responseCode = "200", description = "Categoría eliminada correctamente", content = @Content(schema = @Schema(implementation = Boolean.class))),
+        @ApiResponse(responseCode = "404", description = "Categoría no encontrada", content = @Content)
     })
     @DeleteMapping("/eliminar/{id}")
     public ResponseEntity<Boolean> eliminarCategoria(
@@ -78,14 +76,14 @@ public class CategoriaController {
         }
     }
 
-    @Operation(summary = "Listar categorías de un usuario con filtro opcional por nombre")
+    @Operation(summary = "Obtener la lista de categorías")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Listado de categorías obtenido correctamente", content = @Content(array = @ArraySchema(schema = @Schema(implementation = CategoriaResponseDTO.class))))
+        @ApiResponse(responseCode = "200", description = "Lista de categorías obtenida correctamente", content = @Content(schema = @Schema(implementation = CategoriaResponseDTO.class))),
+        @ApiResponse(responseCode = "400", description = "Datos de entrada inválidos", content = @Content)
     })
-    @GetMapping("/listar/{idUsuario}")
-    public List<CategoriaResponseDTO> listarCategorias(
-            @Parameter(description = "ID del usuario", required = true) @PathVariable Integer idUsuario,
-            @Parameter(description = "Nombre de la categoría para filtrar (opcional)") @RequestParam(required = false) String nombreCategoria) {
-        return categoriaService.obtenerCategorias(idUsuario, nombreCategoria);
+    @GetMapping("/listar")
+    public List<CategoriaResponseDTO> obtenerCategorias() {
+        return categoriaService.obtenerCategorias();
     }
+
 }

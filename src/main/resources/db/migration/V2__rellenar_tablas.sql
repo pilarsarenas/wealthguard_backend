@@ -7,10 +7,10 @@ INSERT INTO `usuario` (
 (0, 0, 0, 'ana.admin@email.com', 1, NOW(6), NOW(6), 'ana_avatar.png', 'anaroot', 'Ana', 'hash456', '¿Ciudad?', 'Rodríguez', 'Madrid', NULL),
 (0, 2, 0, 'marta@email.com', 0, NOW(6), NULL, NULL, 'marta_dev', 'Marta', 'hash789', '¿Color?', 'Sanz', 'Verde', 'López');
 
-INSERT INTO `categoria` (`nombre`,`usuario_id`) VALUES 
-('Vivienda', 1),
-('Ocio', 2),
-('Salario', 3);
+INSERT INTO `categoria` (`nombre`,`icono`) VALUES 
+('Vivienda', NULL),
+('Ocio', NULL),
+('Salario', NULL);
 
 INSERT INTO `tipo_recomendacion` (`mensaje`, `nombre`) VALUES 
 ('Has superado el 80% de tu presupuesto en Ocio. ¡Controla tus gastos!', 'Alerta de Gasto'),
