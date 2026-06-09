@@ -2,20 +2,48 @@ package wealthguard.dto;
 
 import java.time.LocalDateTime;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
+@Schema(description = "DTO de respuesta con los datos de un usuario")
 public class UsuarioResponseDTO {
 
+    @Schema(description = "ID único del usuario", example = "42")
     private Integer id;
+
+    @Schema(description = "Nombre de usuario único", example = "jgarcia92")
     private String nickUsuario;
+
+    @Schema(description = "Nombre real del usuario", example = "Juan")
     private String nombre;
+
+    @Schema(description = "Primer apellido del usuario", example = "García")
     private String primerApellido;
+
+    @Schema(description = "Segundo apellido del usuario", example = "López")
     private String segundoApellido;
+
+    @Schema(description = "Correo electrónico del usuario", example = "juan@email.com")
     private String email;
+
+    @Schema(description = "Contraseña cifrada del usuario")
     private String password;
+
+    @Schema(description = "Pregunta de seguridad para recuperación de cuenta", example = "¿Cuál es el nombre de tu mascota?")
     private String preguntaSeguridad;
+
+    @Schema(description = "URL o base64 de la foto de perfil del usuario", example = "https://cdn.example.com/fotos/jgarcia.jpg")
     private String fotoPerfil;
+
+    @Schema(description = "Fecha y hora de registro del usuario", example = "2024-01-15T09:30:00")
     private LocalDateTime fechaRegistro;
+
+    @Schema(description = "Indica si el usuario tiene rol de administrador", example = "false")
     private Boolean esAdmin;
+
+    @Schema(description = "Indica si la cuenta del usuario está activa", example = "true")
     private Boolean activo;
+
+    @Schema(description = "Indica si la cuenta del usuario está bloqueada", example = "false")
     private Boolean cuentaBloqueada;
 
     public UsuarioResponseDTO() {
@@ -124,7 +152,4 @@ public class UsuarioResponseDTO {
     public void setCuentaBloqueada(Boolean cuentaBloqueada) {
         this.cuentaBloqueada = cuentaBloqueada;
     }
-
-    
-
 }

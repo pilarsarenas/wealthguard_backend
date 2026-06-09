@@ -1,26 +1,19 @@
 package wealthguard.service;
 
+import java.util.List;
+
+import wealthguard.dto.TipoRecomendacionRequestDTO;
+import wealthguard.dto.TipoRecomendacionResponseDTO;
+
 public interface ITipoRecomendacionService {
 
-    /**
-     * Obtiene el mensaje de recomendación basado en el ID del tipo de
-     * recomendación.
-     *
-     * @param idTipoRecomendacion El ID del tipo de recomendación para el cual
-     * se desea obtener el mensaje.
-     * @return El mensaje de recomendación correspondiente al ID proporcionado,
-     * o null si no se encuentra.
-     */
-    public String obtenerMensajeRecomendacion(Integer idTipoRecomendacion);
+    TipoRecomendacionResponseDTO crearTipoRecomendacion(TipoRecomendacionRequestDTO dto);
 
-    /**
-     * Obtiene el mensaje de recomendación basado en el nombre del tipo de
-     * recomendación.
-     *
-     * @param nombreTipoRecomendacion El nombre del tipo de recomendación para
-     * el cual se desea obtener el mensaje.
-     * @return El mensaje de recomendación correspondiente al nombre
-     * proporcionado, o null si no se encuentra.
-     */
-    public String obtenerMensajeRecomendacionPorNombre(String nombreTipoRecomendacion);
+    TipoRecomendacionResponseDTO obtenerTipoRecomendacionPorId(Integer id);
+
+    List<TipoRecomendacionResponseDTO> listarTodos();
+
+    TipoRecomendacionResponseDTO actualizarTipoRecomendacion(Integer id, TipoRecomendacionRequestDTO dto);
+
+    void eliminarTipoRecomendacion(Integer id);
 }
