@@ -6,12 +6,16 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import wealthguard.dto.LoginRequestDTO;
+import wealthguard.dto.LoginResponseDTO;
 import wealthguard.dto.UsuarioRequestDTO;
 import wealthguard.dto.UsuarioResponseDTO;
 import wealthguard.entity.CategoriaEntity;
@@ -35,6 +39,43 @@ public class UsuarioServiceImpl implements IUsuarioService {
     private UsuarioMapper usuarioMapper;
 
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
+    @Override
+    public LoginResponseDTO login(LoginRequestDTO loginRequestDTO) throws UsuarioException {
+        if (loginRequestDTO == null
+                || loginRequestDTO.getUsuario() == null
+                || loginRequestDTO.getUsuario().isBlank()
+                || loginRequestDTO.getPass() == null
+                || loginRequestDTO.getPass().isBlank()) {
+            throw new UsuarioException();
+        }
+
+        String identificador = loginRequestDTO.getUsuario().trim();
+        Optional<UsuarioEntity> usuarioOpt;
+
+        if (identificador.contains("@")) {
+            usuarioOpt = usuarioRepository.findByEmailIgnoreCase(identificador);
+        } else {
+            usuarioOpt = usuarioRepository.findByNickUsuarioIgnoreCase(identificador);
+        }
+
+        UsuarioEntity usuario = usuarioOpt.orElseThrow(UsuarioException::new);
+
+        if (!passwordEncoder.matches(loginRequestDTO.getPass(), usuario.getPassword())) {
+            throw new UsuarioException();
+        }
+
+        LoginResponseDTO response = new LoginResponseDTO();
+        response.setMensaje("Login correcto");
+        response.setToken(UUID.randomUUID().toString());
+        response.setIdUsuario(usuario.getId());
+        response.setNickUsuario(usuario.getNickUsuario());
+        response.setNombre(usuario.getNombre());
+        response.setEmail(usuario.getEmail());
+        response.setEsAdmin(usuario.getEsAdmin());
+        response.setActivo(usuario.getActivo());
+        return response;
+    }
 
     @Override
     public UsuarioResponseDTO crearUsuario(UsuarioRequestDTO usuarioRequestDTO) throws UsuarioException {
