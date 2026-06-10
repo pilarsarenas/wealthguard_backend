@@ -17,7 +17,8 @@ INSERT INTO `categoria` (`nombre`, `icono`) VALUES
 ('Educación', 'school'),
 ('Suscripciones', 'subscriptions'),
 ('Viajes', 'flight'),
-('Regalos', 'redeem');
+('Regalos', 'redeem'),
+('Otros', 'category');
 
 INSERT INTO `tipo_recomendacion` (`mensaje`, `nombre`) VALUES 
 ('Has superado el 80% de tu presupuesto en Ocio. ¡Controla tus gastos!', 'Alerta de Gasto'),
