@@ -37,6 +37,9 @@ public class UsuarioResponseDTO {
     @Schema(description = "Fecha y hora de registro del usuario", example = "2024-01-15T09:30:00")
     private LocalDateTime fechaRegistro;
 
+    @Schema(description = "Fecha y hora del último cambio de contraseña", example = "2024-03-10T14:00:00")
+    private LocalDateTime fechaUltimoCambioPassword;
+
     @Schema(description = "Indica si el usuario tiene rol de administrador", example = "false")
     private Boolean esAdmin;
 
@@ -127,6 +130,14 @@ public class UsuarioResponseDTO {
 
     public void setFechaRegistro(LocalDateTime fechaRegistro) {
         this.fechaRegistro = fechaRegistro;
+    }
+
+    public LocalDateTime getFechaUltimoCambioPassword() {
+        return fechaUltimoCambioPassword;
+    }
+
+    public void setFechaUltimoCambioPassword(LocalDateTime fechaUltimoCambioPassword) {
+        this.fechaUltimoCambioPassword = fechaUltimoCambioPassword;
     }
 
     public Boolean getEsAdmin() {

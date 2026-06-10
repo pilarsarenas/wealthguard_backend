@@ -9,14 +9,11 @@ import wealthguard.entity.UsuarioEntity;
 @Component
 public class UsuarioMapper {
 
-    // Metodo para convertir lo que llega del frontend en una entidad para la base de datos
     public UsuarioEntity convertirAEntity(UsuarioRequestDTO dto) {
-        if (dto == null) {
+        if (dto == null)
             return null;
-        }
 
         UsuarioEntity entity = new UsuarioEntity();
-
         entity.setNickUsuario(dto.getNickUsuario());
         entity.setNombre(dto.getNombre());
         entity.setPrimerApellido(dto.getPrimerApellido());
@@ -28,16 +25,13 @@ public class UsuarioMapper {
         entity.setFotoPerfil(dto.getFotoPerfil());
 
         return entity;
-
     }
-    // Metodo para convertir lo que sale de la base de datos a DTO para el frontend
+
     public UsuarioResponseDTO convertirADTO(UsuarioEntity entity) {
-        if (entity == null) {
+        if (entity == null)
             return null;
-        }
 
         UsuarioResponseDTO dto = new UsuarioResponseDTO();
-
         dto.setId(entity.getId());
         dto.setNickUsuario(entity.getNickUsuario());
         dto.setNombre(entity.getNombre());
@@ -47,8 +41,8 @@ public class UsuarioMapper {
         dto.setPassword(entity.getPassword());
         dto.setPreguntaSeguridad(entity.getPreguntaSeguridad());
         dto.setFotoPerfil(entity.getFotoPerfil());
-
         dto.setFechaRegistro(entity.getFechaRegistro());
+        dto.setFechaUltimoCambioPassword(entity.getFechaUltimoCambioPassword());
         dto.setEsAdmin(entity.getEsAdmin());
         dto.setActivo(entity.getActivo());
         dto.setCuentaBloqueada(entity.getCuentaBloqueada());

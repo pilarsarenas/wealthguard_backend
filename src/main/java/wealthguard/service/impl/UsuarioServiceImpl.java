@@ -117,6 +117,14 @@ public class UsuarioServiceImpl implements IUsuarioService {
             throw new UsuarioException();
         }
 
+        // Validar que la contraseña enviada es correcta antes de guardar
+        if (usuarioRequestDTO.getPassword() == null || usuarioRequestDTO.getPassword().isBlank()) {
+            throw new UsuarioException("Password_obligatoria");
+        }
+        if (!passwordEncoder.matches(usuarioRequestDTO.getPassword(), existente.getPassword())) {
+            throw new UsuarioException("Password_incorrecta");
+        }
+
         UsuarioEntity usuario = usuarioMapper.convertirAEntity(usuarioRequestDTO);
         usuario.setId(idUsuario);
         usuario.setFechaRegistro(existente.getFechaRegistro());
@@ -125,14 +133,8 @@ public class UsuarioServiceImpl implements IUsuarioService {
         usuario.setCuentaBloqueada(existente.getCuentaBloqueada());
         usuario.setActivo(existente.getActivo());
         usuario.setFechaUltimoCambioPassword(existente.getFechaUltimoCambioPassword());
+        usuario.setPassword(existente.getPassword());
 
-        if (usuarioRequestDTO.getPassword() != null && !usuarioRequestDTO.getPassword().isBlank()) {
-            usuario.setPassword(passwordEncoder.encode(usuarioRequestDTO.getPassword()));
-        } else {
-            usuario.setPassword(existente.getPassword());
-        }
-
-        // Conservar la foto de perfil existente si no se manda una nueva
         if (usuarioRequestDTO.getFotoPerfil() == null || usuarioRequestDTO.getFotoPerfil().isBlank()) {
             usuario.setFotoPerfil(existente.getFotoPerfil());
         }
@@ -175,7 +177,7 @@ public class UsuarioServiceImpl implements IUsuarioService {
                 .orElseThrow(() -> new UsuarioException());
 
         if (!passwordEncoder.matches(passwordAntigua, usuario.getPassword())) {
-            throw new UsuarioException();
+            throw new UsuarioException("Password_incorrecta");
         }
 
         usuario.setPassword(passwordEncoder.encode(passwordNueva));
@@ -208,13 +210,11 @@ public class UsuarioServiceImpl implements IUsuarioService {
             Path directorio = Paths.get("uploads", "fotos-perfil");
             Files.createDirectories(directorio);
 
-            // Obtener extensión del archivo original
             String nombreOriginal = imagen.getOriginalFilename();
             String extension = (nombreOriginal != null && nombreOriginal.contains("."))
                     ? nombreOriginal.substring(nombreOriginal.lastIndexOf("."))
                     : ".jpg";
 
-            // Nombre final: usuario_4.png (sobreescribe la anterior del mismo usuario)
             String nombreArchivo = "usuario_" + idUsuario + extension;
             Path rutaArchivo = directorio.resolve(nombreArchivo);
             Files.write(rutaArchivo, imagen.getBytes());
