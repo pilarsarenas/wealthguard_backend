@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -35,14 +36,14 @@ import wealthguard.service.IUsuarioService;
 @RestController
 @RequestMapping("/usuarios")
 @Tag(name = "Usuarios", description = "Gestión de usuarios y cuentas de la aplicación")
-@CrossOrigin(origins = "http://localhost:4200", 
-allowedHeaders = {"Content-Type", "Authorization"},
-allowCredentials = "false",
-methods = {RequestMethod.OPTIONS, 
-    RequestMethod.GET,
-    RequestMethod.POST, 
-    RequestMethod.PUT, 
-    RequestMethod.DELETE})
+@CrossOrigin(origins = "http://localhost:4200",
+        allowedHeaders = {"Content-Type", "Authorization"},
+        allowCredentials = "false",
+        methods = {RequestMethod.OPTIONS,
+                RequestMethod.GET,
+                RequestMethod.POST,
+                RequestMethod.PUT,
+                RequestMethod.DELETE})
 public class UsuarioController {
 
     @Autowired
@@ -173,7 +174,7 @@ public class UsuarioController {
         }
     }
 
-    @Operation(summary = "Actualizar la foto de perfil del usuario", description = "Recibe los bytes de la imagen en el body y devuelve la URL de la foto actualizada")
+    @Operation(summary = "Actualizar la foto de perfil del usuario", description = "Recibe la imagen como MultipartFile y devuelve la URL pública de la foto actualizada")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Foto de perfil actualizada correctamente", content = @Content(schema = @Schema(implementation = String.class))),
             @ApiResponse(responseCode = "404", description = "Usuario no encontrado", content = @Content)
@@ -181,7 +182,7 @@ public class UsuarioController {
     @PutMapping("/foto-perfil/{idUsuario}")
     public ResponseEntity<String> actualizarFotoPerfil(
             @Parameter(description = "ID del usuario", required = true) @PathVariable int idUsuario,
-            @RequestBody byte[] imagen) {
+            @RequestParam("imagen") MultipartFile imagen) {
         try {
             String url = usuarioService.actualizarFotoPerfil(idUsuario, imagen);
             return ResponseEntity.ok(url);

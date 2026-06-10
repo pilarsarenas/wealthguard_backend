@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import wealthguard.dto.LoginRequestDTO;
 import wealthguard.dto.LoginResponseDTO;
@@ -36,59 +37,56 @@ public class UsuarioServiceImpl implements IUsuarioService {
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     @Override
-public LoginResponseDTO login(LoginRequestDTO loginRequestDTO) throws UsuarioException {
+    public LoginResponseDTO login(LoginRequestDTO loginRequestDTO) throws UsuarioException {
 
-    if (loginRequestDTO == null
-            || loginRequestDTO.getUsuario() == null
-            || loginRequestDTO.getUsuario().isBlank()
-            || loginRequestDTO.getPass() == null
-            || loginRequestDTO.getPass().isBlank()) {
-        throw new UsuarioException("Credenciales_invalidas");
-    }
-
-    String identificador = loginRequestDTO.getUsuario().trim();
-    Optional<UsuarioEntity> usuarioOpt;
-
-    if (identificador.contains("@")) {
-        usuarioOpt = usuarioRepository.findByEmailIgnoreCase(identificador);
-    } else {
-        usuarioOpt = usuarioRepository.findByNickUsuarioIgnoreCase(identificador);
-    }
-
-    UsuarioEntity usuario = usuarioOpt.orElseThrow(() -> new UsuarioException("Usuario_no_encontrado"));
-
-    if (Boolean.TRUE.equals(usuario.getCuentaBloqueada())) {
-        throw new UsuarioException("Cuenta_bloqueada_por_demasidos_intentos_fallidos");
-    }
-
-    if (!passwordEncoder.matches(loginRequestDTO.getPass(), usuario.getPassword())) {
-
-        int intentos = usuario.getContadorIntentos() + 1;
-        usuario.setContadorIntentos(intentos);
-
-        if (intentos >= 3) {
-            usuario.setCuentaBloqueada(true);
+        if (loginRequestDTO == null
+                || loginRequestDTO.getUsuario() == null
+                || loginRequestDTO.getUsuario().isBlank()
+                || loginRequestDTO.getPass() == null
+                || loginRequestDTO.getPass().isBlank()) {
+            throw new UsuarioException("Credenciales_invalidas");
         }
 
+        String identificador = loginRequestDTO.getUsuario().trim();
+        Optional<UsuarioEntity> usuarioOpt;
+
+        if (identificador.contains("@")) {
+            usuarioOpt = usuarioRepository.findByEmailIgnoreCase(identificador);
+        } else {
+            usuarioOpt = usuarioRepository.findByNickUsuarioIgnoreCase(identificador);
+        }
+
+        UsuarioEntity usuario = usuarioOpt.orElseThrow(() -> new UsuarioException("Usuario_no_encontrado"));
+
+        if (Boolean.TRUE.equals(usuario.getCuentaBloqueada())) {
+            throw new UsuarioException("Cuenta_bloqueada_por_demasidos_intentos_fallidos");
+        }
+
+        if (!passwordEncoder.matches(loginRequestDTO.getPass(), usuario.getPassword())) {
+            int intentos = usuario.getContadorIntentos() + 1;
+            usuario.setContadorIntentos(intentos);
+            if (intentos >= 3) {
+                usuario.setCuentaBloqueada(true);
+            }
+            usuarioRepository.save(usuario);
+            throw new UsuarioException("Credenciales_incorrectas");
+        }
+
+        usuario.setContadorIntentos(0);
         usuarioRepository.save(usuario);
-        throw new UsuarioException("Credenciales_incorrectas");
+
+        LoginResponseDTO response = new LoginResponseDTO();
+        response.setMensaje("Login correcto");
+        response.setToken(UUID.randomUUID().toString());
+        response.setIdUsuario(usuario.getId());
+        response.setNickUsuario(usuario.getNickUsuario());
+        response.setNombre(usuario.getNombre());
+        response.setEmail(usuario.getEmail());
+        response.setEsAdmin(usuario.getEsAdmin());
+        response.setActivo(usuario.getActivo());
+
+        return response;
     }
-
-    usuario.setContadorIntentos(0);
-    usuarioRepository.save(usuario);
-
-    LoginResponseDTO response = new LoginResponseDTO();
-    response.setMensaje("Login correcto");
-    response.setToken(UUID.randomUUID().toString());
-    response.setIdUsuario(usuario.getId());
-    response.setNickUsuario(usuario.getNickUsuario());
-    response.setNombre(usuario.getNombre());
-    response.setEmail(usuario.getEmail());
-    response.setEsAdmin(usuario.getEsAdmin());
-    response.setActivo(usuario.getActivo());
-
-    return response;
-}
 
     @Override
     public UsuarioResponseDTO crearUsuario(UsuarioRequestDTO usuarioRequestDTO) throws UsuarioException {
@@ -109,9 +107,9 @@ public LoginResponseDTO login(LoginRequestDTO loginRequestDTO) throws UsuarioExc
         return usuarioMapper.convertirADTO(guardado);
     }
 
-    // Actualiza los datos del perfil. Requiere que el usuario ya tenga ID.
     @Override
-    public UsuarioResponseDTO actualizarUsuario(int idUsuario, UsuarioRequestDTO usuarioRequestDTO) throws UsuarioException {
+    public UsuarioResponseDTO actualizarUsuario(int idUsuario, UsuarioRequestDTO usuarioRequestDTO)
+            throws UsuarioException {
         UsuarioEntity existente = usuarioRepository.findById(idUsuario)
                 .orElseThrow(() -> new UsuarioException());
 
@@ -121,8 +119,6 @@ public LoginResponseDTO login(LoginRequestDTO loginRequestDTO) throws UsuarioExc
 
         UsuarioEntity usuario = usuarioMapper.convertirAEntity(usuarioRequestDTO);
         usuario.setId(idUsuario);
-
-        // Conservamos campos de sistema que no llegan en el request de perfil.
         usuario.setFechaRegistro(existente.getFechaRegistro());
         usuario.setEsAdmin(existente.getEsAdmin());
         usuario.setContadorIntentos(existente.getContadorIntentos());
@@ -136,11 +132,15 @@ public LoginResponseDTO login(LoginRequestDTO loginRequestDTO) throws UsuarioExc
             usuario.setPassword(existente.getPassword());
         }
 
+        // Conservar la foto de perfil existente si no se manda una nueva
+        if (usuarioRequestDTO.getFotoPerfil() == null || usuarioRequestDTO.getFotoPerfil().isBlank()) {
+            usuario.setFotoPerfil(existente.getFotoPerfil());
+        }
+
         UsuarioEntity actualizado = usuarioRepository.save(usuario);
         return usuarioMapper.convertirADTO(actualizado);
     }
 
-    // Elimina de forma permanente la cuenta del usuario y todos sus datos asociados.
     @Override
     public boolean eliminarCuenta(int idUsuario) {
         if (!usuarioRepository.existsById(idUsuario)) {
@@ -150,7 +150,6 @@ public LoginResponseDTO login(LoginRequestDTO loginRequestDTO) throws UsuarioExc
         return true;
     }
 
-    // Exporta los datos del usuario como CSV (portabilidad RGPD).
     @Override
     public byte[] exportarDatos(int idUsuario) {
         UsuarioEntity usuario = usuarioRepository.findById(idUsuario)
@@ -169,9 +168,9 @@ public LoginResponseDTO login(LoginRequestDTO loginRequestDTO) throws UsuarioExc
         return csv.getBytes();
     }
 
-    // Cambia la contraseña verificando la antigua con BCrypt y hasheando la nueva.
     @Override
-    public boolean cambiarPassword(int idUsuario, String passwordAntigua, String passwordNueva) throws UsuarioException {
+    public boolean cambiarPassword(int idUsuario, String passwordAntigua, String passwordNueva)
+            throws UsuarioException {
         UsuarioEntity usuario = usuarioRepository.findById(idUsuario)
                 .orElseThrow(() -> new UsuarioException());
 
@@ -185,7 +184,6 @@ public LoginResponseDTO login(LoginRequestDTO loginRequestDTO) throws UsuarioExc
         return true;
     }
 
-    // Devuelve los datos del perfil del usuario para la pantalla de perfil.
     @Override
     public UsuarioResponseDTO obtenerPerfil(int idUsuario) {
         UsuarioEntity usuario = usuarioRepository.findById(idUsuario)
@@ -201,26 +199,33 @@ public LoginResponseDTO login(LoginRequestDTO loginRequestDTO) throws UsuarioExc
                 .collect(Collectors.toList());
     }
 
-    // Guarda los bytes de imagen en disco y actualiza la URL de fotoPerfil.
     @Override
-    public String actualizarFotoPerfil(int idUsuario, byte[] imagen) throws UsuarioException {
+    public String actualizarFotoPerfil(int idUsuario, MultipartFile imagen) throws UsuarioException {
         UsuarioEntity usuario = usuarioRepository.findById(idUsuario)
                 .orElseThrow(() -> new UsuarioException());
 
         try {
             Path directorio = Paths.get("uploads", "fotos-perfil");
             Files.createDirectories(directorio);
-            Path rutaArchivo = directorio.resolve("usuario_" + idUsuario + ".jpg");
-            Files.write(rutaArchivo, imagen);
 
-            String url = rutaArchivo.toString();
+            // Obtener extensión del archivo original
+            String nombreOriginal = imagen.getOriginalFilename();
+            String extension = (nombreOriginal != null && nombreOriginal.contains("."))
+                    ? nombreOriginal.substring(nombreOriginal.lastIndexOf("."))
+                    : ".jpg";
+
+            // Nombre final: usuario_4.png (sobreescribe la anterior del mismo usuario)
+            String nombreArchivo = "usuario_" + idUsuario + extension;
+            Path rutaArchivo = directorio.resolve(nombreArchivo);
+            Files.write(rutaArchivo, imagen.getBytes());
+
+            String url = "http://localhost:8080/uploads/fotos-perfil/" + nombreArchivo;
             usuario.setFotoPerfil(url);
             usuarioRepository.save(usuario);
             return url;
+
         } catch (IOException e) {
             throw new RuntimeException("Error al guardar la imagen de perfil", e);
         }
     }
 }
-
-
