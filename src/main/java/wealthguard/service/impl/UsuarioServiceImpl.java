@@ -36,41 +36,59 @@ public class UsuarioServiceImpl implements IUsuarioService {
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     @Override
-    public LoginResponseDTO login(LoginRequestDTO loginRequestDTO) throws UsuarioException {
-        if (loginRequestDTO == null
-                || loginRequestDTO.getUsuario() == null
-                || loginRequestDTO.getUsuario().isBlank()
-                || loginRequestDTO.getPass() == null
-                || loginRequestDTO.getPass().isBlank()) {
-            throw new UsuarioException();
-        }
+public LoginResponseDTO login(LoginRequestDTO loginRequestDTO) throws UsuarioException {
 
-        String identificador = loginRequestDTO.getUsuario().trim();
-        Optional<UsuarioEntity> usuarioOpt;
-
-        if (identificador.contains("@")) {
-            usuarioOpt = usuarioRepository.findByEmailIgnoreCase(identificador);
-        } else {
-            usuarioOpt = usuarioRepository.findByNickUsuarioIgnoreCase(identificador);
-        }
-
-        UsuarioEntity usuario = usuarioOpt.orElseThrow(UsuarioException::new);
-
-        if (!passwordEncoder.matches(loginRequestDTO.getPass(), usuario.getPassword())) {
-            throw new UsuarioException();
-        }
-
-        LoginResponseDTO response = new LoginResponseDTO();
-        response.setMensaje("Login correcto");
-        response.setToken(UUID.randomUUID().toString());
-        response.setIdUsuario(usuario.getId());
-        response.setNickUsuario(usuario.getNickUsuario());
-        response.setNombre(usuario.getNombre());
-        response.setEmail(usuario.getEmail());
-        response.setEsAdmin(usuario.getEsAdmin());
-        response.setActivo(usuario.getActivo());
-        return response;
+    if (loginRequestDTO == null
+            || loginRequestDTO.getUsuario() == null
+            || loginRequestDTO.getUsuario().isBlank()
+            || loginRequestDTO.getPass() == null
+            || loginRequestDTO.getPass().isBlank()) {
+        throw new UsuarioException("Credenciales_invalidas");
     }
+
+    String identificador = loginRequestDTO.getUsuario().trim();
+    Optional<UsuarioEntity> usuarioOpt;
+
+    if (identificador.contains("@")) {
+        usuarioOpt = usuarioRepository.findByEmailIgnoreCase(identificador);
+    } else {
+        usuarioOpt = usuarioRepository.findByNickUsuarioIgnoreCase(identificador);
+    }
+
+    UsuarioEntity usuario = usuarioOpt.orElseThrow(() -> new UsuarioException("Usuario_no_encontrado"));
+
+    if (Boolean.TRUE.equals(usuario.getCuentaBloqueada())) {
+        throw new UsuarioException("Cuenta_bloqueada_por_demasidos_intentos_fallidos");
+    }
+
+    if (!passwordEncoder.matches(loginRequestDTO.getPass(), usuario.getPassword())) {
+
+        int intentos = usuario.getContadorIntentos() + 1;
+        usuario.setContadorIntentos(intentos);
+
+        if (intentos >= 3) {
+            usuario.setCuentaBloqueada(true);
+        }
+
+        usuarioRepository.save(usuario);
+        throw new UsuarioException("Credenciales_incorrectas");
+    }
+
+    usuario.setContadorIntentos(0);
+    usuarioRepository.save(usuario);
+
+    LoginResponseDTO response = new LoginResponseDTO();
+    response.setMensaje("Login correcto");
+    response.setToken(UUID.randomUUID().toString());
+    response.setIdUsuario(usuario.getId());
+    response.setNickUsuario(usuario.getNickUsuario());
+    response.setNombre(usuario.getNombre());
+    response.setEmail(usuario.getEmail());
+    response.setEsAdmin(usuario.getEsAdmin());
+    response.setActivo(usuario.getActivo());
+
+    return response;
+}
 
     @Override
     public UsuarioResponseDTO crearUsuario(UsuarioRequestDTO usuarioRequestDTO) throws UsuarioException {
@@ -203,6 +221,6 @@ public class UsuarioServiceImpl implements IUsuarioService {
             throw new RuntimeException("Error al guardar la imagen de perfil", e);
         }
     }
-
 }
+
 
