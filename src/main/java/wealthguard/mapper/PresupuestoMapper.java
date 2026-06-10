@@ -9,40 +9,38 @@ import wealthguard.entity.PresupuestoEntity;
 @Component
 public class PresupuestoMapper {
 
-    // Metodo para convertir lo que llega del frontend en una entidad para la base
-    // de datos
-    public PresupuestoEntity convertirAEntity(PresupuestoRequestDTO dto) {
-        if (dto == null) {
+
+    public PresupuestoEntity convertirAEntity(PresupuestoRequestDTO PresupuestoRequestDTO) {
+        if (PresupuestoRequestDTO == null) {
             return null;
         }
 
-        PresupuestoEntity entity = new PresupuestoEntity();
+        PresupuestoEntity presupuestoEntity = new PresupuestoEntity();
 
-        entity.setUsuario(dto.getUsuario());
-        entity.setCategoria(dto.getCategoria());
-        entity.setLimite(dto.getLimite());
-        entity.setFechaInicio(dto.getFechaInicio());
-        entity.setFechaFin(dto.getFechaFin());
+        presupuestoEntity.setUsuario(PresupuestoRequestDTO.getUsuario());
+        presupuestoEntity.setCategoria(PresupuestoRequestDTO.getCategoria());
+        presupuestoEntity.setLimite(PresupuestoRequestDTO.getLimite());
+        presupuestoEntity.setFechaInicio(PresupuestoRequestDTO.getFechaInicio());
+        presupuestoEntity.setFechaFin(PresupuestoRequestDTO.getFechaFin());
 
-        return entity;
+        return presupuestoEntity;
 
     }
 
-    // Metodo para convertir lo que sale de la base de datos a DTO para el frontend
-    public PresupuestoResponseDTO convertirADTO(PresupuestoEntity entity) {
-        if (entity == null) {
+    public PresupuestoResponseDTO convertirADTO(PresupuestoEntity presupuestoEntity) {
+        if (presupuestoEntity == null) {
             return null;
         }
 
-        PresupuestoResponseDTO dto = new PresupuestoResponseDTO();
+        PresupuestoResponseDTO presupuestoResponseDTO = new PresupuestoResponseDTO();
 
-        dto.setId(entity.getId());
-        dto.setUsuario(entity.getUsuario());
-        dto.setCategoria(entity.getCategoria());
-        dto.setLimite(entity.getLimite());
-        dto.setFechaInicio(entity.getFechaInicio());
-        dto.setFechaFin(entity.getFechaFin());
-
-        return dto;
+        presupuestoResponseDTO.setId(presupuestoEntity.getId()); 
+        presupuestoResponseDTO.setUsuario(presupuestoEntity.getUsuario());
+        presupuestoResponseDTO.setCategoria(presupuestoEntity.getCategoria());
+        presupuestoResponseDTO.setLimite(presupuestoEntity.getLimite());
+        presupuestoResponseDTO.setFechaInicio(presupuestoEntity.getFechaInicio());
+        presupuestoResponseDTO.setFechaFin(presupuestoEntity.getFechaFin());
+        
+        return presupuestoResponseDTO;
     }
 }

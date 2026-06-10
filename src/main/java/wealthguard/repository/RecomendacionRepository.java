@@ -16,20 +16,15 @@ public interface RecomendacionRepository extends JpaRepository<RecomendacionEnti
     List<RecomendacionEntity> findByTipoRecomendacionId(Integer tipoRecomendacionId);
 
     List<RecomendacionEntity> findByUsuarioIdAndTipoRecomendacionId(
-        Integer usuarioId,
-        Integer tipoRecomendacionId
-    );
+            Integer usuarioId,
+            Integer tipoRecomendacionId);
 
-    // Buscar recomendaciones de un usuario en un rango de fechas
     List<RecomendacionEntity> findByUsuarioIdAndFechaRecomendacionBetween(
-        Integer usuarioId,
-        LocalDateTime desde,
-        LocalDateTime hasta
-    );
+            Integer usuarioId,
+            LocalDateTime desde,
+            LocalDateTime hasta);
 
-    // Buscar recomendaciones ordenadas por fecha descendente (más recientes primero)
     List<RecomendacionEntity> findByUsuarioIdOrderByFechaRecomendacionDesc(Integer usuarioId);
 
     void deleteByUsuarioId(Integer usuarioId);
-
 }

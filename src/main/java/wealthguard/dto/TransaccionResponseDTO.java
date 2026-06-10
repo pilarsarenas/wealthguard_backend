@@ -1,15 +1,31 @@
 package wealthguard.dto;
 
+import java.time.LocalDateTime;
 
-// Envia los datos al frontend
+import io.swagger.v3.oas.annotations.media.Schema;
+
+@Schema(description = "DTO de respuesta con los datos de una transacción")
 public class TransaccionResponseDTO {
 
+    @Schema(description = "ID único de la transacción", example = "1")
     private Integer id;
+
+    @Schema(description = "Cantidad de dinero de la transacción", example = "49.99")
     private double cantidad;
-    private java.time.LocalDateTime fecha;
+
+    @Schema(description = "Fecha y hora de la transacción", example = "2024-06-01T14:30:00")
+    private LocalDateTime fecha;
+
+    @Schema(description = "Descripción o concepto de la transacción", example = "Compra supermercado")
     private String descripcion;
+
+    @Schema(description = "Nombre de la categoría asociada a la transacción", example = "Alimentación")
     private String nombreCategoria;
+
+    @Schema(description = "ID de la categoría asociada a la transacción", example = "3")
     private Integer idCategoria;
+
+    @Schema(description = "Tipo de transacción: true = ingreso, false = gasto", example = "false")
     private Boolean tipoTransaccion;
 
     public TransaccionResponseDTO() {
@@ -31,11 +47,11 @@ public class TransaccionResponseDTO {
         this.cantidad = cantidad;
     }
 
-    public java.time.LocalDateTime getFecha() {
+    public LocalDateTime getFecha() {
         return fecha;
     }
 
-    public void setFecha(java.time.LocalDateTime fecha) {
+    public void setFecha(LocalDateTime fecha) {
         this.fecha = fecha;
     }
 
@@ -70,6 +86,4 @@ public class TransaccionResponseDTO {
     public void setTipoTransaccion(Boolean tipoTransaccion) {
         this.tipoTransaccion = tipoTransaccion;
     }
-
-
 }

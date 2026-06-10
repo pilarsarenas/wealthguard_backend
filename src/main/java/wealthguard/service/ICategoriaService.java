@@ -30,7 +30,7 @@ public interface ICategoriaService {
      *
      * @return Lista de nombres de categorías
      */
-    public List<CategoriaResponseDTO> obtenerCategorias(Integer usuarioId, String nombreCategoria);
+    public List<CategoriaResponseDTO> obtenerCategorias();
 
     /**
      * Edita el nombre de una categoría existente.

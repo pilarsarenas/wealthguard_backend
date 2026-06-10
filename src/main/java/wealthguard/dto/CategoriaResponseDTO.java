@@ -1,10 +1,18 @@
 package wealthguard.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
+@Schema(description = "DTO de respuesta con los datos de una categoría")
 public class CategoriaResponseDTO {
 
+    @Schema(description = "ID único de la categoría", example = "1")
     private Integer id;
+
+    @Schema(description = "Nombre de la categoría", example = "Alimentación")
     private String nombre;
-    private Integer usuarioId;
+
+    @Schema(description = "Icono representativo de la categoría (opcional)", example = "icono.svg")
+    private String icono;
 
     public CategoriaResponseDTO() {
     }
@@ -25,11 +33,12 @@ public class CategoriaResponseDTO {
         this.nombre = nombre;
     }
 
-    public Integer getUsuarioId() {
-        return usuarioId;
+    public String getIcono() {
+        return icono;
     }
 
-    public void setUsuarioId(Integer usuarioId) {
-        this.usuarioId = usuarioId;
+    public void setIcono(String icono) {
+        this.icono = icono;
     }
+
 }

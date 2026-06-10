@@ -7,10 +7,18 @@ INSERT INTO `usuario` (
 (0, 0, 0, 'ana.admin@email.com', 1, NOW(6), NOW(6), 'ana_avatar.png', 'anaroot', 'Ana', 'hash456', '¿Ciudad?', 'Rodríguez', 'Madrid', NULL),
 (0, 2, 0, 'marta@email.com', 0, NOW(6), NULL, NULL, 'marta_dev', 'Marta', 'hash789', '¿Color?', 'Sanz', 'Verde', 'López');
 
-INSERT INTO `categoria` (`nombre`,`usuario_id`) VALUES 
-('Vivienda', 1),
-('Ocio', 2),
-('Salario', 3);
+INSERT INTO `categoria` (`nombre`, `icono`) VALUES 
+('Vivienda', 'home'),
+('Ocio', 'sports_esports'),
+('Salario', 'payments'),
+('Alimentación', 'restaurant'),
+('Transporte', 'directions_car'),
+('Salud', 'medical_services'),
+('Educación', 'school'),
+('Suscripciones', 'subscriptions'),
+('Viajes', 'flight'),
+('Regalos', 'redeem'),
+('Otros', 'category');
 
 INSERT INTO `tipo_recomendacion` (`mensaje`, `nombre`) VALUES 
 ('Has superado el 80% de tu presupuesto en Ocio. ¡Controla tus gastos!', 'Alerta de Gasto'),
@@ -18,9 +26,9 @@ INSERT INTO `tipo_recomendacion` (`mensaje`, `nombre`) VALUES
 ('Tienes un buen balance positivo este mes. Considera invertir.', 'Consejo Inversión');
 
 INSERT INTO `transaccion` (`cantidad`, `descripcion`, `fecha`, `tipo_transaccion`, `categoria_id`, `usuario_id`) VALUES 
-(1000.00, 'Pago de alquiler', '2026-05-01 10:00:00', 0, 1, 1),
-(45.50, 'Entradas de cine', '2026-05-15 18:30:00', 0, 2, 2),
-(2500.00, 'Nómina mensual', '2026-05-28 09:00:00', 1, 3, 3);
+(1000.00, 'Pago de alquiler', '2026-06-01 10:00:00', 0, 1, 1),
+(45.50, 'Entradas de cine', '2026-06-15 18:30:00', 0, 2, 2),
+(2500.00, 'Nómina mensual', '2026-06-28 09:00:00', 1, 3, 3);
 
 INSERT INTO `score_financiero` (`fecha_calculo`, `nivel`, `valor_maximo`, `usuario_id`) VALUES 
 (NOW(6), 750, 1000, 1),
@@ -32,10 +40,10 @@ INSERT INTO `recomendacion` (`fecha_recomendacion`, `tipo_recomendacion_id`, `us
 (NOW(6), 2, 2),
 (NOW(6), 3, 3);
 
-INSERT INTO `presupuesto` (`fecha_fin`, `fecha_inicio`, `limite`, `categoria_id`, `usuario_id`) VALUES 
-('2026-05-31 23:59:59', '2026-05-01 00:00:00', 1200.00, 1, 1),
-('2026-05-31 23:59:59', '2026-05-01 00:00:00', 150.00, 2, 2),
-('2026-05-31 23:59:59', '2026-05-01 00:00:00', 1000.00, 1, 3);
+INSERT INTO `presupuesto` (`fecha_inicio`, `fecha_fin`, `limite`, `categoria_id`, `usuario_id`) VALUES 
+('2026-06-01 00:00:00', '2026-06-30 23:59:59', 1200.00, 1, 1),
+('2026-06-01 00:00:00', '2026-06-30 23:59:59', 150.00, 2, 2),
+('2026-06-01 00:00:00', '2026-06-30 23:59:59', 1000.00, 1, 3);
 
 INSERT INTO `objetivo` (`cantidad_objetivo`, `completado`, `fecha_fin`, `fecha_inicio`, `categoria_id`, `usuario_id`) VALUES 
 (15000.00, 0, '2026-12-31 23:59:59', '2026-01-01 00:00:00', 1, 1),

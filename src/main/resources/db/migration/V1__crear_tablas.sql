@@ -28,10 +28,8 @@ CREATE TABLE `tipo_recomendacion` (
 CREATE TABLE `categoria` (
   `id` int NOT NULL AUTO_INCREMENT,
   `nombre` varchar(255) NOT NULL,
-  `usuario_id` int NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `FK_categoria_usuario_id` (`usuario_id`),
-  CONSTRAINT `FK_categoria_usuario_id` FOREIGN KEY (`usuario_id`) REFERENCES `usuario` (`id`)
+  `icono` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `transaccion` (

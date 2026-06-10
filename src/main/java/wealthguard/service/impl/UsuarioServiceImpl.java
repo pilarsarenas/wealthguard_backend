@@ -6,19 +6,21 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import wealthguard.dto.LoginRequestDTO;
+import wealthguard.dto.LoginResponseDTO;
 import wealthguard.dto.UsuarioRequestDTO;
 import wealthguard.dto.UsuarioResponseDTO;
-import wealthguard.entity.CategoriaEntity;
 import wealthguard.entity.UsuarioEntity;
 import wealthguard.exception.UsuarioException;
 import wealthguard.mapper.UsuarioMapper;
-import wealthguard.repository.CategoriaRepository;
 import wealthguard.repository.UsuarioRepository;
 import wealthguard.service.IUsuarioService;
 
@@ -29,12 +31,64 @@ public class UsuarioServiceImpl implements IUsuarioService {
     private UsuarioRepository usuarioRepository;
 
     @Autowired
-    private CategoriaRepository categoriaRepository;
-
-    @Autowired
     private UsuarioMapper usuarioMapper;
 
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
+    @Override
+public LoginResponseDTO login(LoginRequestDTO loginRequestDTO) throws UsuarioException {
+
+    if (loginRequestDTO == null
+            || loginRequestDTO.getUsuario() == null
+            || loginRequestDTO.getUsuario().isBlank()
+            || loginRequestDTO.getPass() == null
+            || loginRequestDTO.getPass().isBlank()) {
+        throw new UsuarioException("Credenciales_invalidas");
+    }
+
+    String identificador = loginRequestDTO.getUsuario().trim();
+    Optional<UsuarioEntity> usuarioOpt;
+
+    if (identificador.contains("@")) {
+        usuarioOpt = usuarioRepository.findByEmailIgnoreCase(identificador);
+    } else {
+        usuarioOpt = usuarioRepository.findByNickUsuarioIgnoreCase(identificador);
+    }
+
+    UsuarioEntity usuario = usuarioOpt.orElseThrow(() -> new UsuarioException("Usuario_no_encontrado"));
+
+    if (Boolean.TRUE.equals(usuario.getCuentaBloqueada())) {
+        throw new UsuarioException("Cuenta_bloqueada_por_demasidos_intentos_fallidos");
+    }
+
+    if (!passwordEncoder.matches(loginRequestDTO.getPass(), usuario.getPassword())) {
+
+        int intentos = usuario.getContadorIntentos() + 1;
+        usuario.setContadorIntentos(intentos);
+
+        if (intentos >= 3) {
+            usuario.setCuentaBloqueada(true);
+        }
+
+        usuarioRepository.save(usuario);
+        throw new UsuarioException("Credenciales_incorrectas");
+    }
+
+    usuario.setContadorIntentos(0);
+    usuarioRepository.save(usuario);
+
+    LoginResponseDTO response = new LoginResponseDTO();
+    response.setMensaje("Login correcto");
+    response.setToken(UUID.randomUUID().toString());
+    response.setIdUsuario(usuario.getId());
+    response.setNickUsuario(usuario.getNickUsuario());
+    response.setNombre(usuario.getNombre());
+    response.setEmail(usuario.getEmail());
+    response.setEsAdmin(usuario.getEsAdmin());
+    response.setActivo(usuario.getActivo());
+
+    return response;
+}
 
     @Override
     public UsuarioResponseDTO crearUsuario(UsuarioRequestDTO usuarioRequestDTO) throws UsuarioException {
@@ -167,57 +221,6 @@ public class UsuarioServiceImpl implements IUsuarioService {
             throw new RuntimeException("Error al guardar la imagen de perfil", e);
         }
     }
-
-    // Elimina una categoría personalizada del usuario, siempre que no sea "General" o "Sin categoría".
-    @Override
-    public boolean eliminarCategoriaUsuario(int idCategoria, int idUsuario) {
-        CategoriaEntity categoria = categoriaRepository.findById(idCategoria).orElse(null);
-
-        if (categoria == null) {
-            return false;
-        }
-
-        if (categoria.getUsuarioId() == null || categoria.getUsuarioId().getId() != idUsuario) {
-            return false;
-        }
-
-        String nombre = categoria.getNombre().toLowerCase();
-        if (nombre.equals("general") || nombre.equals("sin categoría")) {
-            return false;
-        }
-
-        categoriaRepository.deleteById(idCategoria);
-        return true;
-    }
-
-    // Crea una nueva categoría personalizada para el usuario si no existe ya con ese nombre.
-    @Override
-    public boolean crearCategoriaUsuario(String nombreCategoria, int idUsuario) {
-        List<CategoriaEntity> existentes = categoriaRepository.buscarConFiltro(idUsuario, nombreCategoria);
-
-        if (!existentes.isEmpty()) {
-            return false;
-        }
-
-        UsuarioEntity usuario = usuarioRepository.findById(idUsuario)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-
-        CategoriaEntity nueva = new CategoriaEntity();
-        nueva.setNombre(nombreCategoria);
-        nueva.setUsuarioId(usuario);
-        categoriaRepository.save(nueva);
-        return true;
-    }
-
-    // Devuelve la lista de nombres de categorías personalizadas del usuario, excluyendo las globales.
-    @Override
-    public List<String> obtenerCategoriasUsuario(int idUsuario) {
-        return categoriaRepository.buscarConFiltro(idUsuario, null)
-                .stream()
-                .map(CategoriaEntity::getNombre)
-                .filter(nombre -> !nombre.equalsIgnoreCase("general") && !nombre.equalsIgnoreCase("sin categoría"))
-                .collect(Collectors.toList());
-    }
-
 }
+
 

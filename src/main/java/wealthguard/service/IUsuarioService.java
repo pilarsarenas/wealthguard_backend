@@ -2,11 +2,22 @@ package wealthguard.service;
 
 import java.util.List;
 
+import wealthguard.dto.LoginRequestDTO;
+import wealthguard.dto.LoginResponseDTO;
 import wealthguard.dto.UsuarioRequestDTO;
 import wealthguard.dto.UsuarioResponseDTO;
 import wealthguard.exception.UsuarioException;
 
 public interface IUsuarioService {
+
+    /**
+     * Autentica un usuario por nick o email y contraseña.
+     *
+     * @param loginRequestDTO Credenciales de acceso
+     * @return LoginResponseDTO con datos de sesión
+     * @throws UsuarioException si las credenciales no son válidas
+     */
+    public LoginResponseDTO login(LoginRequestDTO loginRequestDTO) throws UsuarioException;
 
     /**
      * Crea un nuevo usuario en el sistema.
@@ -89,35 +100,5 @@ public interface IUsuarioService {
      * @throws UsuarioException si el usuario no existe
      */
     public String actualizarFotoPerfil(int idUsuario, byte[] imagen) throws UsuarioException;
-
-    /**
-     * Elimina una categoría personalizada del usuario. Solo se pueden eliminar
-     * categorías que no sean "General" o "Sin categoría".
-     *
-     * @param idCategoria ID de la categoría a eliminar
-     * @param idUsuario ID del usuario propietario de la categoría
-     * @return true si la eliminación fue exitosa, false si no se encontró la
-     * categoría o no pertenece al usuario
-     */
-    public boolean eliminarCategoriaUsuario(int idCategoria, int idUsuario);
-
-    /**
-     * Crea una nueva categoría personalizada para el usuario.
-     *
-     * @param nombreCategoria Nombre de la nueva categoría
-     * @param idUsuario ID del usuario propietario de la categoría
-     * @return true si la creación fue exitosa, false si ya existe una categoría
-     * con el mismo nombre para ese usuario
-     */
-    public boolean crearCategoriaUsuario(String nombreCategoria, int idUsuario);
-
-    /**
-     * Obtiene la lista de categorías personalizadas del usuario.
-     *
-     * @param idUsuario ID del usuario
-     * @return Lista de nombres de categorías personalizadas, excluyendo
-     * "General" y "Sin categoría"
-     */
-    public List<String> obtenerCategoriasUsuario(int idUsuario);
 
 }
