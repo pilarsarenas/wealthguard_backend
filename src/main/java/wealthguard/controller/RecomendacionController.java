@@ -29,7 +29,7 @@ public class RecomendacionController {
     private IRecomendacionService recomendacionService;
 
     @PostMapping("/generar")
-    @Operation(summary = "Generar recomendaciones por score", description = "Evalúa el score financiero del usuario y persiste todas las recomendaciones cuyo rango lo incluye")
+    @Operation(summary = "Generar recomendaciones por score", description = "Borra las recomendaciones anteriores del usuario y genera las nuevas según su score actual")
     public ResponseEntity<List<RecomendacionResponseDTO>> generar(
             @Parameter(description = "ID del usuario", required = true) @RequestParam int idUsuario,
             @Parameter(description = "Score financiero actual (0-100)", required = true) @RequestParam int score) {
@@ -37,7 +37,7 @@ public class RecomendacionController {
     }
 
     @GetMapping("/usuario/{idUsuario}")
-    @Operation(summary = "Listar recomendaciones del usuario", description = "Devuelve todas las recomendaciones registradas para el usuario, de más reciente a más antigua")
+    @Operation(summary = "Listar recomendaciones del usuario", description = "Devuelve todas las recomendaciones del usuario de más reciente a más antigua")
     public ResponseEntity<List<RecomendacionResponseDTO>> listar(
             @Parameter(description = "ID del usuario", required = true) @PathVariable int idUsuario) {
         return ResponseEntity.ok(recomendacionService.obtenerRecomendaciones(idUsuario));

@@ -38,7 +38,6 @@ public class RecomendacionServiceImpl implements IRecomendacionService {
         UsuarioEntity usuario = usuarioRepository.findById(idUsuario)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado: " + idUsuario));
 
-        // Obtiene todos los tipos cuyo rango de score incluye el valor actual
         List<TipoRecomendacionEntity> tipos = tipoRecomendacionRepository.findByScore(score);
 
         LocalDateTime ahora = LocalDateTime.now();
@@ -51,9 +50,7 @@ public class RecomendacionServiceImpl implements IRecomendacionService {
             return r;
         }).collect(Collectors.toList());
 
-        List<RecomendacionEntity> guardadas = recomendacionRepository.saveAll(nuevas);
-
-        return guardadas.stream()
+        return recomendacionRepository.saveAll(nuevas).stream()
                 .map(recomendacionMapper::convertirADTO)
                 .collect(Collectors.toList());
     }
