@@ -36,14 +36,12 @@ import wealthguard.service.IUsuarioService;
 @RestController
 @RequestMapping("/usuarios")
 @Tag(name = "Usuarios", description = "Gestión de usuarios y cuentas de la aplicación")
-@CrossOrigin(origins = "http://localhost:4200",
-        allowedHeaders = {"Content-Type", "Authorization"},
-        allowCredentials = "false",
-        methods = {RequestMethod.OPTIONS,
+@CrossOrigin(origins = "http://localhost:4200", allowedHeaders = { "Content-Type",
+        "Authorization" }, allowCredentials = "false", methods = { RequestMethod.OPTIONS,
                 RequestMethod.GET,
                 RequestMethod.POST,
                 RequestMethod.PUT,
-                RequestMethod.DELETE})
+                RequestMethod.DELETE })
 public class UsuarioController {
 
     @Autowired
@@ -77,6 +75,26 @@ public class UsuarioController {
         } catch (UsuarioException e) {
             return ResponseEntity.badRequest().build();
         }
+    }
+
+    @Operation(summary = "Verificar si un nombre de usuario ya existe")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "true si existe, false si está disponible", content = @Content(schema = @Schema(implementation = Boolean.class)))
+    })
+    @GetMapping("/existe-nick")
+    public ResponseEntity<Boolean> existeNick(
+            @Parameter(description = "Nombre de usuario a verificar", required = true) @RequestParam String nick) {
+        return ResponseEntity.ok(usuarioService.existeNick(nick));
+    }
+
+    @Operation(summary = "Verificar si un email ya existe")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "true si existe, false si está disponible", content = @Content(schema = @Schema(implementation = Boolean.class)))
+    })
+    @GetMapping("/existe-email")
+    public ResponseEntity<Boolean> existeEmail(
+            @Parameter(description = "Email a verificar", required = true) @RequestParam String email) {
+        return ResponseEntity.ok(usuarioService.existeEmail(email));
     }
 
     @Operation(summary = "Listar todos los usuarios")

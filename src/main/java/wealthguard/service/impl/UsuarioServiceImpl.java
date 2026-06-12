@@ -228,4 +228,14 @@ public class UsuarioServiceImpl implements IUsuarioService {
             throw new RuntimeException("Error al guardar la imagen de perfil", e);
         }
     }
+
+    @Override
+    public boolean existeNick(String nick) {
+        return usuarioRepository.findByNickUsuarioIgnoreCase(nick).isPresent();
+    }
+
+    @Override
+    public boolean existeEmail(String email) {
+        return usuarioRepository.findByEmailIgnoreCase(email).isPresent();
+    }
 }
