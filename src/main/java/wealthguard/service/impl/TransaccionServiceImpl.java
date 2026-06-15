@@ -50,7 +50,6 @@ public class TransaccionServiceImpl implements ITransaccionService {
         List<TransaccionEntity> transacciones = transaccionRepository.buscarConFiltros(idUsuario, fechaInicio, fechaFin,
                 idCategoria, tipo, cantidad, descripcion);
 
-        // Convertir de lista de entidades a lista de DTOs
         return transacciones.stream()
                 .map(transaccion -> transaccionMapper.convertirADTO(transaccion)).collect(Collectors.toList());
 
@@ -60,7 +59,6 @@ public class TransaccionServiceImpl implements ITransaccionService {
     @Override
     public TransaccionResponseDTO crearTransaccion(TransaccionRequestDTO transaccionRequestDTO) {
 
-        // Convertimos de DTO a entidad
         TransaccionEntity nuevaEntidad = transaccionMapper.convertirAEntity(transaccionRequestDTO);
 
         if (nuevaEntidad.getCategoria() != null) {
@@ -69,9 +67,7 @@ public class TransaccionServiceImpl implements ITransaccionService {
             nuevaEntidad.setCategoria(categoriaReal);
 
         }
-        // Guardamos la entidad en la base de datos
         TransaccionEntity entidadGuardada = transaccionRepository.save(nuevaEntidad);
-        // Convertimos de entidad a DTO y lo devolvemos
         return transaccionMapper.convertirADTO(entidadGuardada);
 
     }
@@ -81,7 +77,6 @@ public class TransaccionServiceImpl implements ITransaccionService {
     public TransaccionResponseDTO editarTransaccion(Integer idTransaccion,
             TransaccionRequestDTO transaccionRequestDTO) {
 
-        // Buscamos la transaccion a editar en la base de datos
         TransaccionEntity transaccionExistente = transaccionRepository.findById(idTransaccion)
                 .orElseThrow(() -> new RuntimeException("Transaccion no encontrada"));
 
@@ -91,11 +86,9 @@ public class TransaccionServiceImpl implements ITransaccionService {
             throw new RuntimeException("No puedes editar transacciones con más de 3 meses de antigüedad.");
         }
 
-        // Convertimos de DTO a entidad
         TransaccionEntity transaccionActualizada = transaccionMapper.convertirAEntity(transaccionRequestDTO);
         transaccionActualizada.setId(idTransaccion);
 
-        // Guardamos la entidad actualizada en la base de datos
         TransaccionEntity entidadActualizada = transaccionRepository.save(transaccionActualizada);
         return transaccionMapper.convertirADTO(entidadActualizada);
 
@@ -104,7 +97,6 @@ public class TransaccionServiceImpl implements ITransaccionService {
     // Metodo para eliminar una transaccion
     @Override
     public boolean eliminarTransaccion(Integer idTransaccion) {
-        // Buscamos la transacción para verificar su fecha
         TransaccionEntity transaccion = transaccionRepository.findById(idTransaccion)
                 .orElse(null);
 
@@ -126,8 +118,7 @@ public class TransaccionServiceImpl implements ITransaccionService {
         }
     }
 
-    // Metodo para obtener la tendencia de gastos de un usuario comparando el % del
-    // mes actual con el anterior
+    // Metodo para obtener la tendencia de gastos de un usuario comparando el % del mes actual con el anterior
     @Override
     public double obtenerTendencia(int idUsuario) {
 
@@ -156,8 +147,6 @@ public class TransaccionServiceImpl implements ITransaccionService {
             balanceAnterior = 0.0;
         }
 
-        // Si el mes anterior era 0, la tendencia es 100% si subio o 0% si bajo o si se
-        // quedo igual
         if (balanceAnterior == 0.0) {
             if (balanceActual > 0)
                 return 100.0;
@@ -200,13 +189,12 @@ public class TransaccionServiceImpl implements ITransaccionService {
 
                 totalGastos += cantidad;
 
-                // Sumamos el gasto a la categoria correspondiente
                 double sumaAnterior = sumasPorCategoria.getOrDefault(nombreCat, 0.0);
                 sumasPorCategoria.put(nombreCat, sumaAnterior + cantidad);
             }
         }
 
-        // Si después de mirar todo no hay gastos este mes, salimos
+        // Si no hay gastos, devolvemos sin datos
         if (totalGastos == 0.0) {
             return new String[] { "Sin datos", "0.0" };
         }
@@ -233,7 +221,6 @@ public class TransaccionServiceImpl implements ITransaccionService {
     @Transactional
     public double[] obtenerMeta(int idUsuario) {
 
-        // Buscamos los objetivos activos del usuario
         Optional<ObjetivoEntity> objetivos = objetivoRepository.findFirstByUsuarioIdOrderByFechaInicioDesc(idUsuario);
 
         // Realizamos la validación inicial
@@ -262,23 +249,18 @@ public class TransaccionServiceImpl implements ITransaccionService {
                 inicioMesActual,
                 finMesActual, null, null, null, null);
 
-        // Si la base de datos nos devolvio transacciones validas, las sumamos
         double progresoActual = 0.0;
         if (transaccionesMeta != null) {
             for (TransaccionEntity transaccion : transaccionesMeta) {
                 if (transaccion.getTipoTransaccion() != null && transaccion.getTipoTransaccion()) {
-                    // Si es true (Ingreso), lo sumamos
                     progresoActual += transaccion.getCantidad();
                 } else {
-                    // Si es false (Gasto), lo restamos
                     progresoActual -= transaccion.getCantidad();
                 }
             }
         }
 
-        // Si la meta es mayor que 0, se divide el progreso entre la meta y se
-        // multiplica por 100 para obtener el %
-        // Si es 0 me negativo se devuelve 0
+        // Calculamos el porcentaje
         double porcentaje;
         if (cantidadMeta > 0) {
             porcentaje = (progresoActual / cantidadMeta) * 100;
