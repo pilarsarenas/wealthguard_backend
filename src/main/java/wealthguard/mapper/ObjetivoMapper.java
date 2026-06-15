@@ -23,15 +23,8 @@ public class ObjetivoMapper {
                     usuario.setId(objetivoRequestDTO.getUsuarioId());
                     objetivoEntity.setUsuario(usuario);
                 }
-        if (objetivoRequestDTO.getCategoriaId() != null) {
-            CategoriaEntity categoria = new CategoriaEntity();
-            categoria.setId(objetivoRequestDTO.getCategoriaId());
-            objetivoEntity.setCategoria(categoria);
-        }
+
         objetivoEntity.setCantidadObjetivo(objetivoRequestDTO.getCantidadObjetivo());
-        objetivoEntity.setFechaInicio(objetivoRequestDTO.getFechaInicio());
-        objetivoEntity.setFechaFin(objetivoRequestDTO.getFechaFin());
-        objetivoEntity.setCompletado(objetivoRequestDTO.getCompletado());
 
         return objetivoEntity;
     }
@@ -45,10 +38,8 @@ public class ObjetivoMapper {
 
         objetivoResponseDTO.setUsuarioId(objetivoEntity.getUsuario().getId());
         objetivoResponseDTO.setCantidadObjetivo(objetivoEntity.getCantidadObjetivo());
-        objetivoResponseDTO.setCategoriaId(objetivoEntity.getCategoria().getId());
         objetivoResponseDTO.setFechaInicio(objetivoEntity.getFechaInicio());
         objetivoResponseDTO.setFechaFin(objetivoEntity.getFechaFin());
-        objetivoResponseDTO.setCompletado(objetivoEntity.getCompletado());
 
         return objetivoResponseDTO;
     }
