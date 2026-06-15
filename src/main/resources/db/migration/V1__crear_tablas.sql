@@ -87,14 +87,10 @@ CREATE TABLE `presupuesto` (
 CREATE TABLE `objetivo` (
   `id` int NOT NULL AUTO_INCREMENT,
   `cantidad_objetivo` double NOT NULL,
-  `completado` bit(1) NOT NULL,
-  `fecha_fin` datetime(6) NOT NULL,
   `fecha_inicio` datetime(6) NOT NULL,
-  `categoria_id` int NOT NULL,
+  `fecha_fin` datetime(6) NOT NULL,
   `usuario_id` int NOT NULL,
   PRIMARY KEY (`id`),
-  KEY `FKr4x1nb94de4vddrnptrcpgts0` (`categoria_id`),
-  KEY `FK8tgg8arf1nu6mtytgymba2leh` (`usuario_id`),
-  CONSTRAINT `FK8tgg8arf1nu6mtytgymba2leh` FOREIGN KEY (`usuario_id`) REFERENCES `usuario` (`id`),
-  CONSTRAINT `FKr4x1nb94de4vddrnptrcpgts0` FOREIGN KEY (`categoria_id`) REFERENCES `categoria` (`id`)
+  KEY `FK_usuario_objetivo` (`usuario_id`),
+  CONSTRAINT `FK_usuario_objetivo` FOREIGN KEY (`usuario_id`) REFERENCES `usuario` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;

@@ -22,10 +22,6 @@ public class ObjetivoEntity {
     @JoinColumn(name = "usuario_id", nullable = false)
     private UsuarioEntity usuario;
 
-    @ManyToOne
-    @JoinColumn(name = "categoria_id", nullable = false)
-    private CategoriaEntity categoria;
-
     @Column(name = "cantidad_objetivo", nullable = false)
     private double cantidadObjetivo;
 
@@ -34,9 +30,6 @@ public class ObjetivoEntity {
 
     @Column(name = "fecha_fin", nullable = false)
     private LocalDateTime fechaFin;
-
-    @Column(name = "completado", nullable = false)
-    private Boolean completado;
 
     public Integer getId() {
         return id;
@@ -52,14 +45,6 @@ public class ObjetivoEntity {
 
     public void setUsuario(UsuarioEntity usuario) {
         this.usuario = usuario;
-    }
-
-    public CategoriaEntity getCategoria() {
-        return categoria;
-    }
-
-    public void setCategoria(CategoriaEntity categoria) {
-        this.categoria = categoria;
     }
 
     public double getCantidadObjetivo() {
@@ -84,14 +69,6 @@ public class ObjetivoEntity {
 
     public void setFechaFin(LocalDateTime fechaFin) {
         this.fechaFin = fechaFin;
-    }
-
-    public Boolean getCompletado() {
-        return completado;
-    }
-
-    public void setCompletado(Boolean completado) {
-        this.completado = completado;
     }
 
 }
