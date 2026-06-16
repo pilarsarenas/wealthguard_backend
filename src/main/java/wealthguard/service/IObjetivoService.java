@@ -46,5 +46,13 @@ public interface IObjetivoService {
      */
     public ObjetivoResponseDTO obtenerObjetivo(Integer idUsuario);
 
+    /**
+     * Obtiene el objetivo financiero del usuario especificado. Cada
+     * objetivo incluye su ID, monto objetivo y fecha.
+     * @param idUsuario
+     * @return El objeto ObjetivoResponseDTO con los datos del objetivo creado, incluyendo su ID generado.
+     */
+    public ObjetivoResponseDTO obtenerUltimoObjetivo(Integer idUsuario);
+
 
 }
