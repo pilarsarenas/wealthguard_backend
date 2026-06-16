@@ -70,4 +70,9 @@ public class ObjetivoController {
                 return ResponseEntity.ok(objetivoService.obtenerObjetivo(idUsuario));
         }
 
+        @GetMapping("/ultimo/{idUsuario}")
+        public ResponseEntity<ObjetivoResponseDTO> obtenerMetaPasada(@PathVariable Integer idUsuario) {
+                return ResponseEntity.ok(objetivoService.obtenerUltimoObjetivo(idUsuario));
+        }
+
 }

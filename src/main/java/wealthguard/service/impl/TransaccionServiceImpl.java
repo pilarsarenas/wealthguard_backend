@@ -233,7 +233,6 @@ public class TransaccionServiceImpl implements ITransaccionService {
 
         // Comprobamos si la meta ha caducado
         if (metaActual.getFechaFin().isBefore(LocalDateTime.now())) {
-            objetivoRepository.delete(metaActual);
             return new double[] { 0.0, 0.0 };
         }
 
