@@ -38,12 +38,6 @@ public class UsuarioEntity {
     @Column(name = "fecha_registro", nullable = false)
     private LocalDateTime fechaRegistro;
 
-    @Column(name = "es_admin", nullable = false)
-    private Boolean esAdmin;
-
-    @Column(name = "contador_intentos", nullable = false)
-    private Integer contadorIntentos;
-
     @Column(name = "pregunta_seguridad", nullable = false)
     private String preguntaSeguridad;
 
@@ -55,12 +49,6 @@ public class UsuarioEntity {
 
     @Column(name = "fecha_ultimo_cambio_password")
     private LocalDateTime fechaUltimoCambioPassword;
-
-    @Column(name = "cuenta_bloqueada", nullable = false)
-    private Boolean cuentaBloqueada = false;
-
-    @Column(name = "fecha_baja", nullable = true)
-    private LocalDateTime fechaBaja;
 
     @Column(name = "activo", nullable = false)
     private Boolean activo = false;
@@ -129,22 +117,6 @@ public class UsuarioEntity {
         this.fechaRegistro = fechaRegistro;
     }
 
-    public Boolean getEsAdmin() {
-        return esAdmin;
-    }
-
-    public void setEsAdmin(Boolean esAdmin) {
-        this.esAdmin = esAdmin;
-    }
-
-    public Integer getContadorIntentos() {
-        return contadorIntentos;
-    }
-
-    public void setContadorIntentos(Integer contadorIntentos) {
-        this.contadorIntentos = contadorIntentos;
-    }
-
     public String getPreguntaSeguridad() {
         return preguntaSeguridad;
     }
@@ -175,22 +147,6 @@ public class UsuarioEntity {
 
     public void setFechaUltimoCambioPassword(LocalDateTime fechaUltimoCambioPassword) {
         this.fechaUltimoCambioPassword = fechaUltimoCambioPassword;
-    }
-
-    public Boolean getCuentaBloqueada() {
-        return cuentaBloqueada;
-    }
-
-    public void setCuentaBloqueada(Boolean cuentaBloqueada) {
-        this.cuentaBloqueada = cuentaBloqueada;
-    }
-
-    public LocalDateTime getFechaBaja() {
-        return fechaBaja;
-    }
-
-    public void setFechaBaja(LocalDateTime fechaBaja) {
-        this.fechaBaja = fechaBaja;
     }
 
     public Boolean getActivo() {

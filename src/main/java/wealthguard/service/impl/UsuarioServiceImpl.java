@@ -58,22 +58,9 @@ public class UsuarioServiceImpl implements IUsuarioService {
 
         UsuarioEntity usuario = usuarioOpt.orElseThrow(() -> new UsuarioException("Usuario_no_encontrado"));
 
-        if (Boolean.TRUE.equals(usuario.getCuentaBloqueada())) {
-            throw new UsuarioException("Cuenta_bloqueada_por_demasidos_intentos_fallidos");
-        }
-
         if (!passwordEncoder.matches(loginRequestDTO.getPass(), usuario.getPassword())) {
-            int intentos = usuario.getContadorIntentos() + 1;
-            usuario.setContadorIntentos(intentos);
-            if (intentos >= 3) {
-                usuario.setCuentaBloqueada(true);
-            }
-            usuarioRepository.save(usuario);
             throw new UsuarioException("Credenciales_incorrectas");
         }
-
-        usuario.setContadorIntentos(0);
-        usuarioRepository.save(usuario);
 
         LoginResponseDTO response = new LoginResponseDTO();
         response.setMensaje("Login correcto");
@@ -82,7 +69,6 @@ public class UsuarioServiceImpl implements IUsuarioService {
         response.setNickUsuario(usuario.getNickUsuario());
         response.setNombre(usuario.getNombre());
         response.setEmail(usuario.getEmail());
-        response.setEsAdmin(usuario.getEsAdmin());
         response.setActivo(usuario.getActivo());
 
         return response;
@@ -99,9 +85,6 @@ public class UsuarioServiceImpl implements IUsuarioService {
         usuario.setFechaRegistro(LocalDateTime.now());
         usuario.setFechaUltimoCambioPassword(LocalDateTime.now());
         usuario.setActivo(true);
-        usuario.setEsAdmin(false);
-        usuario.setCuentaBloqueada(false);
-        usuario.setContadorIntentos(0);
 
         UsuarioEntity guardado = usuarioRepository.save(usuario);
         return usuarioMapper.convertirADTO(guardado);
@@ -128,9 +111,6 @@ public class UsuarioServiceImpl implements IUsuarioService {
         UsuarioEntity usuario = usuarioMapper.convertirAEntity(usuarioRequestDTO);
         usuario.setId(idUsuario);
         usuario.setFechaRegistro(existente.getFechaRegistro());
-        usuario.setEsAdmin(existente.getEsAdmin());
-        usuario.setContadorIntentos(existente.getContadorIntentos());
-        usuario.setCuentaBloqueada(existente.getCuentaBloqueada());
         usuario.setActivo(existente.getActivo());
         usuario.setFechaUltimoCambioPassword(existente.getFechaUltimoCambioPassword());
         usuario.setPassword(existente.getPassword());

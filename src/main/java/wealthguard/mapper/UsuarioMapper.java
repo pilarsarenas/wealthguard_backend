@@ -43,9 +43,7 @@ public class UsuarioMapper {
         dto.setFotoPerfil(entity.getFotoPerfil());
         dto.setFechaRegistro(entity.getFechaRegistro());
         dto.setFechaUltimoCambioPassword(entity.getFechaUltimoCambioPassword());
-        dto.setEsAdmin(entity.getEsAdmin());
         dto.setActivo(entity.getActivo());
-        dto.setCuentaBloqueada(entity.getCuentaBloqueada());
 
         return dto;
     }

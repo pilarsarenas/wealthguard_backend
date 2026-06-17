@@ -1,10 +1,7 @@
 CREATE TABLE `usuario` (
   `id` int NOT NULL AUTO_INCREMENT,
   `activo` bit(1) NOT NULL DEFAULT b'1',
-  `cuenta_bloqueada` bit(1) NOT NULL DEFAULT b'0',
-  `contador_intentos` int NOT NULL,
   `email` varchar(255) NOT NULL,
-  `es_admin` bit(1) NOT NULL,
   `fecha_registro` datetime(6) NOT NULL,
   `fecha_ultimo_cambio_password` datetime(6) DEFAULT NULL,
   `foto_perfil` varchar(255) DEFAULT NULL,

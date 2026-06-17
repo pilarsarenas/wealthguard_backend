@@ -1,11 +1,11 @@
 INSERT INTO `usuario` (
-  `activo`, `contador_intentos`, `cuenta_bloqueada`, `email`, `es_admin`, `fecha_registro`, 
-  `fecha_ultimo_cambio_password`, `foto_perfil`, `nick_usuario`, `nombre`, 
-  `password`, `pregunta_seguridad`, `primer_apellido`, `respuesta_seguridad`, `segundo_apellido`
+  `activo`, `email`, `fecha_registro`, `fecha_ultimo_cambio_password`, 
+  `foto_perfil`, `nick_usuario`, `nombre`, `password`, 
+  `pregunta_seguridad`, `primer_apellido`, `respuesta_seguridad`, `segundo_apellido`
 ) VALUES 
-(0, 0, 0, 'juan@email.com', 0, NOW(6), NULL, NULL, 'juan99', 'Juan', 'hash123', '¿Mascota?', 'Pérez', 'Toby', 'García'),
-(0, 0, 0, 'ana.admin@email.com', 1, NOW(6), NOW(6), 'ana_avatar.png', 'anaroot', 'Ana', 'hash456', '¿Ciudad?', 'Rodríguez', 'Madrid', NULL),
-(0, 2, 0, 'marta@email.com', 0, NOW(6), NULL, NULL, 'marta_dev', 'Marta', 'hash789', '¿Color?', 'Sanz', 'Verde', 'López');
+(0, 'juan@email.com', NOW(6), NULL, NULL, 'juan99', 'Juan', 'hash123', '¿Mascota?', 'Pérez', 'Toby', 'García'),
+(0, 'ana.admin@email.com', NOW(6), NOW(6), 'ana_avatar.png', 'anaroot', 'Ana', 'hash456', '¿Ciudad?', 'Rodríguez', 'Madrid', NULL),
+(0, 'marta@email.com', NOW(6), NULL, NULL, 'marta_dev', 'Marta', 'hash789', '¿Color?', 'Sanz', 'Verde', 'López');
 
 INSERT INTO `categoria` (`nombre`, `icono`) VALUES 
 ('Vivienda', 'home'),
