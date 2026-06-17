@@ -7,6 +7,7 @@ import wealthguard.dto.TipoRecomendacionResponseDTO;
 
 public interface ITipoRecomendacionService {
 
+    
     TipoRecomendacionResponseDTO crearTipoRecomendacion(TipoRecomendacionRequestDTO dto);
 
     TipoRecomendacionResponseDTO obtenerTipoRecomendacionPorId(Integer id);
