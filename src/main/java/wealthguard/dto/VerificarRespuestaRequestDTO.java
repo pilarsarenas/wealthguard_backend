@@ -1,4 +1,3 @@
-// VerificarRespuestaRequestDTO.java
 package wealthguard.dto;
 
 public class VerificarRespuestaRequestDTO {

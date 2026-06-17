@@ -286,8 +286,6 @@ public class UsuarioServiceImpl implements IUsuarioService {
 
         entidad.setPassword(passwordEncoder.encode(passwordNueva));
         entidad.setFechaUltimoCambioPassword(LocalDateTime.now());
-        entidad.setContadorIntentos(0);
-        entidad.setCuentaBloqueada(false); // si la cuenta estaba bloqueada por intentos fallidos, la desbloqueamos
         usuarioRepository.save(entidad);
         return true;
     }
