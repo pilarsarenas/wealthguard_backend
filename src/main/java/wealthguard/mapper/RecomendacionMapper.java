@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 import wealthguard.dto.RecomendacionRequestDTO;
 import wealthguard.dto.RecomendacionResponseDTO;
 import wealthguard.entity.RecomendacionEntity;
+import wealthguard.entity.TipoRecomendacionEntity;
 
 @Component
 public class RecomendacionMapper {
@@ -33,12 +34,18 @@ public class RecomendacionMapper {
 
         RecomendacionResponseDTO dto = new RecomendacionResponseDTO();
 
-        dto.setId(entity.getId());
-        dto.setUsuario(entity.getUsuario());
-        dto.setTipoRecomendacion(entity.getTipoRecomendacion());
+        dto.setIdRecomendacion(entity.getId());
         dto.setFechaRecomendacion(entity.getFechaRecomendacion());
-        return dto;
 
+        TipoRecomendacionEntity tipo = entity.getTipoRecomendacion();
+        if (tipo != null) {
+            dto.setTitulo(tipo.getNombre());
+            dto.setDescripcion(tipo.getMensaje());
+            dto.setIcono(tipo.getIcono());
+            dto.setScoreRango(tipo.getScoreMinimo() + "-" + tipo.getScoreMaximo());
+        }
+
+        return dto;
     }
 
 }
