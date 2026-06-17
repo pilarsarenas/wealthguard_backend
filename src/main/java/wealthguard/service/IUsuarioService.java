@@ -120,4 +120,9 @@ public interface IUsuarioService {
          */
         public boolean existeEmail(String email);
 
+        String obtenerPreguntaSeguridad(String usuario) throws UsuarioException;
+
+        boolean verificarRespuestaSeguridad(String usuario, String respuesta) throws UsuarioException;
+
+        boolean resetearPassword(String usuario, String respuesta, String passwordNueva) throws UsuarioException;
 }
