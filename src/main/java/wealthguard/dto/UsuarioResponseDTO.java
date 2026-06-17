@@ -40,14 +40,8 @@ public class UsuarioResponseDTO {
     @Schema(description = "Fecha y hora del último cambio de contraseña", example = "2024-03-10T14:00:00")
     private LocalDateTime fechaUltimoCambioPassword;
 
-    @Schema(description = "Indica si el usuario tiene rol de administrador", example = "false")
-    private Boolean esAdmin;
-
     @Schema(description = "Indica si la cuenta del usuario está activa", example = "true")
     private Boolean activo;
-
-    @Schema(description = "Indica si la cuenta del usuario está bloqueada", example = "false")
-    private Boolean cuentaBloqueada;
 
     public UsuarioResponseDTO() {
     }
@@ -140,14 +134,6 @@ public class UsuarioResponseDTO {
         this.fechaUltimoCambioPassword = fechaUltimoCambioPassword;
     }
 
-    public Boolean getEsAdmin() {
-        return esAdmin;
-    }
-
-    public void setEsAdmin(Boolean esAdmin) {
-        this.esAdmin = esAdmin;
-    }
-
     public Boolean getActivo() {
         return activo;
     }
@@ -156,11 +142,4 @@ public class UsuarioResponseDTO {
         this.activo = activo;
     }
 
-    public Boolean getCuentaBloqueada() {
-        return cuentaBloqueada;
-    }
-
-    public void setCuentaBloqueada(Boolean cuentaBloqueada) {
-        this.cuentaBloqueada = cuentaBloqueada;
-    }
 }

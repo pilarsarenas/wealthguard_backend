@@ -23,9 +23,6 @@ public class LoginResponseDTO {
     @Schema(description = "Email del usuario", example = "juan@email.com")
     private String email;
 
-    @Schema(description = "Indica si el usuario es administrador", example = "false")
-    private Boolean esAdmin;
-
     @Schema(description = "Indica si la cuenta está activa", example = "true")
     private Boolean activo;
 
@@ -78,14 +75,6 @@ public class LoginResponseDTO {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public Boolean getEsAdmin() {
-        return esAdmin;
-    }
-
-    public void setEsAdmin(Boolean esAdmin) {
-        this.esAdmin = esAdmin;
     }
 
     public Boolean getActivo() {
