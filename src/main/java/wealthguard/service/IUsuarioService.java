@@ -120,4 +120,39 @@ public interface IUsuarioService {
          */
         public boolean existeEmail(String email);
 
+        /**
+         * Obtiene la pregunta de seguridad asociada a un usuario.
+         *
+         * @param usuario Nick o email del usuario
+         * @return Pregunta de seguridad asociada al usuario
+         * @throws UsuarioException si el usuario no existe o no tiene pregunta de
+         *                          seguridad configurada
+         */
+        String obtenerPreguntaSeguridad(String usuario) throws UsuarioException;
+ 
+        /**
+          * Verifica si la respuesta a la pregunta de seguridad es correcta para un
+          * usuario.
+          *
+          *
+        @param usuario Nick o email del usuario
+         * @param respuesta Respuesta a la pregunta de seguridad
+         * @return true si la respuesta es correcta, false si es incorrecta
+         * @throws UsuarioException si el usuario no existe o no tiene pregunta de
+         *                          seguridad configurada
+         */
+        boolean verificarRespuestaSeguridad(String usuario, String respuesta) throws UsuarioException;
+
+        /**
+         * Resetea la contraseña de un usuario después de verificar la respuesta a su
+         * pregunta de seguridad.
+         *
+         * @param usuario       Nick o email del usuario
+         * @param respuesta     Respuesta a la pregunta de seguridad
+         * @param passwordNueva Nueva contraseña en texto plano
+         * @return true si el reseteo fue exitoso, false si la respuesta es incorrecta
+         * @throws UsuarioException si el usuario no existe o no tiene pregunta de
+         *                          seguridad configurada
+         */
+        boolean resetearPassword(String usuario, String respuesta, String passwordNueva) throws UsuarioException;
 }

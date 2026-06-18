@@ -218,4 +218,55 @@ public class UsuarioServiceImpl implements IUsuarioService {
     public boolean existeEmail(String email) {
         return usuarioRepository.findByEmailIgnoreCase(email).isPresent();
     }
+
+    private UsuarioEntity buscarPorNickOEmail(String identificador) throws UsuarioException {
+        if (identificador == null || identificador.isBlank()) {
+            throw new UsuarioException("Usuario_no_encontrado");
+        }
+        String valor = identificador.trim();
+        Optional<UsuarioEntity> usuarioOpt = valor.contains("@")
+                ? usuarioRepository.findByEmailIgnoreCase(valor)
+                : usuarioRepository.findByNickUsuarioIgnoreCase(valor);
+        return usuarioOpt.orElseThrow(() -> new UsuarioException("Usuario_no_encontrado"));
+    }
+
+    @Override
+    public String obtenerPreguntaSeguridad(String usuario) throws UsuarioException {
+        UsuarioEntity entidad = buscarPorNickOEmail(usuario);
+        if (entidad.getPreguntaSeguridad() == null || entidad.getPreguntaSeguridad().isBlank()) {
+            throw new UsuarioException("Usuario_sin_pregunta_seguridad");
+        }
+        return entidad.getPreguntaSeguridad();
+    }
+
+    @Override
+    public boolean verificarRespuestaSeguridad(String usuario, String respuesta) throws UsuarioException {
+        UsuarioEntity entidad = buscarPorNickOEmail(usuario);
+        if (respuesta == null || respuesta.isBlank()) {
+            return false;
+        }
+        return entidad.getRespuestaSeguridad() != null
+                && entidad.getRespuestaSeguridad().trim().equalsIgnoreCase(respuesta.trim());
+    }
+
+    @Override
+    public boolean resetearPassword(String usuario, String respuesta, String passwordNueva) throws UsuarioException {
+        UsuarioEntity entidad = buscarPorNickOEmail(usuario);
+
+        boolean respuestaCorrecta = entidad.getRespuestaSeguridad() != null
+                && entidad.getRespuestaSeguridad().trim()
+                        .equalsIgnoreCase(respuesta == null ? "" : respuesta.trim());
+
+        if (!respuestaCorrecta) {
+            throw new UsuarioException("Respuesta_incorrecta");
+        }
+        if (passwordNueva == null || passwordNueva.isBlank()) {
+            throw new UsuarioException("Password_obligatoria");
+        }
+
+        entidad.setPassword(passwordEncoder.encode(passwordNueva));
+        entidad.setFechaUltimoCambioPassword(LocalDateTime.now());
+        usuarioRepository.save(entidad);
+        return true;
+    }
 }

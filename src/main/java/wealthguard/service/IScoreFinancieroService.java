@@ -7,6 +7,7 @@ import wealthguard.dto.ScoreFinancieroResponseDTO;
 
 public interface IScoreFinancieroService {
 
+
     ScoreFinancieroResponseDTO crearScore(ScoreFinancieroRequestDTO dto);
 
     ScoreFinancieroResponseDTO obtenerScorePorId(Integer id);

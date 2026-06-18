@@ -28,8 +28,11 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import wealthguard.dto.LoginErrorResponseDTO;
 import wealthguard.dto.LoginRequestDTO;
 import wealthguard.dto.LoginResponseDTO;
+import wealthguard.dto.PreguntaSeguridadResponseDTO;
+import wealthguard.dto.ResetearPasswordRequestDTO;
 import wealthguard.dto.UsuarioRequestDTO;
 import wealthguard.dto.UsuarioResponseDTO;
+import wealthguard.dto.VerificarRespuestaRequestDTO;
 import wealthguard.exception.UsuarioException;
 import wealthguard.service.IUsuarioService;
 
@@ -206,6 +209,44 @@ public class UsuarioController {
             return ResponseEntity.ok(url);
         } catch (UsuarioException e) {
             return ResponseEntity.notFound().build();
+        }
+    }
+
+    @Operation(summary = "Obtener la pregunta de seguridad para recuperar contraseña")
+    @GetMapping("/pregunta-seguridad")
+    public ResponseEntity<Object> obtenerPreguntaSeguridad(@RequestParam String usuario) {
+        try {
+            String pregunta = usuarioService.obtenerPreguntaSeguridad(usuario);
+            return ResponseEntity.ok(new PreguntaSeguridadResponseDTO(pregunta));
+        } catch (UsuarioException e) {
+            return ResponseEntity.status(404).body(new LoginErrorResponseDTO("Usuario no encontrado"));
+        }
+    }
+
+    @Operation(summary = "Verificar la respuesta de seguridad")
+    @PostMapping("/verificar-respuesta")
+    public ResponseEntity<Boolean> verificarRespuesta(@RequestBody VerificarRespuestaRequestDTO requestDTO) {
+        try {
+            boolean correcta = usuarioService.verificarRespuestaSeguridad(requestDTO.getUsuario(),
+                    requestDTO.getRespuesta());
+            return ResponseEntity.ok(correcta);
+        } catch (UsuarioException e) {
+            return ResponseEntity.ok(false);
+        }
+    }
+
+    @Operation(summary = "Resetear la contraseña tras verificar la pregunta de seguridad")
+    @PutMapping("/resetear-password")
+    public ResponseEntity<Object> resetearPassword(@RequestBody ResetearPasswordRequestDTO requestDTO) {
+        try {
+            usuarioService.resetearPassword(requestDTO.getUsuario(), requestDTO.getRespuesta(),
+                    requestDTO.getPasswordNueva());
+            return ResponseEntity.ok(true);
+        } catch (UsuarioException e) {
+            String mensaje = "Respuesta_incorrecta".equals(e.getMessage())
+                    ? "La respuesta de seguridad no es correcta."
+                    : "No se pudo actualizar la contraseña.";
+            return ResponseEntity.status(400).body(new LoginErrorResponseDTO(mensaje));
         }
     }
 }
