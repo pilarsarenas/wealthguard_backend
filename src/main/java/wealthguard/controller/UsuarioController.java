@@ -105,8 +105,10 @@ public class UsuarioController {
             @ApiResponse(responseCode = "200", description = "Listado de usuarios obtenido correctamente", content = @Content(array = @ArraySchema(schema = @Schema(implementation = UsuarioResponseDTO.class))))
     })
     @GetMapping("/listar")
-    public List<UsuarioResponseDTO> listarUsuarios() {
-        return usuarioService.listarUsuarios();
+    public List<UsuarioResponseDTO> listarUsuarios(
+            @Parameter(description = "Nick del usuario autenticado", required = true) @RequestParam String nickUsuario,
+            @Parameter(description = "Contraseña del usuario autenticado", required = true) @RequestParam String nickContrasena) {
+        return usuarioService.listarUsuarios(nickUsuario, nickContrasena);
     }
 
     @Operation(summary = "Obtener el perfil de un usuario por ID")
@@ -116,9 +118,11 @@ public class UsuarioController {
     })
     @GetMapping("/perfil/{idUsuario}")
     public ResponseEntity<UsuarioResponseDTO> obtenerPerfil(
-            @Parameter(description = "ID del usuario", required = true) @PathVariable int idUsuario) {
+            @Parameter(description = "ID del usuario", required = true) @PathVariable int idUsuario,
+            @Parameter(description = "Nick del usuario autenticado", required = true) @RequestParam String nickUsuario,
+            @Parameter(description = "Contraseña del usuario autenticado", required = true) @RequestParam String nickContrasena) {
         try {
-            UsuarioResponseDTO usuario = usuarioService.obtenerPerfil(idUsuario);
+            UsuarioResponseDTO usuario = usuarioService.obtenerPerfil(idUsuario, nickUsuario, nickContrasena);
             return ResponseEntity.ok(usuario);
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
@@ -133,9 +137,12 @@ public class UsuarioController {
     @PutMapping("/actualizar/{idUsuario}")
     public ResponseEntity<UsuarioResponseDTO> actualizarUsuario(
             @Parameter(description = "ID del usuario a actualizar", required = true) @PathVariable int idUsuario,
-            @RequestBody UsuarioRequestDTO requestDTO) {
+            @RequestBody UsuarioRequestDTO requestDTO,
+            @Parameter(description = "Nick del usuario autenticado", required = true) @RequestParam String nickUsuario,
+            @Parameter(description = "Contraseña del usuario autenticado", required = true) @RequestParam String nickContrasena) {
         try {
-            UsuarioResponseDTO actualizado = usuarioService.actualizarUsuario(idUsuario, requestDTO);
+            UsuarioResponseDTO actualizado = usuarioService.actualizarUsuario(idUsuario, requestDTO, nickUsuario,
+                    nickContrasena);
             return ResponseEntity.ok(actualizado);
         } catch (UsuarioException e) {
             return ResponseEntity.badRequest().build();
@@ -149,8 +156,10 @@ public class UsuarioController {
     })
     @DeleteMapping("/eliminar/{idUsuario}")
     public ResponseEntity<Boolean> eliminarCuenta(
-            @Parameter(description = "ID del usuario a eliminar", required = true) @PathVariable int idUsuario) {
-        boolean eliminado = usuarioService.eliminarCuenta(idUsuario);
+            @Parameter(description = "ID del usuario a eliminar", required = true) @PathVariable int idUsuario,
+            @Parameter(description = "Nick del usuario autenticado", required = true) @RequestParam String nickUsuario,
+            @Parameter(description = "Contraseña del usuario autenticado", required = true) @RequestParam String nickContrasena) {
+        boolean eliminado = usuarioService.eliminarCuenta(idUsuario, nickUsuario, nickContrasena);
         if (eliminado) {
             return ResponseEntity.ok(true);
         } else {
@@ -167,9 +176,12 @@ public class UsuarioController {
     public ResponseEntity<Boolean> cambiarPassword(
             @Parameter(description = "ID del usuario", required = true) @PathVariable int idUsuario,
             @Parameter(description = "Contraseña actual del usuario", required = true) @RequestParam String passwordAntigua,
-            @Parameter(description = "Nueva contraseña del usuario", required = true) @RequestParam String passwordNueva) {
+            @Parameter(description = "Nueva contraseña del usuario", required = true) @RequestParam String passwordNueva,
+            @Parameter(description = "Nick del usuario autenticado", required = true) @RequestParam String nickUsuario,
+            @Parameter(description = "Contraseña del usuario autenticado", required = true) @RequestParam String nickContrasena) {
         try {
-            boolean resultado = usuarioService.cambiarPassword(idUsuario, passwordAntigua, passwordNueva);
+            boolean resultado = usuarioService.cambiarPassword(idUsuario, passwordAntigua, passwordNueva,
+                    nickUsuario, nickContrasena);
             return ResponseEntity.ok(resultado);
         } catch (UsuarioException e) {
             return ResponseEntity.badRequest().build();
@@ -183,9 +195,11 @@ public class UsuarioController {
     })
     @GetMapping("/exportar/{idUsuario}")
     public ResponseEntity<byte[]> exportarDatos(
-            @Parameter(description = "ID del usuario", required = true) @PathVariable int idUsuario) {
+            @Parameter(description = "ID del usuario", required = true) @PathVariable int idUsuario,
+            @Parameter(description = "Nick del usuario autenticado", required = true) @RequestParam String nickUsuario,
+            @Parameter(description = "Contraseña del usuario autenticado", required = true) @RequestParam String nickContrasena) {
         try {
-            byte[] datos = usuarioService.exportarDatos(idUsuario);
+            byte[] datos = usuarioService.exportarDatos(idUsuario, nickUsuario, nickContrasena);
             return ResponseEntity.ok()
                     .header("Content-Disposition", "attachment; filename=\"datos_usuario_" + idUsuario + ".csv\"")
                     .header("Content-Type", "text/csv")
@@ -203,9 +217,11 @@ public class UsuarioController {
     @PutMapping("/foto-perfil/{idUsuario}")
     public ResponseEntity<String> actualizarFotoPerfil(
             @Parameter(description = "ID del usuario", required = true) @PathVariable int idUsuario,
-            @RequestParam("imagen") MultipartFile imagen) {
+            @RequestParam("imagen") MultipartFile imagen,
+            @Parameter(description = "Nick del usuario autenticado", required = true) @RequestParam String nickUsuario,
+            @Parameter(description = "Contraseña del usuario autenticado", required = true) @RequestParam String nickContrasena) {
         try {
-            String url = usuarioService.actualizarFotoPerfil(idUsuario, imagen);
+            String url = usuarioService.actualizarFotoPerfil(idUsuario, imagen, nickUsuario, nickContrasena);
             return ResponseEntity.ok(url);
         } catch (UsuarioException e) {
             return ResponseEntity.notFound().build();

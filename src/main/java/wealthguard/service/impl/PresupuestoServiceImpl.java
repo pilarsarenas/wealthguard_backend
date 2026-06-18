@@ -15,6 +15,7 @@ import wealthguard.mapper.PresupuestoMapper;
 import wealthguard.repository.PresupuestoRepository;
 import wealthguard.repository.TransaccionRepository;
 import wealthguard.service.IPresupuestoService;
+import wealthguard.service.LoginService;
 
 @Service
 public class PresupuestoServiceImpl implements IPresupuestoService {
@@ -28,18 +29,25 @@ public class PresupuestoServiceImpl implements IPresupuestoService {
     @Autowired
     private PresupuestoMapper presupuestoMapper;
 
+    @Autowired
+    private LoginService loginService;
 
     @Override
-    public PresupuestoResponseDTO crearPresupuesto(PresupuestoRequestDTO presupuestoRequest) {
+    public PresupuestoResponseDTO crearPresupuesto(PresupuestoRequestDTO presupuestoRequest, String nickUsuario,
+            String nickContrasena) {
+
+        loginService.verificar(nickUsuario, nickContrasena);
+
         PresupuestoEntity nuevaEntidad = presupuestoMapper.convertirAEntity(presupuestoRequest);
         PresupuestoEntity entidadGuardada = presupuestoRepository.save(nuevaEntidad);
-        // Al crear, el gasto es 0 y el porcentaje también
         return presupuestoMapper.convertirADTO(entidadGuardada);
     }
 
-
     @Override
-    public boolean eliminarPresupuesto(int idPresupuesto) {
+    public boolean eliminarPresupuesto(int idPresupuesto, String nickUsuario, String nickContrasena) {
+
+        loginService.verificar(nickUsuario, nickContrasena);
+
         if (!presupuestoRepository.existsById(idPresupuesto)) {
             return false;
         }
@@ -47,10 +55,11 @@ public class PresupuestoServiceImpl implements IPresupuestoService {
         return true;
     }
 
-
     @Override
     public boolean editarPresupuesto(int idPresupuesto, int idCategoria, double limite,
-            LocalDateTime fechaInicio, LocalDateTime fechaFin) {
+            LocalDateTime fechaInicio, LocalDateTime fechaFin, String nickUsuario, String nickContrasena) {
+
+        loginService.verificar(nickUsuario, nickContrasena);
 
         PresupuestoEntity presupuesto = presupuestoRepository.findById(idPresupuesto)
                 .orElse(null);
@@ -67,40 +76,36 @@ public class PresupuestoServiceImpl implements IPresupuestoService {
         return true;
     }
 
-    // ─── OBTENER CON GASTO ACTUAL ────────────────────────────────────────────────
-
     @Override
-    public List<PresupuestoResponseDTO> obtenerPresupuestos(int idUsuario) {
+    public List<PresupuestoResponseDTO> obtenerPresupuestos(int idUsuario, String nickUsuario,
+            String nickContrasena) {
+
+        loginService.verificar(nickUsuario, nickContrasena);
 
         List<PresupuestoEntity> presupuestos = presupuestoRepository.findByUsuarioId(idUsuario);
         List<PresupuestoResponseDTO> resultado = new ArrayList<>();
 
         for (PresupuestoEntity presupuesto : presupuestos) {
 
-            // Buscamos los gastos (false) de esa categoría dentro del periodo del presupuesto
             List<TransaccionEntity> transacciones = transaccionRepository.buscarConFiltros(
                     idUsuario,
                     presupuesto.getFechaInicio(),
                     presupuesto.getFechaFin(),
                     presupuesto.getCategoria().getId(),
-                    false,  // false = gastos
+                    false,
                     null,
-                    null
-            );
+                    null);
 
-            // Sumamos el total gastado
             double gastoActual = 0.0;
             for (TransaccionEntity t : transacciones) {
                 gastoActual += t.getCantidad();
             }
 
-            // Calculamos el porcentaje
             double porcentaje = 0.0;
             if (presupuesto.getLimite() > 0) {
                 porcentaje = (gastoActual / presupuesto.getLimite()) * 100;
             }
 
-            // Convertimos a DTO y le metemos los campos calculados
             PresupuestoResponseDTO dto = presupuestoMapper.convertirADTO(presupuesto);
             dto.setGastoActual(gastoActual);
             dto.setPorcentaje(porcentaje);

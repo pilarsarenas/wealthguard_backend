@@ -15,6 +15,7 @@ import wealthguard.entity.ObjetivoEntity;
 import wealthguard.mapper.ObjetivoMapper;
 import wealthguard.repository.ObjetivoRepository;
 import wealthguard.service.IObjetivoService;
+import wealthguard.service.LoginService;
 
 @Service
 public class ObjetivoServiceImpl implements IObjetivoService {
@@ -25,55 +26,62 @@ public class ObjetivoServiceImpl implements IObjetivoService {
     @Autowired
     private ObjetivoMapper objetivoMapper;
 
+    @Autowired
+    private LoginService loginService;
+
     @Override
     @Transactional
-    public ObjetivoResponseDTO crearObjetivo(ObjetivoRequestDTO objetivoRequestDTO) {
+    public ObjetivoResponseDTO crearObjetivo(ObjetivoRequestDTO objetivoRequestDTO, String nickUsuario,
+            String nickContrasena) {
+
+        loginService.verificar(nickUsuario, nickContrasena);
 
         LocalDateTime ahora = LocalDateTime.now();
         LocalDateTime inicioMes = ahora.with(TemporalAdjusters.firstDayOfMonth()).with(LocalTime.MIN);
         LocalDateTime finMes = ahora.with(TemporalAdjusters.lastDayOfMonth()).with(LocalTime.MAX);
 
-        // Buscamos si ya existe un objetivo para el usuario
-        Optional<ObjetivoEntity> objetivoExistente = objetivoRepository.findFirstByUsuarioIdOrderByFechaInicioDesc(objetivoRequestDTO.getUsuarioId());
-       
-       // Si existe y pertenece al mes actual lo sobreescrimos
+        Optional<ObjetivoEntity> objetivoExistente = objetivoRepository
+                .findFirstByUsuarioIdOrderByFechaInicioDesc(objetivoRequestDTO.getUsuarioId());
+
         if (objetivoExistente.isPresent()) {
             ObjetivoEntity ultimoObjetivo = objetivoExistente.get();
 
             if (!ultimoObjetivo.getFechaFin().isBefore(inicioMes) && !ultimoObjetivo.getFechaInicio().isAfter(finMes)) {
                 ultimoObjetivo.setCantidadObjetivo(objetivoRequestDTO.getCantidadObjetivo());
                 return objetivoMapper.convertirADTO(objetivoRepository.save(ultimoObjetivo));
-                
             }
         }
 
-        // Si no existe o no pertenece al mes actual lo creamos
         ObjetivoEntity objetivoEntity = objetivoMapper.convertirAEntity(objetivoRequestDTO);
         objetivoEntity.setFechaInicio(inicioMes);
         objetivoEntity.setFechaFin(finMes);
 
         ObjetivoEntity objetivoGuardado = objetivoRepository.save(objetivoEntity);
         return objetivoMapper.convertirADTO(objetivoGuardado);
-
     }
 
     @Override
-    public boolean eliminarObjetivo(Integer idObjetivo) {
+    public boolean eliminarObjetivo(Integer idObjetivo, String nickUsuario, String nickContrasena) {
+
+        loginService.verificar(nickUsuario, nickContrasena);
+
         if (objetivoRepository.existsById(idObjetivo)) {
             objetivoRepository.deleteById(idObjetivo);
             return true;
         } else {
-            return false; // No se encontró el objetivo
+            return false;
         }
     }
 
     @Override
-    public ObjetivoResponseDTO editarObjetivo(int idObjetivo, ObjetivoRequestDTO objetivoRequestDTO) {
+    public ObjetivoResponseDTO editarObjetivo(int idObjetivo, ObjetivoRequestDTO objetivoRequestDTO,
+            String nickUsuario, String nickContrasena) {
+
+        loginService.verificar(nickUsuario, nickContrasena);
 
         ObjetivoEntity objetivoExistente = objetivoRepository.findById(idObjetivo)
                 .orElseThrow(() -> new IllegalArgumentException("No se encontró el objetivo con ID: " + idObjetivo));
 
-        // Solo modificamos la cantidad. El resto se mantiene igual
         objetivoExistente.setCantidadObjetivo(objetivoRequestDTO.getCantidadObjetivo());
 
         ObjetivoEntity objetivoGuardado = objetivoRepository.save(objetivoExistente);
@@ -81,19 +89,23 @@ public class ObjetivoServiceImpl implements IObjetivoService {
     }
 
     @Override
-    public ObjetivoResponseDTO obtenerObjetivo(Integer idUsuario) {
+    public ObjetivoResponseDTO obtenerObjetivo(Integer idUsuario, String nickUsuario, String nickContrasena) {
+
+        loginService.verificar(nickUsuario, nickContrasena);
+
         return objetivoRepository.findFirstByUsuarioIdOrderByFechaInicioDesc(idUsuario)
                 .map(objetivoMapper::convertirADTO)
                 .orElse(null);
     }
 
-    // Busca el objetivo de un usuario cuya fecha de fin haya pasado
     @Override
-    public ObjetivoResponseDTO obtenerUltimoObjetivo(Integer idUsuario) {
-        return objetivoRepository.findFirstByUsuarioIdAndFechaFinBeforeOrderByFechaFinDesc(idUsuario, LocalDateTime.now())
+    public ObjetivoResponseDTO obtenerUltimoObjetivo(Integer idUsuario, String nickUsuario, String nickContrasena) {
+
+        loginService.verificar(nickUsuario, nickContrasena);
+
+        return objetivoRepository.findFirstByUsuarioIdAndFechaFinBeforeOrderByFechaFinDesc(idUsuario,
+                LocalDateTime.now())
                 .map(objetivoMapper::convertirADTO)
                 .orElse(null);
     }
-
-
 }

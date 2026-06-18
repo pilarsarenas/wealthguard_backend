@@ -30,6 +30,7 @@ import wealthguard.repository.ScoreFinancieroRepository;
 import wealthguard.repository.TransaccionRepository;
 import wealthguard.repository.UsuarioRepository;
 import wealthguard.service.IUsuarioService;
+import wealthguard.service.LoginService;
 
 @Service
 public class UsuarioServiceImpl implements IUsuarioService {
@@ -54,6 +55,9 @@ public class UsuarioServiceImpl implements IUsuarioService {
 
     @Autowired
     private ScoreFinancieroRepository scoreFinancieroRepository;
+
+    @Autowired
+    private LoginService loginService;
 
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
@@ -112,8 +116,11 @@ public class UsuarioServiceImpl implements IUsuarioService {
     }
 
     @Override
-    public UsuarioResponseDTO actualizarUsuario(int idUsuario, UsuarioRequestDTO usuarioRequestDTO)
-            throws UsuarioException {
+    public UsuarioResponseDTO actualizarUsuario(int idUsuario, UsuarioRequestDTO usuarioRequestDTO,
+            String nickUsuario, String nickContrasena) throws UsuarioException {
+
+        loginService.verificar(nickUsuario, nickContrasena);
+
         UsuarioEntity existente = usuarioRepository.findById(idUsuario)
                 .orElseThrow(() -> new UsuarioException());
 
@@ -121,7 +128,6 @@ public class UsuarioServiceImpl implements IUsuarioService {
             throw new UsuarioException();
         }
 
-        // Validar que la contraseña enviada es correcta antes de guardar
         if (usuarioRequestDTO.getPassword() == null || usuarioRequestDTO.getPassword().isBlank()) {
             throw new UsuarioException("Password_obligatoria");
         }
@@ -146,7 +152,9 @@ public class UsuarioServiceImpl implements IUsuarioService {
 
     @Override
     @Transactional
-    public boolean eliminarCuenta(int idUsuario) {
+    public boolean eliminarCuenta(int idUsuario, String nickUsuario, String nickContrasena) {
+        loginService.verificar(nickUsuario, nickContrasena);
+
         if (!usuarioRepository.existsById(idUsuario)) {
             return false;
         }
@@ -162,7 +170,9 @@ public class UsuarioServiceImpl implements IUsuarioService {
     }
 
     @Override
-    public byte[] exportarDatos(int idUsuario) {
+    public byte[] exportarDatos(int idUsuario, String nickUsuario, String nickContrasena) {
+        loginService.verificar(nickUsuario, nickContrasena);
+
         UsuarioEntity usuario = usuarioRepository.findById(idUsuario)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
@@ -180,8 +190,11 @@ public class UsuarioServiceImpl implements IUsuarioService {
     }
 
     @Override
-    public boolean cambiarPassword(int idUsuario, String passwordAntigua, String passwordNueva)
-            throws UsuarioException {
+    public boolean cambiarPassword(int idUsuario, String passwordAntigua, String passwordNueva,
+            String nickUsuario, String nickContrasena) throws UsuarioException {
+
+        loginService.verificar(nickUsuario, nickContrasena);
+
         UsuarioEntity usuario = usuarioRepository.findById(idUsuario)
                 .orElseThrow(() -> new UsuarioException());
 
@@ -196,14 +209,18 @@ public class UsuarioServiceImpl implements IUsuarioService {
     }
 
     @Override
-    public UsuarioResponseDTO obtenerPerfil(int idUsuario) {
+    public UsuarioResponseDTO obtenerPerfil(int idUsuario, String nickUsuario, String nickContrasena) {
+        loginService.verificar(nickUsuario, nickContrasena);
+
         UsuarioEntity usuario = usuarioRepository.findById(idUsuario)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
         return usuarioMapper.convertirADTO(usuario);
     }
 
     @Override
-    public List<UsuarioResponseDTO> listarUsuarios() {
+    public List<UsuarioResponseDTO> listarUsuarios(String nickUsuario, String nickContrasena) {
+        loginService.verificar(nickUsuario, nickContrasena);
+
         return usuarioRepository.findAll()
                 .stream()
                 .map(usuarioMapper::convertirADTO)
@@ -211,7 +228,11 @@ public class UsuarioServiceImpl implements IUsuarioService {
     }
 
     @Override
-    public String actualizarFotoPerfil(int idUsuario, MultipartFile imagen) throws UsuarioException {
+    public String actualizarFotoPerfil(int idUsuario, MultipartFile imagen,
+            String nickUsuario, String nickContrasena) throws UsuarioException {
+
+        loginService.verificar(nickUsuario, nickContrasena);
+
         UsuarioEntity usuario = usuarioRepository.findById(idUsuario)
                 .orElseThrow(() -> new UsuarioException());
 
