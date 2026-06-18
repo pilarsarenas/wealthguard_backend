@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.transaction.annotation.Transactional;
 
 import wealthguard.dto.LoginRequestDTO;
 import wealthguard.dto.LoginResponseDTO;
@@ -22,6 +23,11 @@ import wealthguard.dto.UsuarioResponseDTO;
 import wealthguard.entity.UsuarioEntity;
 import wealthguard.exception.UsuarioException;
 import wealthguard.mapper.UsuarioMapper;
+import wealthguard.repository.ObjetivoRepository;
+import wealthguard.repository.PresupuestoRepository;
+import wealthguard.repository.RecomendacionRepository;
+import wealthguard.repository.ScoreFinancieroRepository;
+import wealthguard.repository.TransaccionRepository;
 import wealthguard.repository.UsuarioRepository;
 import wealthguard.service.IUsuarioService;
 
@@ -33,6 +39,21 @@ public class UsuarioServiceImpl implements IUsuarioService {
 
     @Autowired
     private UsuarioMapper usuarioMapper;
+
+    @Autowired
+    private TransaccionRepository transaccionRepository;
+
+    @Autowired
+    private RecomendacionRepository recomendacionRepository;
+
+    @Autowired
+    private PresupuestoRepository presupuestoRepository;
+
+    @Autowired
+    private ObjetivoRepository objetivoRepository;
+
+    @Autowired
+    private ScoreFinancieroRepository scoreFinancieroRepository;
 
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
@@ -124,10 +145,18 @@ public class UsuarioServiceImpl implements IUsuarioService {
     }
 
     @Override
+    @Transactional
     public boolean eliminarCuenta(int idUsuario) {
         if (!usuarioRepository.existsById(idUsuario)) {
             return false;
         }
+
+        transaccionRepository.deleteByUsuarioId(idUsuario);
+        recomendacionRepository.deleteByUsuarioId(idUsuario);
+        presupuestoRepository.deleteByUsuarioId(idUsuario);
+        objetivoRepository.deleteByUsuarioId(idUsuario);
+        scoreFinancieroRepository.deleteByUsuarioId(idUsuario);
+
         usuarioRepository.deleteById(idUsuario);
         return true;
     }
