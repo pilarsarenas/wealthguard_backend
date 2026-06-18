@@ -52,6 +52,8 @@ public interface TransaccionRepository extends JpaRepository<TransaccionEntity, 
 
             List<TransaccionEntity> findByUsuarioId(Integer idUsuario);
 
+            void deleteByUsuarioId(Integer usuarioId);
+
 
 }
 

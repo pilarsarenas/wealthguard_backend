@@ -18,4 +18,6 @@ public interface ObjetivoRepository extends JpaRepository<ObjetivoEntity, Intege
     // Obtiene la última meta de un usuario cuya fecha de fin ya haya pasado
     Optional<ObjetivoEntity> findFirstByUsuarioIdAndFechaFinBeforeOrderByFechaFinDesc(Integer idUsuario, LocalDateTime fechaFin);
 
+    void deleteByUsuarioId(Integer usuarioId);
+
 }
