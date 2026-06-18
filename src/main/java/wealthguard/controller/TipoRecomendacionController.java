@@ -3,7 +3,15 @@ package wealthguard.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import wealthguard.dto.TipoRecomendacionRequestDTO;
 import wealthguard.dto.TipoRecomendacionResponseDTO;
@@ -19,14 +27,14 @@ public class TipoRecomendacionController {
         @PostMapping
         public TipoRecomendacionResponseDTO crear(@RequestBody TipoRecomendacionRequestDTO dto,
                         @RequestParam String nickUsuario,
-                        @RequestParam String nickContrasena) {
+                        @RequestParam String nickContrasena) throws Exception {
                 return service.crearTipoRecomendacion(dto, nickUsuario, nickContrasena);
         }
 
         @GetMapping
         public List<TipoRecomendacionResponseDTO> listarTodos(
                         @RequestParam String nickUsuario,
-                        @RequestParam String nickContrasena) {
+                        @RequestParam String nickContrasena) throws Exception {
                 return service.listarTodos(nickUsuario, nickContrasena);
         }
 
@@ -34,7 +42,7 @@ public class TipoRecomendacionController {
         public TipoRecomendacionResponseDTO obtenerTipoRecomendacionPorId(
                         @PathVariable Integer id,
                         @RequestParam String nickUsuario,
-                        @RequestParam String nickContrasena) {
+                        @RequestParam String nickContrasena) throws Exception {
                 return service.obtenerTipoRecomendacionPorId(id, nickUsuario, nickContrasena);
         }
 
@@ -43,7 +51,7 @@ public class TipoRecomendacionController {
                         @PathVariable Integer id,
                         @RequestBody TipoRecomendacionRequestDTO dto,
                         @RequestParam String nickUsuario,
-                        @RequestParam String nickContrasena) {
+                        @RequestParam String nickContrasena) throws Exception {
                 return service.actualizarTipoRecomendacion(id, dto, nickUsuario, nickContrasena);
         }
 
@@ -51,7 +59,7 @@ public class TipoRecomendacionController {
         public void eliminarTipoRecomendacion(
                         @PathVariable Integer id,
                         @RequestParam String nickUsuario,
-                        @RequestParam String nickContrasena) {
+                        @RequestParam String nickContrasena) throws Exception {
                 service.eliminarTipoRecomendacion(id, nickUsuario, nickContrasena);
         }
 }

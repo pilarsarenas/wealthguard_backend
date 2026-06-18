@@ -45,7 +45,7 @@ public class TransaccionController {
                         @Parameter(description = "Cantidad exacta para filtrar") @RequestParam(required = false) Double cantidad,
                         @Parameter(description = "Texto a buscar en la descripción") @RequestParam(required = false) String descripcion,
                         @RequestParam String nickUsuario,
-                        @RequestParam String nickContrasena) throws wealthguard.exception.UsuarioException {
+                        @RequestParam String nickContrasena) throws Exception {
                 return transaccionService.listarTransacciones(idUsuario, fechaInicio, fechaFin, idCategoria, tipo,
                                 cantidad,
                                 descripcion, nickUsuario, nickContrasena);
@@ -59,7 +59,7 @@ public class TransaccionController {
         public List<TransaccionResponseDTO> listarTodasPorUsuario(
                         @Parameter(description = "ID del usuario", required = true) @PathVariable Integer idUsuario,
                         @RequestParam String nickUsuario,
-                        @RequestParam String nickContrasena) throws wealthguard.exception.UsuarioException {
+                        @RequestParam String nickContrasena) throws Exception {
                 return transaccionService.listarTodasPorUsuario(idUsuario, nickUsuario, nickContrasena);
         }
 
@@ -71,7 +71,7 @@ public class TransaccionController {
         @PostMapping("/crear")
         public TransaccionResponseDTO crearTransaccion(@RequestBody TransaccionRequestDTO transaccionRequestDTO,
                         @RequestParam String nickUsuario,
-                        @RequestParam String nickContrasena) throws wealthguard.exception.UsuarioException {
+                        @RequestParam String nickContrasena) throws Exception {
                 return transaccionService.crearTransaccion(transaccionRequestDTO, nickUsuario, nickContrasena);
         }
 
@@ -85,7 +85,7 @@ public class TransaccionController {
                         @Parameter(description = "ID de la transacción a editar", required = true) @PathVariable Integer id,
                         @RequestBody TransaccionRequestDTO transaccionRequestDTO,
                         @RequestParam String nickUsuario,
-                        @RequestParam String nickContrasena) throws wealthguard.exception.UsuarioException {
+                        @RequestParam String nickContrasena) throws Exception {
                 return transaccionService.editarTransaccion(id, transaccionRequestDTO, nickUsuario, nickContrasena);
         }
 
@@ -98,7 +98,7 @@ public class TransaccionController {
         public ResponseEntity<Boolean> eliminarTransaccion(
                         @Parameter(description = "ID de la transacción a eliminar", required = true) @PathVariable Integer id,
                         @RequestParam String nickUsuario,
-                        @RequestParam String nickContrasena) throws wealthguard.exception.UsuarioException {
+                        @RequestParam String nickContrasena) throws Exception {
                 boolean eliminado = transaccionService.eliminarTransaccion(id, nickUsuario, nickContrasena);
                 if (eliminado) {
                         return ResponseEntity.ok(true);
@@ -115,7 +115,7 @@ public class TransaccionController {
         public double obtenerTendencia(
                         @Parameter(description = "ID del usuario", required = true) @PathVariable Integer idUsuario,
                         @RequestParam String nickUsuario,
-                        @RequestParam String nickContrasena) throws wealthguard.exception.UsuarioException {
+                        @RequestParam String nickContrasena) throws Exception {
                 return transaccionService.obtenerTendencia(idUsuario, nickUsuario, nickContrasena);
         }
 
@@ -127,7 +127,7 @@ public class TransaccionController {
         public String[] categoriaPrincipal(
                         @Parameter(description = "ID del usuario", required = true) @PathVariable Integer idUsuario,
                         @RequestParam String nickUsuario,
-                        @RequestParam String nickContrasena) throws wealthguard.exception.UsuarioException {
+                        @RequestParam String nickContrasena) throws Exception {
                 return transaccionService.obtenerCategoriaPrincipal(idUsuario, nickUsuario, nickContrasena);
         }
 
@@ -139,7 +139,7 @@ public class TransaccionController {
         public double[] obtenerMeta(
                         @Parameter(description = "ID del usuario", required = true) @PathVariable Integer idUsuario,
                         @RequestParam String nickUsuario,
-                        @RequestParam String nickContrasena) throws wealthguard.exception.UsuarioException {
+                        @RequestParam String nickContrasena) throws Exception {
                 return transaccionService.obtenerMeta(idUsuario, nickUsuario, nickContrasena);
         }
 }

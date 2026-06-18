@@ -6,7 +6,16 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import wealthguard.dto.PresupuestoRequestDTO;
 import wealthguard.dto.PresupuestoResponseDTO;
@@ -26,7 +35,7 @@ public class PresupuestoController {
     public List<PresupuestoResponseDTO> obtenerPresupuestos(
             @PathVariable Integer idUsuario,
             @RequestParam String nickUsuario,
-            @RequestParam String nickContrasena) {
+            @RequestParam String nickContrasena) throws Exception {
         return presupuestoService.obtenerPresupuestos(idUsuario, nickUsuario, nickContrasena);
     }
 
@@ -34,7 +43,7 @@ public class PresupuestoController {
     public PresupuestoResponseDTO crearPresupuesto(
             @org.springframework.web.bind.annotation.RequestBody PresupuestoRequestDTO presupuestoRequestDTO,
             @RequestParam String nickUsuario,
-            @RequestParam String nickContrasena) {
+            @RequestParam String nickContrasena) throws Exception {
         return presupuestoService.crearPresupuesto(presupuestoRequestDTO, nickUsuario, nickContrasena);
     }
 
@@ -46,7 +55,7 @@ public class PresupuestoController {
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime fechaInicio,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime fechaFin,
             @RequestParam String nickUsuario,
-            @RequestParam String nickContrasena) {
+            @RequestParam String nickContrasena) throws Exception {
 
         boolean editado = presupuestoService.editarPresupuesto(
                 idPresupuesto, idCategoria, limite, fechaInicio, fechaFin, nickUsuario, nickContrasena);
@@ -58,7 +67,7 @@ public class PresupuestoController {
     public ResponseEntity<Boolean> eliminarPresupuesto(
             @PathVariable int idPresupuesto,
             @RequestParam String nickUsuario,
-            @RequestParam String nickContrasena) {
+            @RequestParam String nickContrasena) throws Exception {
 
         boolean eliminado = presupuestoService.eliminarPresupuesto(idPresupuesto, nickUsuario, nickContrasena);
         return eliminado ? ResponseEntity.ok(true) : ResponseEntity.notFound().build();
