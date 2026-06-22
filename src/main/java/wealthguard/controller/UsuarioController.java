@@ -217,11 +217,9 @@ public class UsuarioController {
     @PutMapping("/foto-perfil/{idUsuario}")
     public ResponseEntity<String> actualizarFotoPerfil(
             @Parameter(description = "ID del usuario", required = true) @PathVariable int idUsuario,
-            @RequestParam("imagen") MultipartFile imagen,
-            @Parameter(description = "Nick del usuario autenticado", required = true) @RequestParam String nickUsuario,
-            @Parameter(description = "Contraseña del usuario autenticado", required = true) @RequestParam String nickContrasena) {
+            @RequestParam("imagen") MultipartFile imagen) {
         try {
-            String url = usuarioService.actualizarFotoPerfil(idUsuario, imagen, nickUsuario, nickContrasena);
+            String url = usuarioService.actualizarFotoPerfil(idUsuario, imagen);
             return ResponseEntity.ok(url);
         } catch (UsuarioException e) {
             return ResponseEntity.notFound().build();

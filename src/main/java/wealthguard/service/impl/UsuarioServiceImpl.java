@@ -13,8 +13,8 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import wealthguard.dto.LoginRequestDTO;
 import wealthguard.dto.LoginResponseDTO;
@@ -228,10 +228,7 @@ public class UsuarioServiceImpl implements IUsuarioService {
     }
 
     @Override
-    public String actualizarFotoPerfil(int idUsuario, MultipartFile imagen,
-            String nickUsuario, String nickContrasena) throws UsuarioException {
-
-        loginService.verificar(nickUsuario, nickContrasena);
+    public String actualizarFotoPerfil(int idUsuario, MultipartFile imagen) throws UsuarioException {
 
         UsuarioEntity usuario = usuarioRepository.findById(idUsuario)
                 .orElseThrow(() -> new UsuarioException());

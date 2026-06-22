@@ -117,8 +117,7 @@ public interface IUsuarioService {
    * @return URL o ruta donde quedó almacenada la imagen
    * @throws UsuarioException si el usuario no existe o la imagen no es válida
    */
-  public String actualizarFotoPerfil(int idUsuario, MultipartFile imagen,
-      String nickUsuario, String nickContrasena) throws UsuarioException;
+public String actualizarFotoPerfil(int idUsuario, MultipartFile imagen) throws UsuarioException;
 
   /**
    * Comprueba si un nombre de usuario ya está registrado en el sistema.
