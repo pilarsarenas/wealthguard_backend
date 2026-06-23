@@ -119,8 +119,6 @@ public class UsuarioServiceImpl implements IUsuarioService {
     public UsuarioResponseDTO actualizarUsuario(int idUsuario, UsuarioRequestDTO usuarioRequestDTO,
             String nickUsuario, String contrasena) throws UsuarioException {
 
-        loginService.verificar(nickUsuario, contrasena);
-
         UsuarioEntity existente = usuarioRepository.findById(idUsuario)
                 .orElseThrow(() -> new UsuarioException());
 
@@ -144,6 +142,10 @@ public class UsuarioServiceImpl implements IUsuarioService {
 
         if (usuarioRequestDTO.getFotoPerfil() == null || usuarioRequestDTO.getFotoPerfil().isBlank()) {
             usuario.setFotoPerfil(existente.getFotoPerfil());
+        }
+        usuario.setPreguntaSeguridad(existente.getPreguntaSeguridad());
+        if (usuarioRequestDTO.getRespuestaSeguridad() == null || usuarioRequestDTO.getRespuestaSeguridad().isBlank()) {
+            usuario.setRespuestaSeguridad(existente.getRespuestaSeguridad());
         }
 
         UsuarioEntity actualizado = usuarioRepository.save(usuario);
@@ -200,6 +202,9 @@ public class UsuarioServiceImpl implements IUsuarioService {
 
         if (!passwordEncoder.matches(passwordAntigua, usuario.getPassword())) {
             throw new UsuarioException("Password_incorrecta");
+        }
+        if (passwordEncoder.matches(passwordNueva, usuario.getPassword())) {
+            throw new UsuarioException("Password_igual");
         }
 
         usuario.setPassword(passwordEncoder.encode(passwordNueva));
@@ -309,6 +314,9 @@ public class UsuarioServiceImpl implements IUsuarioService {
         }
         if (passwordNueva == null || passwordNueva.isBlank()) {
             throw new UsuarioException("Password_obligatoria");
+        }
+        if (passwordEncoder.matches(passwordNueva, entidad.getPassword())) {
+            throw new UsuarioException("Password_igual");
         }
 
         entidad.setPassword(passwordEncoder.encode(passwordNueva));

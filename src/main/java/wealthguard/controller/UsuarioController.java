@@ -173,7 +173,7 @@ public class UsuarioController {
             @ApiResponse(responseCode = "400", description = "Contraseña antigua incorrecta u otros errores", content = @Content)
     })
     @PutMapping("/cambiar-password/{idUsuario}")
-    public ResponseEntity<Boolean> cambiarPassword(
+    public ResponseEntity<Object> cambiarPassword(
             @Parameter(description = "ID del usuario", required = true) @PathVariable int idUsuario,
             @Parameter(description = "Contraseña actual del usuario", required = true) @RequestParam String passwordAntigua,
             @Parameter(description = "Nueva contraseña del usuario", required = true) @RequestParam String passwordNueva,
@@ -184,7 +184,12 @@ public class UsuarioController {
                     nickUsuario, contrasena);
             return ResponseEntity.ok(resultado);
         } catch (UsuarioException e) {
-            return ResponseEntity.badRequest().build();
+            String mensaje = switch (e.getMessage()) {
+                case "Password_igual" -> "La nueva contraseña no puede ser igual a la anterior.";
+                case "Password_incorrecta" -> "La contraseña actual es incorrecta.";
+                default -> "No se pudo actualizar la contraseña.";
+            };
+            return ResponseEntity.status(400).body(new LoginErrorResponseDTO(mensaje));
         }
     }
 
@@ -257,9 +262,12 @@ public class UsuarioController {
                     requestDTO.getPasswordNueva());
             return ResponseEntity.ok(true);
         } catch (UsuarioException e) {
-            String mensaje = "Respuesta_incorrecta".equals(e.getMessage())
-                    ? "La respuesta de seguridad no es correcta."
-                    : "No se pudo actualizar la contraseña.";
+            String mensaje;
+            switch (e.getMessage()) {
+                case "Respuesta_incorrecta" -> mensaje = "La respuesta de seguridad no es correcta.";
+                case "Password_igual" -> mensaje = "La nueva contraseña no puede ser igual a la anterior.";
+                default -> mensaje = "No se pudo actualizar la contraseña.";
+            }
             return ResponseEntity.status(400).body(new LoginErrorResponseDTO(mensaje));
         }
     }
