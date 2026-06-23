@@ -12,10 +12,10 @@ public class LoginService {
     @Autowired
     private IUsuarioService usuarioService;
 
-    public void verificar(String nickUsuario, String nickContrasena) {
+    public void verificar(String nickUsuario, String contrasena) {
         LoginRequestDTO loginRequestDTO = new LoginRequestDTO();
         loginRequestDTO.setUsuario(nickUsuario);
-        loginRequestDTO.setPass(nickContrasena);
+        loginRequestDTO.setPass(contrasena);
 
         try {
             usuarioService.login(loginRequestDTO);

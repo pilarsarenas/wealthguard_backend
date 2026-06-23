@@ -32,9 +32,9 @@ public class ObjetivoServiceImpl implements IObjetivoService {
     @Override
     @Transactional
     public ObjetivoResponseDTO crearObjetivo(ObjetivoRequestDTO objetivoRequestDTO, String nickUsuario,
-            String nickContrasena) {
+            String contrasena) {
 
-        loginService.verificar(nickUsuario, nickContrasena);
+        loginService.verificar(nickUsuario, contrasena);
 
         LocalDateTime ahora = LocalDateTime.now();
         LocalDateTime inicioMes = ahora.with(TemporalAdjusters.firstDayOfMonth()).with(LocalTime.MIN);
@@ -61,9 +61,9 @@ public class ObjetivoServiceImpl implements IObjetivoService {
     }
 
     @Override
-    public boolean eliminarObjetivo(Integer idObjetivo, String nickUsuario, String nickContrasena) {
+    public boolean eliminarObjetivo(Integer idObjetivo, String nickUsuario, String contrasena) {
 
-        loginService.verificar(nickUsuario, nickContrasena);
+        loginService.verificar(nickUsuario, contrasena);
 
         if (objetivoRepository.existsById(idObjetivo)) {
             objetivoRepository.deleteById(idObjetivo);
@@ -75,9 +75,9 @@ public class ObjetivoServiceImpl implements IObjetivoService {
 
     @Override
     public ObjetivoResponseDTO editarObjetivo(int idObjetivo, ObjetivoRequestDTO objetivoRequestDTO,
-            String nickUsuario, String nickContrasena) {
+            String nickUsuario, String contrasena) {
 
-        loginService.verificar(nickUsuario, nickContrasena);
+        loginService.verificar(nickUsuario, contrasena);
 
         ObjetivoEntity objetivoExistente = objetivoRepository.findById(idObjetivo)
                 .orElseThrow(() -> new IllegalArgumentException("No se encontró el objetivo con ID: " + idObjetivo));
@@ -89,9 +89,9 @@ public class ObjetivoServiceImpl implements IObjetivoService {
     }
 
     @Override
-    public ObjetivoResponseDTO obtenerObjetivo(Integer idUsuario, String nickUsuario, String nickContrasena) {
+    public ObjetivoResponseDTO obtenerObjetivo(Integer idUsuario, String nickUsuario, String contrasena) {
 
-        loginService.verificar(nickUsuario, nickContrasena);
+        loginService.verificar(nickUsuario, contrasena);
 
         return objetivoRepository.findFirstByUsuarioIdOrderByFechaInicioDesc(idUsuario)
                 .map(objetivoMapper::convertirADTO)
@@ -99,9 +99,9 @@ public class ObjetivoServiceImpl implements IObjetivoService {
     }
 
     @Override
-    public ObjetivoResponseDTO obtenerUltimoObjetivo(Integer idUsuario, String nickUsuario, String nickContrasena) {
+    public ObjetivoResponseDTO obtenerUltimoObjetivo(Integer idUsuario, String nickUsuario, String contrasena) {
 
-        loginService.verificar(nickUsuario, nickContrasena);
+        loginService.verificar(nickUsuario, contrasena);
 
         return objetivoRepository.findFirstByUsuarioIdAndFechaFinBeforeOrderByFechaFinDesc(idUsuario,
                 LocalDateTime.now())

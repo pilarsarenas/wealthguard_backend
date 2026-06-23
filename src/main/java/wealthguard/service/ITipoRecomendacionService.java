@@ -12,30 +12,30 @@ public interface ITipoRecomendacionService {
      *
      * @param dto            Datos del tipo de recomendación a crear
      * @param nickUsuario    Nick del usuario autenticado
-     * @param nickContrasena Contraseña del usuario autenticado
+     * @param contrasena Contraseña del usuario autenticado
      * @return El objeto TipoRecomendacionResponseDTO creado
      */
     TipoRecomendacionResponseDTO crearTipoRecomendacion(TipoRecomendacionRequestDTO dto, String nickUsuario,
-            String nickContrasena) throws Exception;
+            String contrasena) throws Exception;
 
     /**
      * Obtiene un tipo de recomendación por su ID.
      *
      * @param id             ID del tipo de recomendación
      * @param nickUsuario    Nick del usuario autenticado
-     * @param nickContrasena Contraseña del usuario autenticado
+     * @param contrasena Contraseña del usuario autenticado
      * @return El objeto TipoRecomendacionResponseDTO encontrado
      */
-    TipoRecomendacionResponseDTO obtenerTipoRecomendacionPorId(Integer id, String nickUsuario, String nickContrasena) throws Exception;
+    TipoRecomendacionResponseDTO obtenerTipoRecomendacionPorId(Integer id, String nickUsuario, String contrasena) throws Exception;
 
     /**
      * Lista todos los tipos de recomendación registrados.
      *
      * @param nickUsuario    Nick del usuario autenticado
-     * @param nickContrasena Contraseña del usuario autenticado
+     * @param contrasena Contraseña del usuario autenticado
      * @return Lista de TipoRecomendacionResponseDTO
      */
-    List<TipoRecomendacionResponseDTO> listarTodos(String nickUsuario, String nickContrasena) throws Exception;
+    List<TipoRecomendacionResponseDTO> listarTodos(String nickUsuario, String contrasena) throws Exception;
 
     /**
      * Actualiza un tipo de recomendación existente.
@@ -43,19 +43,19 @@ public interface ITipoRecomendacionService {
      * @param id             ID del tipo de recomendación a actualizar
      * @param dto            Datos actualizados
      * @param nickUsuario    Nick del usuario autenticado
-     * @param nickContrasena Contraseña del usuario autenticado
+     * @param contrasena Contraseña del usuario autenticado
      * @return El objeto TipoRecomendacionResponseDTO actualizado
      */
     TipoRecomendacionResponseDTO actualizarTipoRecomendacion(Integer id, TipoRecomendacionRequestDTO dto,
-            String nickUsuario, String nickContrasena) throws Exception;
+            String nickUsuario, String contrasena) throws Exception;
 
     /**
      * Elimina un tipo de recomendación por su ID.
      *
      * @param id             ID del tipo de recomendación a eliminar
      * @param nickUsuario    Nick del usuario autenticado
-     * @param nickContrasena Contraseña del usuario autenticado
+     * @param contrasena Contraseña del usuario autenticado
      * @return true si se eliminó, false si no existía
      */
-    void eliminarTipoRecomendacion(Integer id, String nickUsuario, String nickContrasena) throws Exception;
+    void eliminarTipoRecomendacion(Integer id, String nickUsuario, String contrasena) throws Exception;
 }

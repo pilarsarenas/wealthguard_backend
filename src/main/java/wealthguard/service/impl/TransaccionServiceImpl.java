@@ -44,9 +44,9 @@ public class TransaccionServiceImpl implements ITransaccionService {
     @Override
     public List<TransaccionResponseDTO> listarTransacciones(Integer idUsuario, LocalDateTime fechaInicio,
             LocalDateTime fechaFin, Integer idCategoria, Boolean tipo, Double cantidad, String descripcion,
-            String nickUsuario, String nickContrasena) {
+            String nickUsuario, String contrasena) {
 
-        loginService.verificar(nickUsuario, nickContrasena);
+        loginService.verificar(nickUsuario, contrasena);
 
         if (fechaFin == null)
             fechaFin = LocalDateTime.now();
@@ -62,9 +62,9 @@ public class TransaccionServiceImpl implements ITransaccionService {
 
     @Override
     public TransaccionResponseDTO crearTransaccion(TransaccionRequestDTO transaccionRequestDTO,
-            String nickUsuario, String nickContrasena) {
+            String nickUsuario, String contrasena) {
 
-        loginService.verificar(nickUsuario, nickContrasena);
+        loginService.verificar(nickUsuario, contrasena);
 
         TransaccionEntity nuevaEntidad = transaccionMapper.convertirAEntity(transaccionRequestDTO);
 
@@ -79,9 +79,9 @@ public class TransaccionServiceImpl implements ITransaccionService {
 
     @Override
     public TransaccionResponseDTO editarTransaccion(Integer idTransaccion,
-            TransaccionRequestDTO transaccionRequestDTO, String nickUsuario, String nickContrasena) {
+            TransaccionRequestDTO transaccionRequestDTO, String nickUsuario, String contrasena) {
 
-        loginService.verificar(nickUsuario, nickContrasena);
+        loginService.verificar(nickUsuario, contrasena);
 
         TransaccionEntity transaccionExistente = transaccionRepository.findById(idTransaccion)
                 .orElseThrow(() -> new RuntimeException("Transaccion no encontrada"));
@@ -99,9 +99,9 @@ public class TransaccionServiceImpl implements ITransaccionService {
     }
 
     @Override
-    public boolean eliminarTransaccion(Integer idTransaccion, String nickUsuario, String nickContrasena) {
+    public boolean eliminarTransaccion(Integer idTransaccion, String nickUsuario, String contrasena) {
 
-        loginService.verificar(nickUsuario, nickContrasena);
+        loginService.verificar(nickUsuario, contrasena);
 
         TransaccionEntity transaccion = transaccionRepository.findById(idTransaccion)
                 .orElse(null);
@@ -124,9 +124,9 @@ public class TransaccionServiceImpl implements ITransaccionService {
     }
 
     @Override
-    public double obtenerTendencia(int idUsuario, String nickUsuario, String nickContrasena) {
+    public double obtenerTendencia(int idUsuario, String nickUsuario, String contrasena) {
 
-        loginService.verificar(nickUsuario, nickContrasena);
+        loginService.verificar(nickUsuario, contrasena);
 
         YearMonth mesActual = YearMonth.now();
         YearMonth mesAnterior = mesActual.minusMonths(1);
@@ -160,9 +160,9 @@ public class TransaccionServiceImpl implements ITransaccionService {
     }
 
     @Override
-    public String[] obtenerCategoriaPrincipal(int idUsuario, String nickUsuario, String nickContrasena) {
+    public String[] obtenerCategoriaPrincipal(int idUsuario, String nickUsuario, String contrasena) {
 
-        loginService.verificar(nickUsuario, nickContrasena);
+        loginService.verificar(nickUsuario, contrasena);
 
         java.time.YearMonth mesActual = java.time.YearMonth.now();
         LocalDateTime inicioMes = mesActual.atDay(1).atStartOfDay();
@@ -211,9 +211,9 @@ public class TransaccionServiceImpl implements ITransaccionService {
 
     @Override
     @Transactional
-    public double[] obtenerMeta(int idUsuario, String nickUsuario, String nickContrasena) {
+    public double[] obtenerMeta(int idUsuario, String nickUsuario, String contrasena) {
 
-        loginService.verificar(nickUsuario, nickContrasena);
+        loginService.verificar(nickUsuario, contrasena);
 
         Optional<ObjetivoEntity> objetivos = objetivoRepository.findFirstByUsuarioIdOrderByFechaInicioDesc(idUsuario);
 
@@ -264,9 +264,9 @@ public class TransaccionServiceImpl implements ITransaccionService {
 
     @Override
     public List<TransaccionResponseDTO> listarTodasPorUsuario(Integer idUsuario, String nickUsuario,
-            String nickContrasena) {
+            String contrasena) {
 
-        loginService.verificar(nickUsuario, nickContrasena);
+        loginService.verificar(nickUsuario, contrasena);
 
         List<TransaccionEntity> transacciones = transaccionRepository.findByUsuarioId(idUsuario);
         return transacciones.stream()

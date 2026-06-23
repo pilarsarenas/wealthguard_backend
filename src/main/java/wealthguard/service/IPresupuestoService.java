@@ -13,22 +13,22 @@ public interface IPresupuestoService {
      *
      * @param presupuestoRequest Datos necesarios para crear el presupuesto
      * @param nickUsuario        Nick del usuario autenticado
-     * @param nickContrasena     Contraseña del usuario autenticado
+     * @param contrasena     Contraseña del usuario autenticado
      * @return El objeto PresupuestoResponseDTO con los datos del presupuesto creado
      */
     PresupuestoResponseDTO crearPresupuesto(PresupuestoRequestDTO presupuestoRequest, String nickUsuario,
-            String nickContrasena) throws Exception;
+            String contrasena) throws Exception;
 
     /**
      * Elimina un presupuesto existente por su ID.
      *
      * @param idPresupuesto  ID del presupuesto a eliminar
      * @param nickUsuario    Nick del usuario autenticado
-     * @param nickContrasena Contraseña del usuario autenticado
+     * @param contrasena Contraseña del usuario autenticado
      * @return true si la eliminación fue exitosa, false si no se encontró el
      *         presupuesto
      */
-    boolean eliminarPresupuesto(int idPresupuesto, String nickUsuario, String nickContrasena) throws Exception;
+    boolean eliminarPresupuesto(int idPresupuesto, String nickUsuario, String contrasena) throws Exception;
 
     /**
      * Modifica el límite y las fechas de un presupuesto existente.
@@ -39,12 +39,12 @@ public interface IPresupuestoService {
      * @param fechaInicio    Nueva fecha de inicio
      * @param fechaFin       Nueva fecha de fin
      * @param nickUsuario    Nick del usuario autenticado
-     * @param nickContrasena Contraseña del usuario autenticado
+     * @param contrasena Contraseña del usuario autenticado
      * @return true si la edición fue exitosa, false si no se encontró el
      *         presupuesto
      */
     boolean editarPresupuesto(int idPresupuesto, int idCategoria, double limite,
-            LocalDateTime fechaInicio, LocalDateTime fechaFin, String nickUsuario, String nickContrasena) throws Exception;
+            LocalDateTime fechaInicio, LocalDateTime fechaFin, String nickUsuario, String contrasena) throws Exception;
 
     /**
      * Devuelve todos los presupuestos del usuario con el gasto actual calculado
@@ -53,8 +53,8 @@ public interface IPresupuestoService {
      *
      * @param idUsuario      ID del usuario
      * @param nickUsuario    Nick del usuario autenticado
-     * @param nickContrasena Contraseña del usuario autenticado
+     * @param contrasena Contraseña del usuario autenticado
      * @return Lista de PresupuestoResponseDTO con los datos calculados
      */
-    List<PresupuestoResponseDTO> obtenerPresupuestos(int idUsuario, String nickUsuario, String nickContrasena) throws Exception;
+    List<PresupuestoResponseDTO> obtenerPresupuestos(int idUsuario, String nickUsuario, String contrasena) throws Exception;
 }

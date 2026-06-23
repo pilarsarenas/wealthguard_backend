@@ -13,11 +13,11 @@ public interface IRecomendacionService {
      * @param idUsuario      ID del usuario
      * @param score          Valor del score financiero actual (0-100)
      * @param nickUsuario    Nick del usuario autenticado
-     * @param nickContrasena Contraseña del usuario autenticado
+     * @param contrasena Contraseña del usuario autenticado
      * @return Lista de recomendaciones generadas y persistidas
      */
     List<RecomendacionResponseDTO> generarRecomendaciones(int idUsuario, int score, String nickUsuario,
-            String nickContrasena) throws Exception;
+            String contrasena) throws Exception;
 
     /**
      * Devuelve todas las recomendaciones registradas para el usuario,
@@ -25,18 +25,18 @@ public interface IRecomendacionService {
      *
      * @param idUsuario      ID del usuario
      * @param nickUsuario    Nick del usuario autenticado
-     * @param nickContrasena Contraseña del usuario autenticado
+     * @param contrasena Contraseña del usuario autenticado
      * @return Lista de RecomendacionResponseDTO
      */
-    List<RecomendacionResponseDTO> obtenerRecomendaciones(int idUsuario, String nickUsuario, String nickContrasena) throws Exception;
+    List<RecomendacionResponseDTO> obtenerRecomendaciones(int idUsuario, String nickUsuario, String contrasena) throws Exception;
 
     /**
      * Elimina una recomendación por su ID.
      *
      * @param idRecomendacion ID de la recomendación
      * @param nickUsuario     Nick del usuario autenticado
-     * @param nickContrasena  Contraseña del usuario autenticado
+     * @param contrasena  Contraseña del usuario autenticado
      * @return true si se eliminó, false si no existía
      */
-    boolean eliminarRecomendacion(int idRecomendacion, String nickUsuario, String nickContrasena) throws Exception;
+    boolean eliminarRecomendacion(int idRecomendacion, String nickUsuario, String contrasena) throws Exception;
 }

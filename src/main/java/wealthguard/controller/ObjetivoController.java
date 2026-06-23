@@ -31,38 +31,38 @@ public class ObjetivoController {
         public ResponseEntity<ObjetivoResponseDTO> crearObjetivo(
                         @RequestBody ObjetivoRequestDTO objetivoRequestDTO,
                         @RequestParam String nickUsuario,
-                        @RequestParam String nickContrasena) throws Exception {
+                        @RequestParam String contrasena) throws Exception {
                 return ResponseEntity
-                                .ok(objetivoService.crearObjetivo(objetivoRequestDTO, nickUsuario, nickContrasena));
+                                .ok(objetivoService.crearObjetivo(objetivoRequestDTO, nickUsuario, contrasena));
         }
 
         @PutMapping("/editar/{id}")
         public ResponseEntity<ObjetivoResponseDTO> editarObjetivo(@PathVariable int id,
                         @RequestBody ObjetivoRequestDTO objetivoRequestDTO,
                         @RequestParam String nickUsuario,
-                        @RequestParam String nickContrasena) throws Exception {
+                        @RequestParam String contrasena) throws Exception {
                 return ResponseEntity.ok(
-                                objetivoService.editarObjetivo(id, objetivoRequestDTO, nickUsuario, nickContrasena));
+                                objetivoService.editarObjetivo(id, objetivoRequestDTO, nickUsuario, contrasena));
         }
 
         @DeleteMapping("/eliminar/{id}")
         public ResponseEntity<Boolean> eliminarObjetivo(@PathVariable Integer id,
                         @RequestParam String nickUsuario,
-                        @RequestParam String nickContrasena) throws Exception {
-                return ResponseEntity.ok(objetivoService.eliminarObjetivo(id, nickUsuario, nickContrasena));
+                        @RequestParam String contrasena) throws Exception {
+                return ResponseEntity.ok(objetivoService.eliminarObjetivo(id, nickUsuario, contrasena));
         }
 
         @GetMapping("/activa/{idUsuario}")
         public ResponseEntity<ObjetivoResponseDTO> obtenerMetaActiva(@PathVariable Integer idUsuario,
                         @RequestParam String nickUsuario,
-                        @RequestParam String nickContrasena) throws Exception {
-                return ResponseEntity.ok(objetivoService.obtenerObjetivo(idUsuario, nickUsuario, nickContrasena));
+                        @RequestParam String contrasena) throws Exception {
+                return ResponseEntity.ok(objetivoService.obtenerObjetivo(idUsuario, nickUsuario, contrasena));
         }
 
         @GetMapping("/ultimo/{idUsuario}")
         public ResponseEntity<ObjetivoResponseDTO> obtenerMetaPasada(@PathVariable Integer idUsuario,
                         @RequestParam String nickUsuario,
-                        @RequestParam String nickContrasena) throws Exception {
-                return ResponseEntity.ok(objetivoService.obtenerUltimoObjetivo(idUsuario, nickUsuario, nickContrasena));
+                        @RequestParam String contrasena) throws Exception {
+                return ResponseEntity.ok(objetivoService.obtenerUltimoObjetivo(idUsuario, nickUsuario, contrasena));
         }
 }

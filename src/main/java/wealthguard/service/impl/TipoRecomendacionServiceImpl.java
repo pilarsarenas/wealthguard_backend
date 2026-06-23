@@ -28,9 +28,9 @@ public class TipoRecomendacionServiceImpl implements ITipoRecomendacionService {
 
     @Override
     public TipoRecomendacionResponseDTO crearTipoRecomendacion(TipoRecomendacionRequestDTO dto, String nickUsuario,
-            String nickContrasena) {
+            String contrasena) {
 
-        loginService.verificar(nickUsuario, nickContrasena);
+        loginService.verificar(nickUsuario, contrasena);
 
         TipoRecomendacionEntity entity = mapper.toEntity(dto);
         TipoRecomendacionEntity savedEntity = repository.save(entity);
@@ -39,9 +39,9 @@ public class TipoRecomendacionServiceImpl implements ITipoRecomendacionService {
 
     @Override
     public TipoRecomendacionResponseDTO obtenerTipoRecomendacionPorId(Integer id, String nickUsuario,
-            String nickContrasena) {
+            String contrasena) {
 
-        loginService.verificar(nickUsuario, nickContrasena);
+        loginService.verificar(nickUsuario, contrasena);
 
         TipoRecomendacionEntity entity = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Tipo de Recomendación no encontrado"));
@@ -49,9 +49,9 @@ public class TipoRecomendacionServiceImpl implements ITipoRecomendacionService {
     }
 
     @Override
-    public List<TipoRecomendacionResponseDTO> listarTodos(String nickUsuario, String nickContrasena) {
+    public List<TipoRecomendacionResponseDTO> listarTodos(String nickUsuario, String contrasena) {
 
-        loginService.verificar(nickUsuario, nickContrasena);
+        loginService.verificar(nickUsuario, contrasena);
 
         List<TipoRecomendacionEntity> entities = repository.findAll();
         return entities.stream()
@@ -61,9 +61,9 @@ public class TipoRecomendacionServiceImpl implements ITipoRecomendacionService {
 
     @Override
     public TipoRecomendacionResponseDTO actualizarTipoRecomendacion(Integer id, TipoRecomendacionRequestDTO dto,
-            String nickUsuario, String nickContrasena) {
+            String nickUsuario, String contrasena) {
 
-        loginService.verificar(nickUsuario, nickContrasena);
+        loginService.verificar(nickUsuario, contrasena);
 
         TipoRecomendacionEntity existingEntity = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Tipo de Recomendación no encontrado"));
@@ -76,9 +76,9 @@ public class TipoRecomendacionServiceImpl implements ITipoRecomendacionService {
     }
 
     @Override
-    public void eliminarTipoRecomendacion(Integer id, String nickUsuario, String nickContrasena) {
+    public void eliminarTipoRecomendacion(Integer id, String nickUsuario, String contrasena) {
 
-        loginService.verificar(nickUsuario, nickContrasena);
+        loginService.verificar(nickUsuario, contrasena);
 
         if (!repository.existsById(id)) {
             throw new RuntimeException("Tipo de Recomendación no encontrado");

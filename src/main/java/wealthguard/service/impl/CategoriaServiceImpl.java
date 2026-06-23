@@ -27,9 +27,9 @@ public class CategoriaServiceImpl implements ICategoriaService {
     private LoginService loginService;
 
     @Override
-    public boolean eliminarCategoria(int idCategoria, String nickUsuario, String nickContrasena) {
+    public boolean eliminarCategoria(int idCategoria, String nickUsuario, String contrasena) {
 
-        loginService.verificar(nickUsuario, nickContrasena);
+        loginService.verificar(nickUsuario, contrasena);
 
         if (categoriaRepository.existsById(idCategoria)) {
             categoriaRepository.deleteById(idCategoria);
@@ -41,9 +41,9 @@ public class CategoriaServiceImpl implements ICategoriaService {
 
     @Override
     public CategoriaResponseDTO crearCategoria(CategoriaRequestDTO nombreCategoria, String nickUsuario,
-            String nickContrasena) {
+            String contrasena) {
 
-        loginService.verificar(nickUsuario, nickContrasena);
+        loginService.verificar(nickUsuario, contrasena);
 
         CategoriaEntity categoriaEntidad = categoriaMapper.convertirAEntity(nombreCategoria);
 
@@ -56,9 +56,9 @@ public class CategoriaServiceImpl implements ICategoriaService {
     }
 
     @Override
-    public List<CategoriaResponseDTO> obtenerCategorias(String nickUsuario, String nickContrasena) {
+    public List<CategoriaResponseDTO> obtenerCategorias(String nickUsuario, String contrasena) {
 
-        loginService.verificar(nickUsuario, nickContrasena);
+        loginService.verificar(nickUsuario, contrasena);
 
         List<CategoriaEntity> categorias = categoriaRepository.listarCategorias();
 
@@ -69,9 +69,9 @@ public class CategoriaServiceImpl implements ICategoriaService {
 
     @Override
     public CategoriaResponseDTO editarCategoria(int idCategoria, CategoriaRequestDTO categoriaRequest,
-            String nickUsuario, String nickContrasena) {
+            String nickUsuario, String contrasena) {
 
-        loginService.verificar(nickUsuario, nickContrasena);
+        loginService.verificar(nickUsuario, contrasena);
 
         CategoriaEntity categoriaEntidad = categoriaRepository.findById(idCategoria)
                 .orElseThrow(() -> new RuntimeException("Categoría no encontrada"));

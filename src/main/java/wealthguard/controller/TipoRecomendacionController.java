@@ -27,23 +27,23 @@ public class TipoRecomendacionController {
         @PostMapping
         public TipoRecomendacionResponseDTO crear(@RequestBody TipoRecomendacionRequestDTO dto,
                         @RequestParam String nickUsuario,
-                        @RequestParam String nickContrasena) throws Exception {
-                return service.crearTipoRecomendacion(dto, nickUsuario, nickContrasena);
+                        @RequestParam String contrasena) throws Exception {
+                return service.crearTipoRecomendacion(dto, nickUsuario, contrasena);
         }
 
         @GetMapping
         public List<TipoRecomendacionResponseDTO> listarTodos(
                         @RequestParam String nickUsuario,
-                        @RequestParam String nickContrasena) throws Exception {
-                return service.listarTodos(nickUsuario, nickContrasena);
+                        @RequestParam String contrasena) throws Exception {
+                return service.listarTodos(nickUsuario, contrasena);
         }
 
         @GetMapping("/{id}")
         public TipoRecomendacionResponseDTO obtenerTipoRecomendacionPorId(
                         @PathVariable Integer id,
                         @RequestParam String nickUsuario,
-                        @RequestParam String nickContrasena) throws Exception {
-                return service.obtenerTipoRecomendacionPorId(id, nickUsuario, nickContrasena);
+                        @RequestParam String contrasena) throws Exception {
+                return service.obtenerTipoRecomendacionPorId(id, nickUsuario, contrasena);
         }
 
         @PutMapping("/{id}")
@@ -51,15 +51,15 @@ public class TipoRecomendacionController {
                         @PathVariable Integer id,
                         @RequestBody TipoRecomendacionRequestDTO dto,
                         @RequestParam String nickUsuario,
-                        @RequestParam String nickContrasena) throws Exception {
-                return service.actualizarTipoRecomendacion(id, dto, nickUsuario, nickContrasena);
+                        @RequestParam String contrasena) throws Exception {
+                return service.actualizarTipoRecomendacion(id, dto, nickUsuario, contrasena);
         }
 
         @DeleteMapping("/{id}")
         public void eliminarTipoRecomendacion(
                         @PathVariable Integer id,
                         @RequestParam String nickUsuario,
-                        @RequestParam String nickContrasena) throws Exception {
-                service.eliminarTipoRecomendacion(id, nickUsuario, nickContrasena);
+                        @RequestParam String contrasena) throws Exception {
+                service.eliminarTipoRecomendacion(id, nickUsuario, contrasena);
         }
 }

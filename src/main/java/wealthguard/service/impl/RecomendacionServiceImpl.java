@@ -41,9 +41,9 @@ public class RecomendacionServiceImpl implements IRecomendacionService {
         @Override
         @Transactional
         public List<RecomendacionResponseDTO> generarRecomendaciones(int idUsuario, int score, String nickUsuario,
-                        String nickContrasena) {
+                        String contrasena) {
 
-                loginService.verificar(nickUsuario, nickContrasena);
+                loginService.verificar(nickUsuario, contrasena);
 
                 List<RecomendacionEntity> existentes = recomendacionRepository
                                 .findByUsuarioIdOrderByFechaRecomendacionDesc(idUsuario);
@@ -95,9 +95,9 @@ public class RecomendacionServiceImpl implements IRecomendacionService {
 
         @Override
         public List<RecomendacionResponseDTO> obtenerRecomendaciones(int idUsuario, String nickUsuario,
-                        String nickContrasena) {
+                        String contrasena) {
 
-                loginService.verificar(nickUsuario, nickContrasena);
+                loginService.verificar(nickUsuario, contrasena);
 
                 return recomendacionRepository
                                 .findByUsuarioIdOrderByFechaRecomendacionDesc(idUsuario)
@@ -107,9 +107,9 @@ public class RecomendacionServiceImpl implements IRecomendacionService {
         }
 
         @Override
-        public boolean eliminarRecomendacion(int idRecomendacion, String nickUsuario, String nickContrasena) {
+        public boolean eliminarRecomendacion(int idRecomendacion, String nickUsuario, String contrasena) {
 
-                loginService.verificar(nickUsuario, nickContrasena);
+                loginService.verificar(nickUsuario, contrasena);
 
                 RecomendacionEntity recomendacion = recomendacionRepository.findById(idRecomendacion).orElse(null);
                 if (recomendacion == null) {

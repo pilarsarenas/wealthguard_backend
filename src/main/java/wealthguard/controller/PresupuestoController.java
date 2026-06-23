@@ -35,16 +35,16 @@ public class PresupuestoController {
     public List<PresupuestoResponseDTO> obtenerPresupuestos(
             @PathVariable Integer idUsuario,
             @RequestParam String nickUsuario,
-            @RequestParam String nickContrasena) throws Exception {
-        return presupuestoService.obtenerPresupuestos(idUsuario, nickUsuario, nickContrasena);
+            @RequestParam String contrasena) throws Exception {
+        return presupuestoService.obtenerPresupuestos(idUsuario, nickUsuario, contrasena);
     }
 
     @PostMapping("/crear")
     public PresupuestoResponseDTO crearPresupuesto(
             @org.springframework.web.bind.annotation.RequestBody PresupuestoRequestDTO presupuestoRequestDTO,
             @RequestParam String nickUsuario,
-            @RequestParam String nickContrasena) throws Exception {
-        return presupuestoService.crearPresupuesto(presupuestoRequestDTO, nickUsuario, nickContrasena);
+            @RequestParam String contrasena) throws Exception {
+        return presupuestoService.crearPresupuesto(presupuestoRequestDTO, nickUsuario, contrasena);
     }
 
     @PutMapping("/editar/{idPresupuesto}")
@@ -55,10 +55,10 @@ public class PresupuestoController {
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime fechaInicio,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime fechaFin,
             @RequestParam String nickUsuario,
-            @RequestParam String nickContrasena) throws Exception {
+            @RequestParam String contrasena) throws Exception {
 
         boolean editado = presupuestoService.editarPresupuesto(
-                idPresupuesto, idCategoria, limite, fechaInicio, fechaFin, nickUsuario, nickContrasena);
+                idPresupuesto, idCategoria, limite, fechaInicio, fechaFin, nickUsuario, contrasena);
 
         return editado ? ResponseEntity.ok(true) : ResponseEntity.notFound().build();
     }
@@ -67,9 +67,9 @@ public class PresupuestoController {
     public ResponseEntity<Boolean> eliminarPresupuesto(
             @PathVariable int idPresupuesto,
             @RequestParam String nickUsuario,
-            @RequestParam String nickContrasena) throws Exception {
+            @RequestParam String contrasena) throws Exception {
 
-        boolean eliminado = presupuestoService.eliminarPresupuesto(idPresupuesto, nickUsuario, nickContrasena);
+        boolean eliminado = presupuestoService.eliminarPresupuesto(idPresupuesto, nickUsuario, contrasena);
         return eliminado ? ResponseEntity.ok(true) : ResponseEntity.notFound().build();
     }
 }

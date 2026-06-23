@@ -27,23 +27,23 @@ public class ScoreFinancieroController {
         @PostMapping
         public ScoreFinancieroResponseDTO crear(@RequestBody ScoreFinancieroRequestDTO dto,
                         @RequestParam String nickUsuario,
-                        @RequestParam String nickContrasena) throws Exception {
-                return service.crearScore(dto, nickUsuario, nickContrasena);
+                        @RequestParam String contrasena) throws Exception {
+                return service.crearScore(dto, nickUsuario, contrasena);
         }
 
         @GetMapping("/{id}")
         public ScoreFinancieroResponseDTO obtenerScorePorId(
                         @PathVariable Integer id,
                         @RequestParam String nickUsuario,
-                        @RequestParam String nickContrasena) throws Exception {
-                return service.obtenerScorePorId(id, nickUsuario, nickContrasena);
+                        @RequestParam String contrasena) throws Exception {
+                return service.obtenerScorePorId(id, nickUsuario, contrasena);
         }
 
         @GetMapping
         public List<ScoreFinancieroResponseDTO> listarTodos(
                         @RequestParam String nickUsuario,
-                        @RequestParam String nickContrasena) throws Exception {
-                return service.listarTodos(nickUsuario, nickContrasena);
+                        @RequestParam String contrasena) throws Exception {
+                return service.listarTodos(nickUsuario, contrasena);
         }
 
         @PutMapping("/{id}")
@@ -51,15 +51,15 @@ public class ScoreFinancieroController {
                         @PathVariable Integer id,
                         @RequestBody ScoreFinancieroRequestDTO dto,
                         @RequestParam String nickUsuario,
-                        @RequestParam String nickContrasena) throws Exception {
-                return service.actualizarScore(id, dto, nickUsuario, nickContrasena);
+                        @RequestParam String contrasena) throws Exception {
+                return service.actualizarScore(id, dto, nickUsuario, contrasena);
         }
 
         @DeleteMapping("/{id}")
         public void eliminarScore(
                         @PathVariable Integer id,
                         @RequestParam String nickUsuario,
-                        @RequestParam String nickContrasena) throws Exception {
-                service.eliminarScore(id, nickUsuario, nickContrasena);
+                        @RequestParam String contrasena) throws Exception {
+                service.eliminarScore(id, nickUsuario, contrasena);
         }
 }

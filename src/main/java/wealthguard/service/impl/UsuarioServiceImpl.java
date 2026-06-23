@@ -117,9 +117,9 @@ public class UsuarioServiceImpl implements IUsuarioService {
 
     @Override
     public UsuarioResponseDTO actualizarUsuario(int idUsuario, UsuarioRequestDTO usuarioRequestDTO,
-            String nickUsuario, String nickContrasena) throws UsuarioException {
+            String nickUsuario, String contrasena) throws UsuarioException {
 
-        loginService.verificar(nickUsuario, nickContrasena);
+        loginService.verificar(nickUsuario, contrasena);
 
         UsuarioEntity existente = usuarioRepository.findById(idUsuario)
                 .orElseThrow(() -> new UsuarioException());
@@ -152,8 +152,8 @@ public class UsuarioServiceImpl implements IUsuarioService {
 
     @Override
     @Transactional
-    public boolean eliminarCuenta(int idUsuario, String nickUsuario, String nickContrasena) {
-        loginService.verificar(nickUsuario, nickContrasena);
+    public boolean eliminarCuenta(int idUsuario, String nickUsuario, String contrasena) {
+        loginService.verificar(nickUsuario, contrasena);
 
         if (!usuarioRepository.existsById(idUsuario)) {
             return false;
@@ -170,8 +170,8 @@ public class UsuarioServiceImpl implements IUsuarioService {
     }
 
     @Override
-    public byte[] exportarDatos(int idUsuario, String nickUsuario, String nickContrasena) {
-        loginService.verificar(nickUsuario, nickContrasena);
+    public byte[] exportarDatos(int idUsuario, String nickUsuario, String contrasena) {
+        loginService.verificar(nickUsuario, contrasena);
 
         UsuarioEntity usuario = usuarioRepository.findById(idUsuario)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
@@ -191,9 +191,9 @@ public class UsuarioServiceImpl implements IUsuarioService {
 
     @Override
     public boolean cambiarPassword(int idUsuario, String passwordAntigua, String passwordNueva,
-            String nickUsuario, String nickContrasena) throws UsuarioException {
+            String nickUsuario, String contrasena) throws UsuarioException {
 
-        loginService.verificar(nickUsuario, nickContrasena);
+        loginService.verificar(nickUsuario, contrasena);
 
         UsuarioEntity usuario = usuarioRepository.findById(idUsuario)
                 .orElseThrow(() -> new UsuarioException());
@@ -209,8 +209,8 @@ public class UsuarioServiceImpl implements IUsuarioService {
     }
 
     @Override
-    public UsuarioResponseDTO obtenerPerfil(int idUsuario, String nickUsuario, String nickContrasena) {
-        loginService.verificar(nickUsuario, nickContrasena);
+    public UsuarioResponseDTO obtenerPerfil(int idUsuario, String nickUsuario, String contrasena) {
+        loginService.verificar(nickUsuario, contrasena);
 
         UsuarioEntity usuario = usuarioRepository.findById(idUsuario)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
@@ -218,8 +218,8 @@ public class UsuarioServiceImpl implements IUsuarioService {
     }
 
     @Override
-    public List<UsuarioResponseDTO> listarUsuarios(String nickUsuario, String nickContrasena) {
-        loginService.verificar(nickUsuario, nickContrasena);
+    public List<UsuarioResponseDTO> listarUsuarios(String nickUsuario, String contrasena) {
+        loginService.verificar(nickUsuario, contrasena);
 
         return usuarioRepository.findAll()
                 .stream()

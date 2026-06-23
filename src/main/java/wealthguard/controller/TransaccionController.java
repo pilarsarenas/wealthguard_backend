@@ -45,10 +45,10 @@ public class TransaccionController {
                         @Parameter(description = "Cantidad exacta para filtrar") @RequestParam(required = false) Double cantidad,
                         @Parameter(description = "Texto a buscar en la descripción") @RequestParam(required = false) String descripcion,
                         @RequestParam String nickUsuario,
-                        @RequestParam String nickContrasena) throws Exception {
+                        @RequestParam String contrasena) throws Exception {
                 return transaccionService.listarTransacciones(idUsuario, fechaInicio, fechaFin, idCategoria, tipo,
                                 cantidad,
-                                descripcion, nickUsuario, nickContrasena);
+                                descripcion, nickUsuario, contrasena);
         }
 
         @Operation(summary = "Listar todas las transacciones de un usuario sin filtros")
@@ -59,8 +59,8 @@ public class TransaccionController {
         public List<TransaccionResponseDTO> listarTodasPorUsuario(
                         @Parameter(description = "ID del usuario", required = true) @PathVariable Integer idUsuario,
                         @RequestParam String nickUsuario,
-                        @RequestParam String nickContrasena) throws Exception {
-                return transaccionService.listarTodasPorUsuario(idUsuario, nickUsuario, nickContrasena);
+                        @RequestParam String contrasena) throws Exception {
+                return transaccionService.listarTodasPorUsuario(idUsuario, nickUsuario, contrasena);
         }
 
         @Operation(summary = "Crear una nueva transacción")
@@ -71,8 +71,8 @@ public class TransaccionController {
         @PostMapping("/crear")
         public TransaccionResponseDTO crearTransaccion(@RequestBody TransaccionRequestDTO transaccionRequestDTO,
                         @RequestParam String nickUsuario,
-                        @RequestParam String nickContrasena) throws Exception {
-                return transaccionService.crearTransaccion(transaccionRequestDTO, nickUsuario, nickContrasena);
+                        @RequestParam String contrasena) throws Exception {
+                return transaccionService.crearTransaccion(transaccionRequestDTO, nickUsuario, contrasena);
         }
 
         @Operation(summary = "Editar una transacción existente")
@@ -85,8 +85,8 @@ public class TransaccionController {
                         @Parameter(description = "ID de la transacción a editar", required = true) @PathVariable Integer id,
                         @RequestBody TransaccionRequestDTO transaccionRequestDTO,
                         @RequestParam String nickUsuario,
-                        @RequestParam String nickContrasena) throws Exception {
-                return transaccionService.editarTransaccion(id, transaccionRequestDTO, nickUsuario, nickContrasena);
+                        @RequestParam String contrasena) throws Exception {
+                return transaccionService.editarTransaccion(id, transaccionRequestDTO, nickUsuario, contrasena);
         }
 
         @Operation(summary = "Eliminar una transacción por ID")
@@ -98,8 +98,8 @@ public class TransaccionController {
         public ResponseEntity<Boolean> eliminarTransaccion(
                         @Parameter(description = "ID de la transacción a eliminar", required = true) @PathVariable Integer id,
                         @RequestParam String nickUsuario,
-                        @RequestParam String nickContrasena) throws Exception {
-                boolean eliminado = transaccionService.eliminarTransaccion(id, nickUsuario, nickContrasena);
+                        @RequestParam String contrasena) throws Exception {
+                boolean eliminado = transaccionService.eliminarTransaccion(id, nickUsuario, contrasena);
                 if (eliminado) {
                         return ResponseEntity.ok(true);
                 } else {
@@ -115,8 +115,8 @@ public class TransaccionController {
         public double obtenerTendencia(
                         @Parameter(description = "ID del usuario", required = true) @PathVariable Integer idUsuario,
                         @RequestParam String nickUsuario,
-                        @RequestParam String nickContrasena) throws Exception {
-                return transaccionService.obtenerTendencia(idUsuario, nickUsuario, nickContrasena);
+                        @RequestParam String contrasena) throws Exception {
+                return transaccionService.obtenerTendencia(idUsuario, nickUsuario, contrasena);
         }
 
         @Operation(summary = "Obtener la categoría principal de gasto del usuario", description = "Devuelve un array con el nombre de la categoría en la que más gasta y su porcentaje")
@@ -127,8 +127,8 @@ public class TransaccionController {
         public String[] categoriaPrincipal(
                         @Parameter(description = "ID del usuario", required = true) @PathVariable Integer idUsuario,
                         @RequestParam String nickUsuario,
-                        @RequestParam String nickContrasena) throws Exception {
-                return transaccionService.obtenerCategoriaPrincipal(idUsuario, nickUsuario, nickContrasena);
+                        @RequestParam String contrasena) throws Exception {
+                return transaccionService.obtenerCategoriaPrincipal(idUsuario, nickUsuario, contrasena);
         }
 
         @Operation(summary = "Obtener el progreso de la meta de ahorro del usuario", description = "Devuelve un array con los valores [ahorrado, objetivo]")
@@ -139,7 +139,7 @@ public class TransaccionController {
         public double[] obtenerMeta(
                         @Parameter(description = "ID del usuario", required = true) @PathVariable Integer idUsuario,
                         @RequestParam String nickUsuario,
-                        @RequestParam String nickContrasena) throws Exception {
-                return transaccionService.obtenerMeta(idUsuario, nickUsuario, nickContrasena);
+                        @RequestParam String contrasena) throws Exception {
+                return transaccionService.obtenerMeta(idUsuario, nickUsuario, contrasena);
         }
 }

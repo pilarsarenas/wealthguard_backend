@@ -36,13 +36,13 @@ public interface IUsuarioService {
    * @param idUsuario         ID del usuario a actualizar
    * @param usuarioRequestDTO Datos nuevos del usuario
    * @param nickUsuario       Nick del usuario autenticado
-   * @param nickContrasena    Contraseña del usuario autenticado
+   * @param contrasena    Contraseña del usuario autenticado
    * @return UsuarioResponseDTO con los datos actualizados
    * @throws UsuarioException si el usuario no existe, el nick ya está en uso o
    *                          las credenciales no son válidas
    */
   public UsuarioResponseDTO actualizarUsuario(int idUsuario, UsuarioRequestDTO usuarioRequestDTO,
-      String nickUsuario, String nickContrasena) throws UsuarioException;
+      String nickUsuario, String contrasena) throws UsuarioException;
 
   /**
    * Elimina de forma permanente la cuenta del usuario y todos sus datos
@@ -50,11 +50,11 @@ public interface IUsuarioService {
    *
    * @param idUsuario      ID del usuario a eliminar
    * @param nickUsuario    Nick del usuario autenticado
-   * @param nickContrasena Contraseña del usuario autenticado
+   * @param contrasena Contraseña del usuario autenticado
    * @return true si la eliminación fue exitosa, false si no se encontró el
    *         usuario
    */
-  public boolean eliminarCuenta(int idUsuario, String nickUsuario, String nickContrasena);
+  public boolean eliminarCuenta(int idUsuario, String nickUsuario, String contrasena);
 
   /**
    * Genera un fichero con todo el historial financiero del usuario para cumplir
@@ -62,10 +62,10 @@ public interface IUsuarioService {
    *
    * @param idUsuario      ID del usuario
    * @param nickUsuario    Nick del usuario autenticado
-   * @param nickContrasena Contraseña del usuario autenticado
+   * @param contrasena Contraseña del usuario autenticado
    * @return Array de bytes del fichero generado (PDF o CSV)
    */
-  public byte[] exportarDatos(int idUsuario, String nickUsuario, String nickContrasena);
+  public byte[] exportarDatos(int idUsuario, String nickUsuario, String contrasena);
 
   /**
    * Cambia la contraseña del usuario siguiendo estos pasos:
@@ -77,33 +77,33 @@ public interface IUsuarioService {
    * @param passwordAntigua Contraseña actual en texto plano
    * @param passwordNueva   Nueva contraseña en texto plano
    * @param nickUsuario     Nick del usuario autenticado
-   * @param nickContrasena  Contraseña del usuario autenticado
+   * @param contrasena  Contraseña del usuario autenticado
    * @return true si el cambio fue exitoso
    * @throws UsuarioException si la contraseña antigua es incorrecta, el usuario
    *                          no existe o las credenciales no son válidas
    */
   public boolean cambiarPassword(int idUsuario, String passwordAntigua, String passwordNueva,
-      String nickUsuario, String nickContrasena) throws UsuarioException;
+      String nickUsuario, String contrasena) throws UsuarioException;
 
   /**
    * Obtiene los datos del perfil del usuario autenticado.
    *
    * @param idUsuario      ID del usuario
    * @param nickUsuario    Nick del usuario autenticado
-   * @param nickContrasena Contraseña del usuario autenticado
+   * @param contrasena Contraseña del usuario autenticado
    * @return UsuarioResponseDTO con todos sus datos, incluida la URL de la foto
    *         de perfil
    */
-  public UsuarioResponseDTO obtenerPerfil(int idUsuario, String nickUsuario, String nickContrasena);
+  public UsuarioResponseDTO obtenerPerfil(int idUsuario, String nickUsuario, String contrasena);
 
   /**
    * Lista todos los usuarios registrados en el sistema.
    *
    * @param nickUsuario    Nick del usuario autenticado
-   * @param nickContrasena Contraseña del usuario autenticado
+   * @param contrasena Contraseña del usuario autenticado
    * @return Lista de UsuarioResponseDTO
    */
-  public List<UsuarioResponseDTO> listarUsuarios(String nickUsuario, String nickContrasena);
+  public List<UsuarioResponseDTO> listarUsuarios(String nickUsuario, String contrasena);
 
   /**
    * Actualiza la foto de perfil del usuario.
@@ -113,7 +113,7 @@ public interface IUsuarioService {
    * @param idUsuario      ID del usuario
    * @param imagen         Archivo de imagen recibido (JPG, PNG, etc.)
    * @param nickUsuario    Nick del usuario autenticado
-   * @param nickContrasena Contraseña del usuario autenticado
+   * @param contrasena Contraseña del usuario autenticado
    * @return URL o ruta donde quedó almacenada la imagen
    * @throws UsuarioException si el usuario no existe o la imagen no es válida
    */

@@ -25,9 +25,9 @@ public class ScoreFinancieroServiceImpl implements IScoreFinancieroService {
 
     @Override
     public ScoreFinancieroResponseDTO crearScore(ScoreFinancieroRequestDTO dto, String nickUsuario,
-            String nickContrasena) {
+            String contrasena) {
 
-        loginService.verificar(nickUsuario, nickContrasena);
+        loginService.verificar(nickUsuario, contrasena);
 
         ScoreFinancieroEntity entity = ScoreFinancieroMapper.toEntity(dto);
         ScoreFinancieroEntity savedEntity = repository.save(entity);
@@ -35,9 +35,9 @@ public class ScoreFinancieroServiceImpl implements IScoreFinancieroService {
     }
 
     @Override
-    public ScoreFinancieroResponseDTO obtenerScorePorId(Integer id, String nickUsuario, String nickContrasena) {
+    public ScoreFinancieroResponseDTO obtenerScorePorId(Integer id, String nickUsuario, String contrasena) {
 
-        loginService.verificar(nickUsuario, nickContrasena);
+        loginService.verificar(nickUsuario, contrasena);
 
         return repository.findById(id)
                 .map(ScoreFinancieroMapper::convertirADTO)
@@ -45,9 +45,9 @@ public class ScoreFinancieroServiceImpl implements IScoreFinancieroService {
     }
 
     @Override
-    public List<ScoreFinancieroResponseDTO> listarTodos(String nickUsuario, String nickContrasena) {
+    public List<ScoreFinancieroResponseDTO> listarTodos(String nickUsuario, String contrasena) {
 
-        loginService.verificar(nickUsuario, nickContrasena);
+        loginService.verificar(nickUsuario, contrasena);
 
         return repository.findAll().stream()
                 .map(ScoreFinancieroMapper::convertirADTO)
@@ -56,9 +56,9 @@ public class ScoreFinancieroServiceImpl implements IScoreFinancieroService {
 
     @Override
     public ScoreFinancieroResponseDTO actualizarScore(Integer id, ScoreFinancieroRequestDTO dto,
-            String nickUsuario, String nickContrasena) {
+            String nickUsuario, String contrasena) {
 
-        loginService.verificar(nickUsuario, nickContrasena);
+        loginService.verificar(nickUsuario, contrasena);
 
         ScoreFinancieroEntity existente = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Score no encontrado"));
@@ -72,9 +72,9 @@ public class ScoreFinancieroServiceImpl implements IScoreFinancieroService {
     }
 
     @Override
-    public void eliminarScore(Integer id, String nickUsuario, String nickContrasena) {
+    public void eliminarScore(Integer id, String nickUsuario, String contrasena) {
 
-        loginService.verificar(nickUsuario, nickContrasena);
+        loginService.verificar(nickUsuario, contrasena);
 
         repository.deleteById(id);
     }

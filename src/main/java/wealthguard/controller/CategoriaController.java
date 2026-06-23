@@ -34,8 +34,8 @@ public class CategoriaController {
     public CategoriaResponseDTO crearCategoria(
             @Valid @RequestBody CategoriaRequestDTO nombreCategoria,
             @RequestParam String nickUsuario,
-            @RequestParam String nickContrasena) throws Exception {
-        return categoriaService.crearCategoria(nombreCategoria, nickUsuario, nickContrasena);
+            @RequestParam String contrasena) throws Exception {
+        return categoriaService.crearCategoria(nombreCategoria, nickUsuario, contrasena);
     }
 
     @PutMapping("/editar/{id}")
@@ -43,23 +43,23 @@ public class CategoriaController {
             @PathVariable Integer id,
             @Valid @RequestBody CategoriaRequestDTO nombreCategoria,
             @RequestParam String nickUsuario,
-            @RequestParam String nickContrasena) throws Exception {
-        return categoriaService.editarCategoria(id, nombreCategoria, nickUsuario, nickContrasena);
+            @RequestParam String contrasena) throws Exception {
+        return categoriaService.editarCategoria(id, nombreCategoria, nickUsuario, contrasena);
     }
 
     @DeleteMapping("/eliminar/{id}")
     public ResponseEntity<Boolean> eliminarCategoria(
             @PathVariable Integer id,
             @RequestParam String nickUsuario,
-            @RequestParam String nickContrasena) throws Exception {
-        boolean eliminado = categoriaService.eliminarCategoria(id, nickUsuario, nickContrasena);
+            @RequestParam String contrasena) throws Exception {
+        boolean eliminado = categoriaService.eliminarCategoria(id, nickUsuario, contrasena);
         return eliminado ? ResponseEntity.ok(true) : ResponseEntity.notFound().build();
     }
 
     @GetMapping("/listar")
     public List<CategoriaResponseDTO> obtenerCategorias(
             @RequestParam String nickUsuario,
-            @RequestParam String nickContrasena) throws Exception {
-        return categoriaService.obtenerCategorias(nickUsuario, nickContrasena);
+            @RequestParam String contrasena) throws Exception {
+        return categoriaService.obtenerCategorias(nickUsuario, contrasena);
     }
 }

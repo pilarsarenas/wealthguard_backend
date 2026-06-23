@@ -25,13 +25,13 @@ public interface ITransaccionService {
      * @param descripcion    Texto parcial o palabra clave contenida en la descripción
      *                       (opcional).
      * @param nickUsuario    Nick del usuario autenticado
-     * @param nickContrasena Contraseña del usuario autenticado
+     * @param contrasena Contraseña del usuario autenticado
      * @return Lista de {@link TransaccionResponseDTO} que cumplen con los criterios
      *         especificados.
      */
     List<TransaccionResponseDTO> listarTransacciones(Integer idUsuario, LocalDateTime fechaInicio,
             LocalDateTime fechaFin, Integer idCategoria, Boolean tipo, Double cantidad, String descripcion,
-            String nickUsuario, String nickContrasena) throws Exception;
+            String nickUsuario, String contrasena) throws Exception;
 
     /**
      * Recupera el historial completo de transacciones (tanto ingresos como gastos)
@@ -39,11 +39,11 @@ public interface ITransaccionService {
      *
      * @param idUsuario      Identificador único del usuario.
      * @param nickUsuario    Nick del usuario autenticado
-     * @param nickContrasena Contraseña del usuario autenticado
+     * @param contrasena Contraseña del usuario autenticado
      * @return Lista de {@link TransaccionResponseDTO} con todas las transacciones
      *         del usuario.
      */
-    List<TransaccionResponseDTO> listarTodasPorUsuario(Integer idUsuario, String nickUsuario, String nickContrasena) throws Exception;
+    List<TransaccionResponseDTO> listarTodasPorUsuario(Integer idUsuario, String nickUsuario, String contrasena) throws Exception;
 
     /**
      * Registra una nueva transacción en el sistema vinculándola a un usuario
@@ -51,12 +51,12 @@ public interface ITransaccionService {
      *
      * @param transaccionRequestDTO Objeto con los datos de la transacción a crear.
      * @param nickUsuario           Nick del usuario autenticado
-     * @param nickContrasena        Contraseña del usuario autenticado
+     * @param contrasena        Contraseña del usuario autenticado
      * @return El objeto {@link TransaccionResponseDTO} con los datos guardados y su
      *         ID generado.
      */
     TransaccionResponseDTO crearTransaccion(TransaccionRequestDTO transaccionRequestDTO, String nickUsuario,
-            String nickContrasena)throws Exception;
+            String contrasena)throws Exception;
 
     /**
      * Actualiza los datos de una transacción existente en la base de datos.
@@ -65,12 +65,12 @@ public interface ITransaccionService {
      *                               desea modificar.
      * @param transaccionRequestDTO  Objeto con los nuevos datos modificados.
      * @param nickUsuario            Nick del usuario autenticado
-     * @param nickContrasena         Contraseña del usuario autenticado
+     * @param contrasena         Contraseña del usuario autenticado
      * @return El objeto {@link TransaccionResponseDTO} con los cambios ya
      *         aplicados.
      */
     TransaccionResponseDTO editarTransaccion(Integer idTransaccion, TransaccionRequestDTO transaccionRequestDTO,
-            String nickUsuario, String nickContrasena)throws Exception;
+            String nickUsuario, String contrasena)throws Exception;
 
     /**
      * Elimina de forma permanente una transacción del sistema a partir de su
@@ -78,10 +78,10 @@ public interface ITransaccionService {
      *
      * @param idTransaccion  Identificador único de la transacción a eliminar.
      * @param nickUsuario    Nick del usuario autenticado
-     * @param nickContrasena Contraseña del usuario autenticado
+     * @param contrasena Contraseña del usuario autenticado
      * @return true si la eliminación fue exitosa, false en caso contrario.
      */
-    boolean eliminarTransaccion(Integer idTransaccion, String nickUsuario, String nickContrasena)throws Exception;
+    boolean eliminarTransaccion(Integer idTransaccion, String nickUsuario, String contrasena)throws Exception;
 
     /**
      * Calcula la tendencia de gastos de un usuario comparando el total de salidas
@@ -89,11 +89,11 @@ public interface ITransaccionService {
      *
      * @param idUsuario      Identificador único del usuario.
      * @param nickUsuario    Nick del usuario autenticado
-     * @param nickContrasena Contraseña del usuario autenticado
+     * @param contrasena Contraseña del usuario autenticado
      * @return Un valor de tipo double que representa el porcentaje de variación
      *         (positivo si el gasto aumentó, negativo si disminuyó).
      */
-    double obtenerTendencia(int idUsuario, String nickUsuario, String nickContrasena)throws Exception;
+    double obtenerTendencia(int idUsuario, String nickUsuario, String contrasena)throws Exception;
 
     /**
      * Identifica la categoría en la que el usuario ha acumulado un mayor volumen de
@@ -101,12 +101,12 @@ public interface ITransaccionService {
      *
      * @param idUsuario      Identificador único del usuario.
      * @param nickUsuario    Nick del usuario autenticado
-     * @param nickContrasena Contraseña del usuario autenticado
+     * @param contrasena Contraseña del usuario autenticado
      * @return Un array de {@link String} de dos elementos, donde el índice 0 es el
      *         nombre de la categoría principal y el índice 1 es el porcentaje del
      *         total gastado formateado a dos decimales (ej: "45.50").
      */
-    String[] obtenerCategoriaPrincipal(int idUsuario, String nickUsuario, String nickContrasena)throws Exception;
+    String[] obtenerCategoriaPrincipal(int idUsuario, String nickUsuario, String contrasena)throws Exception;
 
     /**
      * Obtiene el progreso financiero del usuario respecto a su meta u objetivo de
@@ -114,10 +114,10 @@ public interface ITransaccionService {
      *
      * @param idUsuario      Identificador único del usuario.
      * @param nickUsuario    Nick del usuario autenticado
-     * @param nickContrasena Contraseña del usuario autenticado
+     * @param contrasena Contraseña del usuario autenticado
      * @return Un array de tipo double donde el índice 0 representa la cantidad
      *         actual acumulada y el índice 1 representa el porcentaje de progreso
      *         logrado hacia la meta.
      */
-    double[] obtenerMeta(int idUsuario, String nickUsuario, String nickContrasena)throws Exception;
+    double[] obtenerMeta(int idUsuario, String nickUsuario, String contrasena)throws Exception;
 }

@@ -29,25 +29,25 @@ public class RecomendacionController {
             @RequestParam int idUsuario,
             @RequestParam int score,
             @RequestParam String nickUsuario,
-            @RequestParam String nickContrasena) throws Exception {
+            @RequestParam String contrasena) throws Exception {
         return ResponseEntity
-                .ok(recomendacionService.generarRecomendaciones(idUsuario, score, nickUsuario, nickContrasena));
+                .ok(recomendacionService.generarRecomendaciones(idUsuario, score, nickUsuario, contrasena));
     }
 
     @GetMapping("/usuario/{idUsuario}")
     public ResponseEntity<List<RecomendacionResponseDTO>> listar(
             @PathVariable int idUsuario,
             @RequestParam String nickUsuario,
-            @RequestParam String nickContrasena) throws Exception {
-        return ResponseEntity.ok(recomendacionService.obtenerRecomendaciones(idUsuario, nickUsuario, nickContrasena));
+            @RequestParam String contrasena) throws Exception {
+        return ResponseEntity.ok(recomendacionService.obtenerRecomendaciones(idUsuario, nickUsuario, contrasena));
     }
 
     @DeleteMapping("/{idRecomendacion}")
     public ResponseEntity<Boolean> eliminar(
             @PathVariable int idRecomendacion,
             @RequestParam String nickUsuario,
-            @RequestParam String nickContrasena) throws Exception {
+            @RequestParam String contrasena) throws Exception {
         return ResponseEntity
-                .ok(recomendacionService.eliminarRecomendacion(idRecomendacion, nickUsuario, nickContrasena));
+                .ok(recomendacionService.eliminarRecomendacion(idRecomendacion, nickUsuario, contrasena));
     }
 }

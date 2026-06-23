@@ -34,9 +34,9 @@ public class PresupuestoServiceImpl implements IPresupuestoService {
 
     @Override
     public PresupuestoResponseDTO crearPresupuesto(PresupuestoRequestDTO presupuestoRequest, String nickUsuario,
-            String nickContrasena) {
+            String contrasena) {
 
-        loginService.verificar(nickUsuario, nickContrasena);
+        loginService.verificar(nickUsuario, contrasena);
 
         PresupuestoEntity nuevaEntidad = presupuestoMapper.convertirAEntity(presupuestoRequest);
         PresupuestoEntity entidadGuardada = presupuestoRepository.save(nuevaEntidad);
@@ -44,9 +44,9 @@ public class PresupuestoServiceImpl implements IPresupuestoService {
     }
 
     @Override
-    public boolean eliminarPresupuesto(int idPresupuesto, String nickUsuario, String nickContrasena) {
+    public boolean eliminarPresupuesto(int idPresupuesto, String nickUsuario, String contrasena) {
 
-        loginService.verificar(nickUsuario, nickContrasena);
+        loginService.verificar(nickUsuario, contrasena);
 
         if (!presupuestoRepository.existsById(idPresupuesto)) {
             return false;
@@ -57,9 +57,9 @@ public class PresupuestoServiceImpl implements IPresupuestoService {
 
     @Override
     public boolean editarPresupuesto(int idPresupuesto, int idCategoria, double limite,
-            LocalDateTime fechaInicio, LocalDateTime fechaFin, String nickUsuario, String nickContrasena) {
+            LocalDateTime fechaInicio, LocalDateTime fechaFin, String nickUsuario, String contrasena) {
 
-        loginService.verificar(nickUsuario, nickContrasena);
+        loginService.verificar(nickUsuario, contrasena);
 
         PresupuestoEntity presupuesto = presupuestoRepository.findById(idPresupuesto)
                 .orElse(null);
@@ -78,9 +78,9 @@ public class PresupuestoServiceImpl implements IPresupuestoService {
 
     @Override
     public List<PresupuestoResponseDTO> obtenerPresupuestos(int idUsuario, String nickUsuario,
-            String nickContrasena) {
+            String contrasena) {
 
-        loginService.verificar(nickUsuario, nickContrasena);
+        loginService.verificar(nickUsuario, contrasena);
 
         List<PresupuestoEntity> presupuestos = presupuestoRepository.findByUsuarioId(idUsuario);
         List<PresupuestoResponseDTO> resultado = new ArrayList<>();
