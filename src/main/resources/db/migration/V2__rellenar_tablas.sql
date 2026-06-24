@@ -1,9 +1,9 @@
 INSERT INTO `usuario` (
-  `activo`, `email`, `fecha_registro`, `fecha_ultimo_cambio_password`, 
+`email`, `fecha_registro`, `fecha_ultimo_cambio_password`, 
   `foto_perfil`, `nick_usuario`, `nombre`, `password`, 
   `pregunta_seguridad`, `primer_apellido`, `respuesta_seguridad`, `segundo_apellido`
 ) VALUES 
-(0, 'juan@email.com', NOW(6), NULL, NULL, 'juan99', 'Juan', '$2a$10$Aia8kJzgB9.3ajywpLI4jOAxCvw4AQ6maWr5nYeUgI4WS2LDawixG', '¿Mascota?', 'Pérez', 'Toby', 'García');
+('juan@email.com', NOW(6), NULL, NULL, 'juan99', 'Juan', '$2a$10$Aia8kJzgB9.3ajywpLI4jOAxCvw4AQ6maWr5nYeUgI4WS2LDawixG', '¿Mascota?', 'Pérez', 'Toby', 'García');
 
 INSERT INTO `categoria` (`nombre`, `icono`) VALUES 
 ('Vivienda', 'home'),
@@ -25,9 +25,6 @@ INSERT INTO `tipo_recomendacion` (`mensaje`, `nombre`) VALUES
 
 INSERT INTO `transaccion` (`cantidad`, `descripcion`, `fecha`, `tipo_transaccion`, `categoria_id`, `usuario_id`) VALUES 
 (1000.00, 'Pago de alquiler', '2026-06-01 10:00:00', 0, 1, 1);
-
-INSERT INTO `score_financiero` (`fecha_calculo`, `nivel`, `valor_maximo`, `usuario_id`) VALUES 
-(NOW(6), 750, 1000, 1);
 
 INSERT INTO `recomendacion` (`fecha_recomendacion`, `tipo_recomendacion_id`, `usuario_id`) VALUES 
 (NOW(6), 1, 1);
