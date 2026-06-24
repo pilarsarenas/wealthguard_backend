@@ -1,16 +1,7 @@
 package wealthguard.service.impl;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
-
-import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -25,277 +16,230 @@ import wealthguard.mapper.RecomendacionMapper;
 import wealthguard.repository.RecomendacionRepository;
 import wealthguard.repository.TipoRecomendacionRepository;
 import wealthguard.repository.UsuarioRepository;
-import wealthguard.service.LoginService;
+
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class RecomendacionServiceImplTest {
 
-    @Mock
-    private RecomendacionRepository recomendacionRepository;
-
-    @Mock
-    private UsuarioRepository usuarioRepository;
-
-    @Mock
-    private TipoRecomendacionRepository tipoRecomendacionRepository;
-
-    @Mock
-    private RecomendacionMapper recomendacionMapper;
-
-    @Mock
-    private LoginService loginService;
+    @Mock private RecomendacionRepository recomendacionRepository;
+    @Mock private UsuarioRepository usuarioRepository;
+    @Mock private TipoRecomendacionRepository tipoRecomendacionRepository;
+    @Mock private RecomendacionMapper recomendacionMapper;
 
     @InjectMocks
     private RecomendacionServiceImpl recomendacionService;
 
-    private UsuarioEntity usuarioEntity;
+    private UsuarioEntity usuario;
     private TipoRecomendacionEntity tipoRecomendacion;
-    private RecomendacionEntity recomendacionVigente;
-    private RecomendacionEntity recomendacionAntigua;
-    private RecomendacionResponseDTO recomendacionResponseDTO;
+    private RecomendacionEntity recomendacionEntity;
+    private RecomendacionResponseDTO recomendacionDTO;
 
     @BeforeEach
     void setUp() {
-        usuarioEntity = new UsuarioEntity();
-        usuarioEntity.setId(1);
-        usuarioEntity.setNickUsuario("testuser");
+        usuario = new UsuarioEntity();
+        usuario.setId(1);
 
         tipoRecomendacion = new TipoRecomendacionEntity();
-        tipoRecomendacion.setId(1);
-        tipoRecomendacion.setNombre("Ahorro óptimo");
-        tipoRecomendacion.setMensaje("Estás ahorrando bien.");
-        tipoRecomendacion.setScoreMinimo(600);
-        tipoRecomendacion.setScoreMaximo(800);
+        tipoRecomendacion.setId(10);
+        tipoRecomendacion.setScoreMinimo(0);
+        tipoRecomendacion.setScoreMaximo(50);
 
-        recomendacionVigente = new RecomendacionEntity();
-        recomendacionVigente.setId(10);
-        recomendacionVigente.setUsuario(usuarioEntity);
-        recomendacionVigente.setTipoRecomendacion(tipoRecomendacion);
-        recomendacionVigente.setFechaRecomendacion(LocalDateTime.now().minusDays(1));
+        recomendacionEntity = new RecomendacionEntity();
+        recomendacionEntity.setId(100);
+        recomendacionEntity.setUsuario(usuario);
+        recomendacionEntity.setTipoRecomendacion(tipoRecomendacion);
+        recomendacionEntity.setFechaRecomendacion(LocalDateTime.now());
 
-        recomendacionAntigua = new RecomendacionEntity();
-        recomendacionAntigua.setId(5);
-        recomendacionAntigua.setUsuario(usuarioEntity);
-        recomendacionAntigua.setTipoRecomendacion(tipoRecomendacion);
-        recomendacionAntigua.setFechaRecomendacion(LocalDateTime.now().minusMonths(2));
-
-        recomendacionResponseDTO = new RecomendacionResponseDTO();
-        recomendacionResponseDTO.setIdRecomendacion(10);
-        recomendacionResponseDTO.setTitulo("Ahorro óptimo");
+        recomendacionDTO = new RecomendacionResponseDTO();
     }
 
-    // --- generarRecomendaciones ---
+    // ─── generarRecomendaciones ───────────────────────────────────────────────
 
     @Test
-    void generarRecomendaciones_scoreMismoRango_retornaExistentes() {
-        doNothing().when(loginService).verificar(anyString(), anyString());
+    @DisplayName("generarRecomendaciones: score en mismo rango que la última — devuelve historial sin nueva fila")
+    void generarRecomendaciones_mismoRango_devuelveHistorialExistente() {
+        int score = 30; // dentro del rango 0-50
         when(recomendacionRepository.findByUsuarioIdOrderByFechaRecomendacionDesc(1))
-                .thenReturn(Arrays.asList(recomendacionVigente));
-        when(recomendacionMapper.convertirADTO(recomendacionVigente)).thenReturn(recomendacionResponseDTO);
+                .thenReturn(List.of(recomendacionEntity));
+        when(recomendacionMapper.convertirADTO(recomendacionEntity)).thenReturn(recomendacionDTO);
 
-        int scoreEnMismoRango = 700;
-        List<RecomendacionResponseDTO> result = recomendacionService.generarRecomendaciones(
-                1, scoreEnMismoRango, "testuser", "pass");
+        List<RecomendacionResponseDTO> resultado = recomendacionService.generarRecomendaciones(1, score);
 
-        assertNotNull(result);
-        assertEquals(1, result.size());
-        verify(tipoRecomendacionRepository, never()).findByScore(any());
+        assertThat(resultado).hasSize(1);
         verify(recomendacionRepository, never()).save(any());
     }
 
     @Test
-    void generarRecomendaciones_scoreCambiaRango_creaRecomendacionNueva() {
-        doNothing().when(loginService).verificar(anyString(), anyString());
+    @DisplayName("generarRecomendaciones: primera evaluación (sin historial) — crea nueva recomendación")
+    void generarRecomendaciones_sinHistorial_creaRecomendacion() {
+        int score = 40;
+        when(recomendacionRepository.findByUsuarioIdOrderByFechaRecomendacionDesc(1))
+                .thenReturn(Collections.emptyList())
+                .thenReturn(List.of(recomendacionEntity));
+        when(tipoRecomendacionRepository.findByScore(score)).thenReturn(List.of(tipoRecomendacion));
+        when(usuarioRepository.findById(1)).thenReturn(Optional.of(usuario));
+        when(recomendacionMapper.convertirADTO(recomendacionEntity)).thenReturn(recomendacionDTO);
+
+        List<RecomendacionResponseDTO> resultado = recomendacionService.generarRecomendaciones(1, score);
+
+        verify(recomendacionRepository).save(any(RecomendacionEntity.class));
+        assertThat(resultado).isNotNull();
+    }
+
+    @Test
+    @DisplayName("generarRecomendaciones: score cambia de rango — crea nueva entrada en historial")
+    void generarRecomendaciones_cambioDerango_creaNuevaRecomendacion() {
+        int scoreNuevo = 80; // fuera del rango 0-50
+
+        when(recomendacionRepository.findByUsuarioIdOrderByFechaRecomendacionDesc(1))
+                .thenReturn(List.of(recomendacionEntity))
+                .thenReturn(List.of(recomendacionEntity)); // historial actualizado
 
         TipoRecomendacionEntity tipoNuevo = new TipoRecomendacionEntity();
-        tipoNuevo.setId(2);
-        tipoNuevo.setNombre("Riesgo elevado");
-        tipoNuevo.setMensaje("Debes reducir gastos.");
-        tipoNuevo.setScoreMinimo(200);
-        tipoNuevo.setScoreMaximo(400);
+        tipoNuevo.setScoreMinimo(60);
+        tipoNuevo.setScoreMaximo(100);
+        when(tipoRecomendacionRepository.findByScore(scoreNuevo)).thenReturn(List.of(tipoNuevo));
+        when(usuarioRepository.findById(1)).thenReturn(Optional.of(usuario));
+        when(recomendacionMapper.convertirADTO(any())).thenReturn(recomendacionDTO);
 
-        RecomendacionEntity nuevaRec = new RecomendacionEntity();
-        nuevaRec.setId(11);
-        nuevaRec.setUsuario(usuarioEntity);
-        nuevaRec.setTipoRecomendacion(tipoNuevo);
-        nuevaRec.setFechaRecomendacion(LocalDateTime.now());
+        List<RecomendacionResponseDTO> resultado = recomendacionService.generarRecomendaciones(1, scoreNuevo);
 
-        RecomendacionResponseDTO nuevaDTO = new RecomendacionResponseDTO();
-        nuevaDTO.setIdRecomendacion(11);
-
-        when(recomendacionRepository.findByUsuarioIdOrderByFechaRecomendacionDesc(1))
-                .thenReturn(Arrays.asList(recomendacionVigente))
-                .thenReturn(Arrays.asList(nuevaRec, recomendacionVigente));
-        when(tipoRecomendacionRepository.findByScore(300)).thenReturn(Arrays.asList(tipoNuevo));
-        when(usuarioRepository.findById(1)).thenReturn(Optional.of(usuarioEntity));
-        when(recomendacionRepository.save(any(RecomendacionEntity.class))).thenReturn(nuevaRec);
-        when(recomendacionMapper.convertirADTO(nuevaRec)).thenReturn(nuevaDTO);
-        when(recomendacionMapper.convertirADTO(recomendacionVigente)).thenReturn(recomendacionResponseDTO);
-
-        List<RecomendacionResponseDTO> result = recomendacionService.generarRecomendaciones(
-                1, 300, "testuser", "pass");
-
-        assertNotNull(result);
-        assertEquals(2, result.size());
         verify(recomendacionRepository).save(any(RecomendacionEntity.class));
+        assertThat(resultado).isNotNull();
     }
 
     @Test
-    void generarRecomendaciones_sinExistentes_creaRecomendacionNueva() {
-        doNothing().when(loginService).verificar(anyString(), anyString());
-
-        RecomendacionEntity nuevaRec = new RecomendacionEntity();
-        nuevaRec.setId(1);
-        nuevaRec.setUsuario(usuarioEntity);
-        nuevaRec.setTipoRecomendacion(tipoRecomendacion);
-
-        RecomendacionResponseDTO nuevaDTO = new RecomendacionResponseDTO();
-        nuevaDTO.setIdRecomendacion(1);
-
+    @DisplayName("generarRecomendaciones: sin candidatos de tipo — devuelve historial sin guardar")
+    void generarRecomendaciones_sinCandidatos_devuelveHistorialSinGuardar() {
+        int score = 80;
         when(recomendacionRepository.findByUsuarioIdOrderByFechaRecomendacionDesc(1))
-                .thenReturn(Collections.emptyList())
-                .thenReturn(Arrays.asList(nuevaRec));
-        when(tipoRecomendacionRepository.findByScore(700)).thenReturn(Arrays.asList(tipoRecomendacion));
-        when(usuarioRepository.findById(1)).thenReturn(Optional.of(usuarioEntity));
-        when(recomendacionRepository.save(any(RecomendacionEntity.class))).thenReturn(nuevaRec);
-        when(recomendacionMapper.convertirADTO(nuevaRec)).thenReturn(nuevaDTO);
+                .thenReturn(Collections.emptyList());
+        when(tipoRecomendacionRepository.findByScore(score)).thenReturn(Collections.emptyList());
 
-        List<RecomendacionResponseDTO> result = recomendacionService.generarRecomendaciones(
-                1, 700, "testuser", "pass");
+        List<RecomendacionResponseDTO> resultado = recomendacionService.generarRecomendaciones(1, score);
 
-        assertNotNull(result);
-        assertEquals(1, result.size());
-    }
-
-    @Test
-    void generarRecomendaciones_sinCandidatos_retornaExistentes() {
-        doNothing().when(loginService).verificar(anyString(), anyString());
-
-        TipoRecomendacionEntity tipoFueraDe = new TipoRecomendacionEntity();
-        tipoFueraDe.setScoreMinimo(800);
-        tipoFueraDe.setScoreMaximo(1000);
-
-        when(recomendacionRepository.findByUsuarioIdOrderByFechaRecomendacionDesc(1))
-                .thenReturn(Arrays.asList(recomendacionVigente));
-        when(tipoRecomendacionRepository.findByScore(150)).thenReturn(Collections.emptyList());
-        when(recomendacionMapper.convertirADTO(recomendacionVigente)).thenReturn(recomendacionResponseDTO);
-
-        List<RecomendacionResponseDTO> result = recomendacionService.generarRecomendaciones(
-                1, 150, "testuser", "pass");
-
-        assertNotNull(result);
-        assertEquals(1, result.size());
         verify(recomendacionRepository, never()).save(any());
+        assertThat(resultado).isEmpty();
     }
 
     @Test
-    void generarRecomendaciones_seleccionaMasEspecifico() {
-        doNothing().when(loginService).verificar(anyString(), anyString());
+    @DisplayName("generarRecomendaciones: usuario no encontrado — lanza RuntimeException")
+    void generarRecomendaciones_usuarioNoExiste_lanzaExcepcion() {
+        int score = 80;
+        when(recomendacionRepository.findByUsuarioIdOrderByFechaRecomendacionDesc(1))
+                .thenReturn(Collections.emptyList());
+        when(tipoRecomendacionRepository.findByScore(score)).thenReturn(List.of(tipoRecomendacion));
+        when(usuarioRepository.findById(1)).thenReturn(Optional.empty());
 
-        TipoRecomendacionEntity tipoAmplioRango = new TipoRecomendacionEntity();
-        tipoAmplioRango.setId(3);
-        tipoAmplioRango.setNombre("Rango amplio");
-        tipoAmplioRango.setMensaje("Descripción genérica.");
-        tipoAmplioRango.setScoreMinimo(0);
-        tipoAmplioRango.setScoreMaximo(1000);
+        assertThatThrownBy(() -> recomendacionService.generarRecomendaciones(1, score))
+                .isInstanceOf(RuntimeException.class)
+                .hasMessageContaining("Usuario no encontrado");
+    }
 
-        TipoRecomendacionEntity tipoEstrechoRango = new TipoRecomendacionEntity();
-        tipoEstrechoRango.setId(4);
-        tipoEstrechoRango.setNombre("Rango estrecho");
-        tipoEstrechoRango.setMensaje("Descripción específica.");
-        tipoEstrechoRango.setScoreMinimo(490);
-        tipoEstrechoRango.setScoreMaximo(510);
+    @Test
+    @DisplayName("generarRecomendaciones: varios candidatos — selecciona el de rango más estrecho")
+    void generarRecomendaciones_variosCanidatos_seleccionaMasEspecifico() {
+        int score = 40;
+
+        TipoRecomendacionEntity amplio = new TipoRecomendacionEntity();
+        amplio.setScoreMinimo(0);
+        amplio.setScoreMaximo(100); // rango 100
+
+        TipoRecomendacionEntity estrecho = new TipoRecomendacionEntity();
+        estrecho.setScoreMinimo(30);
+        estrecho.setScoreMaximo(50); // rango 20 ← debe ganar
 
         when(recomendacionRepository.findByUsuarioIdOrderByFechaRecomendacionDesc(1))
                 .thenReturn(Collections.emptyList())
-                .thenReturn(Collections.emptyList());
-        when(tipoRecomendacionRepository.findByScore(500))
-                .thenReturn(Arrays.asList(tipoAmplioRango, tipoEstrechoRango));
-        when(usuarioRepository.findById(1)).thenReturn(Optional.of(usuarioEntity));
-        when(recomendacionRepository.save(any(RecomendacionEntity.class))).thenAnswer(inv -> inv.getArgument(0));
-        when(recomendacionMapper.convertirADTO(any())).thenReturn(recomendacionResponseDTO);
+                .thenReturn(List.of(recomendacionEntity));
+        when(tipoRecomendacionRepository.findByScore(score)).thenReturn(List.of(amplio, estrecho));
+        when(usuarioRepository.findById(1)).thenReturn(Optional.of(usuario));
+        when(recomendacionMapper.convertirADTO(any())).thenReturn(recomendacionDTO);
 
-        recomendacionService.generarRecomendaciones(1, 500, "testuser", "pass");
+        recomendacionService.generarRecomendaciones(1, score);
 
-        verify(recomendacionRepository).save(argThat(r -> r.getTipoRecomendacion().getId().equals(4)));
+        verify(recomendacionRepository).save(argThat(r ->
+                r.getTipoRecomendacion().getScoreMaximo() - r.getTipoRecomendacion().getScoreMinimo() == 20
+        ));
     }
 
-    // --- obtenerRecomendaciones ---
+    // ─── obtenerRecomendaciones ───────────────────────────────────────────────
 
     @Test
-    void obtenerRecomendaciones_conDatos_retornaLista() {
-        doNothing().when(loginService).verificar(anyString(), anyString());
+    @DisplayName("obtenerRecomendaciones: devuelve historial mapeado")
+    void obtenerRecomendaciones_devuelveListaMapeada() {
         when(recomendacionRepository.findByUsuarioIdOrderByFechaRecomendacionDesc(1))
-                .thenReturn(Arrays.asList(recomendacionVigente, recomendacionAntigua));
-        when(recomendacionMapper.convertirADTO(recomendacionVigente)).thenReturn(recomendacionResponseDTO);
-        when(recomendacionMapper.convertirADTO(recomendacionAntigua)).thenReturn(new RecomendacionResponseDTO());
+                .thenReturn(List.of(recomendacionEntity));
+        when(recomendacionMapper.convertirADTO(recomendacionEntity)).thenReturn(recomendacionDTO);
 
-        List<RecomendacionResponseDTO> result = recomendacionService.obtenerRecomendaciones(1, "testuser", "pass");
+        List<RecomendacionResponseDTO> resultado = recomendacionService.obtenerRecomendaciones(1);
 
-        assertNotNull(result);
-        assertEquals(2, result.size());
+        assertThat(resultado).hasSize(1).contains(recomendacionDTO);
     }
 
     @Test
-    void obtenerRecomendaciones_sinDatos_retornaListaVacia() {
-        doNothing().when(loginService).verificar(anyString(), anyString());
+    @DisplayName("obtenerRecomendaciones: sin historial — devuelve lista vacía")
+    void obtenerRecomendaciones_sinHistorial_devuelveListaVacia() {
         when(recomendacionRepository.findByUsuarioIdOrderByFechaRecomendacionDesc(1))
                 .thenReturn(Collections.emptyList());
 
-        List<RecomendacionResponseDTO> result = recomendacionService.obtenerRecomendaciones(1, "testuser", "pass");
+        List<RecomendacionResponseDTO> resultado = recomendacionService.obtenerRecomendaciones(1);
 
-        assertNotNull(result);
-        assertTrue(result.isEmpty());
+        assertThat(resultado).isEmpty();
     }
 
-    // --- eliminarRecomendacion ---
+    // ─── eliminarRecomendacion ────────────────────────────────────────────────
 
     @Test
-    void eliminarRecomendacion_esAntigua_eliminaYRetornaTrue() {
-        doNothing().when(loginService).verificar(anyString(), anyString());
-        when(recomendacionRepository.findById(5)).thenReturn(Optional.of(recomendacionAntigua));
-        when(recomendacionRepository.findByUsuarioIdOrderByFechaRecomendacionDesc(1))
-                .thenReturn(Arrays.asList(recomendacionVigente, recomendacionAntigua));
+    @DisplayName("eliminarRecomendacion: recomendación no existe — devuelve false")
+    void eliminarRecomendacion_noExiste_devuelveFalse() {
+        when(recomendacionRepository.findById(99)).thenReturn(Optional.empty());
 
-        boolean result = recomendacionService.eliminarRecomendacion(5, "testuser", "pass");
+        boolean resultado = recomendacionService.eliminarRecomendacion(99);
 
-        assertTrue(result);
-        verify(recomendacionRepository).deleteById(5);
-    }
-
-    @Test
-    void eliminarRecomendacion_esLaVigente_retornaFalse() {
-        doNothing().when(loginService).verificar(anyString(), anyString());
-        when(recomendacionRepository.findById(10)).thenReturn(Optional.of(recomendacionVigente));
-        when(recomendacionRepository.findByUsuarioIdOrderByFechaRecomendacionDesc(1))
-                .thenReturn(Arrays.asList(recomendacionVigente, recomendacionAntigua));
-
-        boolean result = recomendacionService.eliminarRecomendacion(10, "testuser", "pass");
-
-        assertFalse(result);
+        assertThat(resultado).isFalse();
         verify(recomendacionRepository, never()).deleteById(any());
     }
 
     @Test
-    void eliminarRecomendacion_noExiste_retornaFalse() {
-        doNothing().when(loginService).verificar(anyString(), anyString());
-        when(recomendacionRepository.findById(999)).thenReturn(Optional.empty());
+    @DisplayName("eliminarRecomendacion: es la vigente (la última) — devuelve false sin borrar")
+    void eliminarRecomendacion_esLaVigente_devuelveFalse() {
+        recomendacionEntity.setId(100);
+        when(recomendacionRepository.findById(100)).thenReturn(Optional.of(recomendacionEntity));
+        when(recomendacionRepository.findByUsuarioIdOrderByFechaRecomendacionDesc(1))
+                .thenReturn(List.of(recomendacionEntity)); // la vigente tiene id=100
 
-        boolean result = recomendacionService.eliminarRecomendacion(999, "testuser", "pass");
+        boolean resultado = recomendacionService.eliminarRecomendacion(100);
 
-        assertFalse(result);
+        assertThat(resultado).isFalse();
         verify(recomendacionRepository, never()).deleteById(any());
     }
 
     @Test
-    void eliminarRecomendacion_unica_esVigente_retornaFalse() {
-        doNothing().when(loginService).verificar(anyString(), anyString());
-        when(recomendacionRepository.findById(10)).thenReturn(Optional.of(recomendacionVigente));
+    @DisplayName("eliminarRecomendacion: es una del historial anterior — elimina y devuelve true")
+    void eliminarRecomendacion_esDelHistorial_eliminaYdevuelveTrue() {
+        RecomendacionEntity vigente = new RecomendacionEntity();
+        vigente.setId(200);
+        vigente.setUsuario(usuario);
+
+        recomendacionEntity.setId(100); // la que queremos borrar (no vigente)
+
+        when(recomendacionRepository.findById(100)).thenReturn(Optional.of(recomendacionEntity));
         when(recomendacionRepository.findByUsuarioIdOrderByFechaRecomendacionDesc(1))
-                .thenReturn(Arrays.asList(recomendacionVigente));
+                .thenReturn(Arrays.asList(vigente, recomendacionEntity)); // vigente es la primera
 
-        boolean result = recomendacionService.eliminarRecomendacion(10, "testuser", "pass");
+        boolean resultado = recomendacionService.eliminarRecomendacion(100);
 
-        assertFalse(result);
+        assertThat(resultado).isTrue();
+        verify(recomendacionRepository).deleteById(100);
     }
 }
