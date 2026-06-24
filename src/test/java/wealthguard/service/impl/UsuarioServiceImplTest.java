@@ -30,7 +30,6 @@ import wealthguard.mapper.UsuarioMapper;
 import wealthguard.repository.ObjetivoRepository;
 import wealthguard.repository.PresupuestoRepository;
 import wealthguard.repository.RecomendacionRepository;
-import wealthguard.repository.ScoreFinancieroRepository;
 import wealthguard.repository.TransaccionRepository;
 import wealthguard.repository.UsuarioRepository;
 
@@ -43,7 +42,6 @@ class UsuarioServiceImplTest {
     @Mock private RecomendacionRepository recomendacionRepository;
     @Mock private PresupuestoRepository presupuestoRepository;
     @Mock private ObjetivoRepository objetivoRepository;
-    @Mock private ScoreFinancieroRepository scoreFinancieroRepository;
 
     @InjectMocks
     private UsuarioServiceImpl usuarioService;
@@ -290,7 +288,6 @@ class UsuarioServiceImplTest {
         verify(recomendacionRepository).deleteByUsuarioId(1);
         verify(presupuestoRepository).deleteByUsuarioId(1);
         verify(objetivoRepository).deleteByUsuarioId(1);
-        verify(scoreFinancieroRepository).deleteByUsuarioId(1);
         verify(usuarioRepository).deleteById(1);
     }
 

@@ -44,17 +44,6 @@ CREATE TABLE `transaccion` (
   CONSTRAINT `FKk7db1p3y2mxyhrflylujs3bx7` FOREIGN KEY (`categoria_id`) REFERENCES `categoria` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-CREATE TABLE `score_financiero` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `fecha_calculo` datetime(6) NOT NULL,
-  `nivel` int NOT NULL,
-  `valor_maximo` int NOT NULL,
-  `usuario_id` int NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `FK7b7dywrh3hvlta349lbjcwiog` (`usuario_id`),
-  CONSTRAINT `FK7b7dywrh3hvlta349lbjcwiog` FOREIGN KEY (`usuario_id`) REFERENCES `usuario` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
 CREATE TABLE `recomendacion` (
   `id` int NOT NULL AUTO_INCREMENT,
   `fecha_recomendacion` datetime(6) NOT NULL,

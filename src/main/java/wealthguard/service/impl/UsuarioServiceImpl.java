@@ -13,8 +13,8 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import wealthguard.dto.LoginRequestDTO;
 import wealthguard.dto.LoginResponseDTO;
@@ -26,7 +26,6 @@ import wealthguard.mapper.UsuarioMapper;
 import wealthguard.repository.ObjetivoRepository;
 import wealthguard.repository.PresupuestoRepository;
 import wealthguard.repository.RecomendacionRepository;
-import wealthguard.repository.ScoreFinancieroRepository;
 import wealthguard.repository.TransaccionRepository;
 import wealthguard.repository.UsuarioRepository;
 import wealthguard.service.IUsuarioService;
@@ -51,9 +50,6 @@ public class UsuarioServiceImpl implements IUsuarioService {
 
     @Autowired
     private ObjetivoRepository objetivoRepository;
-
-    @Autowired
-    private ScoreFinancieroRepository scoreFinancieroRepository;
 
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
@@ -155,7 +151,6 @@ public class UsuarioServiceImpl implements IUsuarioService {
         recomendacionRepository.deleteByUsuarioId(idUsuario);
         presupuestoRepository.deleteByUsuarioId(idUsuario);
         objetivoRepository.deleteByUsuarioId(idUsuario);
-        scoreFinancieroRepository.deleteByUsuarioId(idUsuario);
 
         usuarioRepository.deleteById(idUsuario);
         return true;
