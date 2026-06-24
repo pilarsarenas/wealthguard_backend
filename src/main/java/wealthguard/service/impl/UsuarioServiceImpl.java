@@ -13,8 +13,8 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import wealthguard.dto.LoginRequestDTO;
 import wealthguard.dto.LoginResponseDTO;
@@ -30,6 +30,7 @@ import wealthguard.repository.ScoreFinancieroRepository;
 import wealthguard.repository.TransaccionRepository;
 import wealthguard.repository.UsuarioRepository;
 import wealthguard.service.IUsuarioService;
+import wealthguard.service.LoginService;
 
 @Service
 public class UsuarioServiceImpl implements IUsuarioService {
@@ -54,6 +55,9 @@ public class UsuarioServiceImpl implements IUsuarioService {
 
     @Autowired
     private ScoreFinancieroRepository scoreFinancieroRepository;
+
+    @Autowired
+    private LoginService loginService;
 
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
@@ -112,8 +116,9 @@ public class UsuarioServiceImpl implements IUsuarioService {
     }
 
     @Override
-    public UsuarioResponseDTO actualizarUsuario(int idUsuario, UsuarioRequestDTO usuarioRequestDTO)
-            throws UsuarioException {
+    public UsuarioResponseDTO actualizarUsuario(int idUsuario, UsuarioRequestDTO usuarioRequestDTO,
+            String nickUsuario, String contrasena) throws UsuarioException {
+
         UsuarioEntity existente = usuarioRepository.findById(idUsuario)
                 .orElseThrow(() -> new UsuarioException());
 
@@ -121,7 +126,6 @@ public class UsuarioServiceImpl implements IUsuarioService {
             throw new UsuarioException();
         }
 
-        // Validar que la contraseña enviada es correcta antes de guardar
         if (usuarioRequestDTO.getPassword() == null || usuarioRequestDTO.getPassword().isBlank()) {
             throw new UsuarioException("Password_obligatoria");
         }
@@ -139,6 +143,10 @@ public class UsuarioServiceImpl implements IUsuarioService {
         if (usuarioRequestDTO.getFotoPerfil() == null || usuarioRequestDTO.getFotoPerfil().isBlank()) {
             usuario.setFotoPerfil(existente.getFotoPerfil());
         }
+        usuario.setPreguntaSeguridad(existente.getPreguntaSeguridad());
+        if (usuarioRequestDTO.getRespuestaSeguridad() == null || usuarioRequestDTO.getRespuestaSeguridad().isBlank()) {
+            usuario.setRespuestaSeguridad(existente.getRespuestaSeguridad());
+        }
 
         UsuarioEntity actualizado = usuarioRepository.save(usuario);
         return usuarioMapper.convertirADTO(actualizado);
@@ -146,7 +154,9 @@ public class UsuarioServiceImpl implements IUsuarioService {
 
     @Override
     @Transactional
-    public boolean eliminarCuenta(int idUsuario) {
+    public boolean eliminarCuenta(int idUsuario, String nickUsuario, String contrasena) {
+        loginService.verificar(nickUsuario, contrasena);
+
         if (!usuarioRepository.existsById(idUsuario)) {
             return false;
         }
@@ -162,7 +172,9 @@ public class UsuarioServiceImpl implements IUsuarioService {
     }
 
     @Override
-    public byte[] exportarDatos(int idUsuario) {
+    public byte[] exportarDatos(int idUsuario, String nickUsuario, String contrasena) {
+        loginService.verificar(nickUsuario, contrasena);
+
         UsuarioEntity usuario = usuarioRepository.findById(idUsuario)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
@@ -180,13 +192,19 @@ public class UsuarioServiceImpl implements IUsuarioService {
     }
 
     @Override
-    public boolean cambiarPassword(int idUsuario, String passwordAntigua, String passwordNueva)
-            throws UsuarioException {
+    public boolean cambiarPassword(int idUsuario, String passwordAntigua, String passwordNueva,
+            String nickUsuario, String contrasena) throws UsuarioException {
+
+        loginService.verificar(nickUsuario, contrasena);
+
         UsuarioEntity usuario = usuarioRepository.findById(idUsuario)
                 .orElseThrow(() -> new UsuarioException());
 
         if (!passwordEncoder.matches(passwordAntigua, usuario.getPassword())) {
             throw new UsuarioException("Password_incorrecta");
+        }
+        if (passwordEncoder.matches(passwordNueva, usuario.getPassword())) {
+            throw new UsuarioException("Password_igual");
         }
 
         usuario.setPassword(passwordEncoder.encode(passwordNueva));
@@ -196,14 +214,18 @@ public class UsuarioServiceImpl implements IUsuarioService {
     }
 
     @Override
-    public UsuarioResponseDTO obtenerPerfil(int idUsuario) {
+    public UsuarioResponseDTO obtenerPerfil(int idUsuario, String nickUsuario, String contrasena) {
+        loginService.verificar(nickUsuario, contrasena);
+
         UsuarioEntity usuario = usuarioRepository.findById(idUsuario)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
         return usuarioMapper.convertirADTO(usuario);
     }
 
     @Override
-    public List<UsuarioResponseDTO> listarUsuarios() {
+    public List<UsuarioResponseDTO> listarUsuarios(String nickUsuario, String contrasena) {
+        loginService.verificar(nickUsuario, contrasena);
+
         return usuarioRepository.findAll()
                 .stream()
                 .map(usuarioMapper::convertirADTO)
@@ -212,6 +234,7 @@ public class UsuarioServiceImpl implements IUsuarioService {
 
     @Override
     public String actualizarFotoPerfil(int idUsuario, MultipartFile imagen) throws UsuarioException {
+
         UsuarioEntity usuario = usuarioRepository.findById(idUsuario)
                 .orElseThrow(() -> new UsuarioException());
 
@@ -291,6 +314,9 @@ public class UsuarioServiceImpl implements IUsuarioService {
         }
         if (passwordNueva == null || passwordNueva.isBlank()) {
             throw new UsuarioException("Password_obligatoria");
+        }
+        if (passwordEncoder.matches(passwordNueva, entidad.getPassword())) {
+            throw new UsuarioException("Password_igual");
         }
 
         entidad.setPassword(passwordEncoder.encode(passwordNueva));

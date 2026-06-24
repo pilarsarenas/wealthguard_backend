@@ -40,6 +40,7 @@ public class UsuarioMapper {
         dto.setEmail(entity.getEmail());
         dto.setPassword(entity.getPassword());
         dto.setPreguntaSeguridad(entity.getPreguntaSeguridad());
+        dto.setRespuestaSeguridad(entity.getRespuestaSeguridad());
         dto.setFotoPerfil(entity.getFotoPerfil());
         dto.setFechaRegistro(entity.getFechaRegistro());
         dto.setFechaUltimoCambioPassword(entity.getFechaUltimoCambioPassword());

@@ -10,78 +10,56 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import wealthguard.dto.TipoRecomendacionRequestDTO;
 import wealthguard.dto.TipoRecomendacionResponseDTO;
 import wealthguard.service.ITipoRecomendacionService;
 
 @RestController
 @RequestMapping("/tipo-recomendacion")
-@Tag(name = "Tipos de Recomendación", description = "Gestión del catálogo de tipos de recomendaciones financieras")
 public class TipoRecomendacionController {
 
-    @Autowired
-    private ITipoRecomendacionService service;
+        @Autowired
+        private ITipoRecomendacionService service;
 
-    @Operation(summary = "Crear un nuevo tipo de recomendación")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Tipo de recomendación creado correctamente", content = @Content(schema = @Schema(implementation = TipoRecomendacionResponseDTO.class))),
-            @ApiResponse(responseCode = "400", description = "Datos de entrada inválidos", content = @Content)
-    })
-    @PostMapping
-    public TipoRecomendacionResponseDTO crear(@RequestBody TipoRecomendacionRequestDTO dto) {
-        return service.crearTipoRecomendacion(dto);
-    }
+        @PostMapping
+        public TipoRecomendacionResponseDTO crear(@RequestBody TipoRecomendacionRequestDTO dto,
+                        @RequestParam String nickUsuario,
+                        @RequestParam String contrasena) throws Exception {
+                return service.crearTipoRecomendacion(dto, nickUsuario, contrasena);
+        }
 
-    @Operation(summary = "Listar todos los tipos de recomendación")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Listado de tipos de recomendación obtenido correctamente", content = @Content(array = @ArraySchema(schema = @Schema(implementation = TipoRecomendacionResponseDTO.class))))
-    })
-    @GetMapping
-    public List<TipoRecomendacionResponseDTO> listarTodos() {
-        return service.listarTodos();
-    }
+        @GetMapping
+        public List<TipoRecomendacionResponseDTO> listarTodos(
+                        @RequestParam String nickUsuario,
+                        @RequestParam String contrasena) throws Exception {
+                return service.listarTodos(nickUsuario, contrasena);
+        }
 
-    @Operation(summary = "Obtener un tipo de recomendación por ID")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Tipo de recomendación encontrado", content = @Content(schema = @Schema(implementation = TipoRecomendacionResponseDTO.class))),
-            @ApiResponse(responseCode = "404", description = "Tipo de recomendación no encontrado", content = @Content)
-    })
-    @GetMapping("/{id}")
-    public TipoRecomendacionResponseDTO obtenerTipoRecomendacionPorId(
-            @Parameter(description = "ID del tipo de recomendación", required = true) @PathVariable Integer id) {
-        return service.obtenerTipoRecomendacionPorId(id);
-    }
+        @GetMapping("/{id}")
+        public TipoRecomendacionResponseDTO obtenerTipoRecomendacionPorId(
+                        @PathVariable Integer id,
+                        @RequestParam String nickUsuario,
+                        @RequestParam String contrasena) throws Exception {
+                return service.obtenerTipoRecomendacionPorId(id, nickUsuario, contrasena);
+        }
 
-    @Operation(summary = "Actualizar un tipo de recomendación por ID")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Tipo de recomendación actualizado correctamente", content = @Content(schema = @Schema(implementation = TipoRecomendacionResponseDTO.class))),
-            @ApiResponse(responseCode = "404", description = "Tipo de recomendación no encontrado", content = @Content)
-    })
-    @PutMapping("/{id}")
-    public TipoRecomendacionResponseDTO actualizarTipoRecomendacion(
-            @Parameter(description = "ID del tipo de recomendación a actualizar", required = true) @PathVariable Integer id,
-            @RequestBody TipoRecomendacionRequestDTO dto) {
-        return service.actualizarTipoRecomendacion(id, dto);
-    }
+        @PutMapping("/{id}")
+        public TipoRecomendacionResponseDTO actualizarTipoRecomendacion(
+                        @PathVariable Integer id,
+                        @RequestBody TipoRecomendacionRequestDTO dto,
+                        @RequestParam String nickUsuario,
+                        @RequestParam String contrasena) throws Exception {
+                return service.actualizarTipoRecomendacion(id, dto, nickUsuario, contrasena);
+        }
 
-    @Operation(summary = "Eliminar un tipo de recomendación por ID")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Tipo de recomendación eliminado correctamente"),
-            @ApiResponse(responseCode = "404", description = "Tipo de recomendación no encontrado", content = @Content)
-    })
-    @DeleteMapping("/{id}")
-    public void eliminarTipoRecomendacion(
-            @Parameter(description = "ID del tipo de recomendación a eliminar", required = true) @PathVariable Integer id) {
-        service.eliminarTipoRecomendacion(id);
-    }
+        @DeleteMapping("/{id}")
+        public void eliminarTipoRecomendacion(
+                        @PathVariable Integer id,
+                        @RequestParam String nickUsuario,
+                        @RequestParam String contrasena) throws Exception {
+                service.eliminarTipoRecomendacion(id, nickUsuario, contrasena);
+        }
 }

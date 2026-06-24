@@ -105,8 +105,10 @@ public class UsuarioController {
             @ApiResponse(responseCode = "200", description = "Listado de usuarios obtenido correctamente", content = @Content(array = @ArraySchema(schema = @Schema(implementation = UsuarioResponseDTO.class))))
     })
     @GetMapping("/listar")
-    public List<UsuarioResponseDTO> listarUsuarios() {
-        return usuarioService.listarUsuarios();
+    public List<UsuarioResponseDTO> listarUsuarios(
+            @Parameter(description = "Nick del usuario autenticado", required = true) @RequestParam String nickUsuario,
+            @Parameter(description = "Contraseña del usuario autenticado", required = true) @RequestParam String contrasena) {
+        return usuarioService.listarUsuarios(nickUsuario, contrasena);
     }
 
     @Operation(summary = "Obtener el perfil de un usuario por ID")
@@ -116,9 +118,11 @@ public class UsuarioController {
     })
     @GetMapping("/perfil/{idUsuario}")
     public ResponseEntity<UsuarioResponseDTO> obtenerPerfil(
-            @Parameter(description = "ID del usuario", required = true) @PathVariable int idUsuario) {
+            @Parameter(description = "ID del usuario", required = true) @PathVariable int idUsuario,
+            @Parameter(description = "Nick del usuario autenticado", required = true) @RequestParam String nickUsuario,
+            @Parameter(description = "Contraseña del usuario autenticado", required = true) @RequestParam String contrasena) {
         try {
-            UsuarioResponseDTO usuario = usuarioService.obtenerPerfil(idUsuario);
+            UsuarioResponseDTO usuario = usuarioService.obtenerPerfil(idUsuario, nickUsuario, contrasena);
             return ResponseEntity.ok(usuario);
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
@@ -133,9 +137,12 @@ public class UsuarioController {
     @PutMapping("/actualizar/{idUsuario}")
     public ResponseEntity<UsuarioResponseDTO> actualizarUsuario(
             @Parameter(description = "ID del usuario a actualizar", required = true) @PathVariable int idUsuario,
-            @RequestBody UsuarioRequestDTO requestDTO) {
+            @RequestBody UsuarioRequestDTO requestDTO,
+            @Parameter(description = "Nick del usuario autenticado", required = true) @RequestParam String nickUsuario,
+            @Parameter(description = "Contraseña del usuario autenticado", required = true) @RequestParam String contrasena) {
         try {
-            UsuarioResponseDTO actualizado = usuarioService.actualizarUsuario(idUsuario, requestDTO);
+            UsuarioResponseDTO actualizado = usuarioService.actualizarUsuario(idUsuario, requestDTO, nickUsuario,
+                    contrasena);
             return ResponseEntity.ok(actualizado);
         } catch (UsuarioException e) {
             return ResponseEntity.badRequest().build();
@@ -149,8 +156,10 @@ public class UsuarioController {
     })
     @DeleteMapping("/eliminar/{idUsuario}")
     public ResponseEntity<Boolean> eliminarCuenta(
-            @Parameter(description = "ID del usuario a eliminar", required = true) @PathVariable int idUsuario) {
-        boolean eliminado = usuarioService.eliminarCuenta(idUsuario);
+            @Parameter(description = "ID del usuario a eliminar", required = true) @PathVariable int idUsuario,
+            @Parameter(description = "Nick del usuario autenticado", required = true) @RequestParam String nickUsuario,
+            @Parameter(description = "Contraseña del usuario autenticado", required = true) @RequestParam String contrasena) {
+        boolean eliminado = usuarioService.eliminarCuenta(idUsuario, nickUsuario, contrasena);
         if (eliminado) {
             return ResponseEntity.ok(true);
         } else {
@@ -164,15 +173,23 @@ public class UsuarioController {
             @ApiResponse(responseCode = "400", description = "Contraseña antigua incorrecta u otros errores", content = @Content)
     })
     @PutMapping("/cambiar-password/{idUsuario}")
-    public ResponseEntity<Boolean> cambiarPassword(
+    public ResponseEntity<Object> cambiarPassword(
             @Parameter(description = "ID del usuario", required = true) @PathVariable int idUsuario,
             @Parameter(description = "Contraseña actual del usuario", required = true) @RequestParam String passwordAntigua,
-            @Parameter(description = "Nueva contraseña del usuario", required = true) @RequestParam String passwordNueva) {
+            @Parameter(description = "Nueva contraseña del usuario", required = true) @RequestParam String passwordNueva,
+            @Parameter(description = "Nick del usuario autenticado", required = true) @RequestParam String nickUsuario,
+            @Parameter(description = "Contraseña del usuario autenticado", required = true) @RequestParam String contrasena) {
         try {
-            boolean resultado = usuarioService.cambiarPassword(idUsuario, passwordAntigua, passwordNueva);
+            boolean resultado = usuarioService.cambiarPassword(idUsuario, passwordAntigua, passwordNueva,
+                    nickUsuario, contrasena);
             return ResponseEntity.ok(resultado);
         } catch (UsuarioException e) {
-            return ResponseEntity.badRequest().build();
+            String mensaje = switch (e.getMessage()) {
+                case "Password_igual" -> "La nueva contraseña no puede ser igual a la anterior.";
+                case "Password_incorrecta" -> "La contraseña actual es incorrecta.";
+                default -> "No se pudo actualizar la contraseña.";
+            };
+            return ResponseEntity.status(400).body(new LoginErrorResponseDTO(mensaje));
         }
     }
 
@@ -183,9 +200,11 @@ public class UsuarioController {
     })
     @GetMapping("/exportar/{idUsuario}")
     public ResponseEntity<byte[]> exportarDatos(
-            @Parameter(description = "ID del usuario", required = true) @PathVariable int idUsuario) {
+            @Parameter(description = "ID del usuario", required = true) @PathVariable int idUsuario,
+            @Parameter(description = "Nick del usuario autenticado", required = true) @RequestParam String nickUsuario,
+            @Parameter(description = "Contraseña del usuario autenticado", required = true) @RequestParam String contrasena) {
         try {
-            byte[] datos = usuarioService.exportarDatos(idUsuario);
+            byte[] datos = usuarioService.exportarDatos(idUsuario, nickUsuario, contrasena);
             return ResponseEntity.ok()
                     .header("Content-Disposition", "attachment; filename=\"datos_usuario_" + idUsuario + ".csv\"")
                     .header("Content-Type", "text/csv")
@@ -243,9 +262,12 @@ public class UsuarioController {
                     requestDTO.getPasswordNueva());
             return ResponseEntity.ok(true);
         } catch (UsuarioException e) {
-            String mensaje = "Respuesta_incorrecta".equals(e.getMessage())
-                    ? "La respuesta de seguridad no es correcta."
-                    : "No se pudo actualizar la contraseña.";
+            String mensaje;
+            switch (e.getMessage()) {
+                case "Respuesta_incorrecta" -> mensaje = "La respuesta de seguridad no es correcta.";
+                case "Password_igual" -> mensaje = "La nueva contraseña no puede ser igual a la anterior.";
+                default -> mensaje = "No se pudo actualizar la contraseña.";
+            }
             return ResponseEntity.status(400).body(new LoginErrorResponseDTO(mensaje));
         }
     }

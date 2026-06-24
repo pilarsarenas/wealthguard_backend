@@ -31,6 +31,9 @@ public class UsuarioResponseDTO {
     @Schema(description = "Pregunta de seguridad para recuperación de cuenta", example = "¿Cuál es el nombre de tu mascota?")
     private String preguntaSeguridad;
 
+    @Schema(description = "Respuesta de seguridad del usuario")
+    private String respuestaSeguridad;
+
     @Schema(description = "URL o base64 de la foto de perfil del usuario", example = "https://cdn.example.com/fotos/jgarcia.jpg")
     private String fotoPerfil;
 
@@ -108,6 +111,14 @@ public class UsuarioResponseDTO {
 
     public void setPreguntaSeguridad(String preguntaSeguridad) {
         this.preguntaSeguridad = preguntaSeguridad;
+    }
+
+    public String getRespuestaSeguridad() {
+        return respuestaSeguridad;
+    }
+
+    public void setRespuestaSeguridad(String respuestaSeguridad) {
+        this.respuestaSeguridad = respuestaSeguridad;
     }
 
     public String getFotoPerfil() {

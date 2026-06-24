@@ -18,113 +18,116 @@ import wealthguard.repository.RecomendacionRepository;
 import wealthguard.repository.TipoRecomendacionRepository;
 import wealthguard.repository.UsuarioRepository;
 import wealthguard.service.IRecomendacionService;
+import wealthguard.service.LoginService;
 
 @Service
 public class RecomendacionServiceImpl implements IRecomendacionService {
 
-    @Autowired
-    private RecomendacionRepository recomendacionRepository;
+        @Autowired
+        private RecomendacionRepository recomendacionRepository;
 
-    @Autowired
-    private UsuarioRepository usuarioRepository;
+        @Autowired
+        private UsuarioRepository usuarioRepository;
 
-    @Autowired
-    private TipoRecomendacionRepository tipoRecomendacionRepository;
+        @Autowired
+        private TipoRecomendacionRepository tipoRecomendacionRepository;
 
-    @Autowired
-    private RecomendacionMapper recomendacionMapper;
+        @Autowired
+        private RecomendacionMapper recomendacionMapper;
 
-    @Override
-    @Transactional
-    public List<RecomendacionResponseDTO> generarRecomendaciones(int idUsuario, int score) {
+        @Autowired
+        private LoginService loginService;
 
-        List<RecomendacionEntity> existentes = recomendacionRepository
-                .findByUsuarioIdOrderByFechaRecomendacionDesc(idUsuario);
+        @Override
+        @Transactional
+        public List<RecomendacionResponseDTO> generarRecomendaciones(int idUsuario, int score, String nickUsuario,
+                        String contrasena) {
 
-        if (!existentes.isEmpty()) {
-            TipoRecomendacionEntity tipoActual = existentes.get(0).getTipoRecomendacion();
-            boolean scoreSigueEnMismoRango = score >= tipoActual.getScoreMinimo()
-                    && score <= tipoActual.getScoreMaximo();
+                loginService.verificar(nickUsuario, contrasena);
 
-            // Si el score sigue cayendo en el mismo rango que la última vez,
-            // no generamos una fila nueva: devolvemos el historial tal cual está.
-            if (scoreSigueEnMismoRango) {
-                return existentes.stream()
-                        .map(recomendacionMapper::convertirADTO)
-                        .collect(Collectors.toList());
-            }
+                List<RecomendacionEntity> existentes = recomendacionRepository
+                                .findByUsuarioIdOrderByFechaRecomendacionDesc(idUsuario);
+
+                if (!existentes.isEmpty()) {
+                        TipoRecomendacionEntity tipoActual = existentes.get(0).getTipoRecomendacion();
+                        boolean scoreSigueEnMismoRango = score >= tipoActual.getScoreMinimo()
+                                        && score <= tipoActual.getScoreMaximo();
+
+                        if (scoreSigueEnMismoRango) {
+                                return existentes.stream()
+                                                .map(recomendacionMapper::convertirADTO)
+                                                .collect(Collectors.toList());
+                        }
+                }
+
+                List<TipoRecomendacionEntity> candidatos = tipoRecomendacionRepository.findByScore(score);
+                TipoRecomendacionEntity tipoMasEspecifico = seleccionarMasEspecifico(candidatos);
+
+                if (tipoMasEspecifico == null) {
+                        return existentes.stream()
+                                        .map(recomendacionMapper::convertirADTO)
+                                        .collect(Collectors.toList());
+                }
+
+                UsuarioEntity usuario = usuarioRepository.findById(idUsuario)
+                                .orElseThrow(() -> new RuntimeException("Usuario no encontrado: " + idUsuario));
+
+                RecomendacionEntity r = new RecomendacionEntity();
+                r.setUsuario(usuario);
+                r.setTipoRecomendacion(tipoMasEspecifico);
+                r.setFechaRecomendacion(LocalDateTime.now());
+
+                recomendacionRepository.save(r);
+
+                List<RecomendacionEntity> actualizadas = recomendacionRepository
+                                .findByUsuarioIdOrderByFechaRecomendacionDesc(idUsuario);
+
+                return actualizadas.stream()
+                                .map(recomendacionMapper::convertirADTO)
+                                .collect(Collectors.toList());
         }
 
-        // El score cambió de rango (o es la primera evaluación): añadimos una
-        // nueva entrada al historial SIN borrar las anteriores.
-        List<TipoRecomendacionEntity> candidatos = tipoRecomendacionRepository.findByScore(score);
-        TipoRecomendacionEntity tipoMasEspecifico = seleccionarMasEspecifico(candidatos);
-
-        if (tipoMasEspecifico == null) {
-            return existentes.stream()
-                    .map(recomendacionMapper::convertirADTO)
-                    .collect(Collectors.toList());
+        private TipoRecomendacionEntity seleccionarMasEspecifico(List<TipoRecomendacionEntity> candidatos) {
+                return candidatos.stream()
+                                .min(Comparator.comparingInt(t -> t.getScoreMaximo() - t.getScoreMinimo()))
+                                .orElse(null);
         }
 
-        UsuarioEntity usuario = usuarioRepository.findById(idUsuario)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado: " + idUsuario));
+        @Override
+        public List<RecomendacionResponseDTO> obtenerRecomendaciones(int idUsuario, String nickUsuario,
+                        String contrasena) {
 
-        RecomendacionEntity r = new RecomendacionEntity();
-        r.setUsuario(usuario);
-        r.setTipoRecomendacion(tipoMasEspecifico);
-        r.setFechaRecomendacion(LocalDateTime.now());
+                loginService.verificar(nickUsuario, contrasena);
 
-        recomendacionRepository.save(r);
-
-        // Devolvemos el historial completo ya actualizado (la nueva queda primera).
-        List<RecomendacionEntity> actualizadas = recomendacionRepository
-                .findByUsuarioIdOrderByFechaRecomendacionDesc(idUsuario);
-
-        return actualizadas.stream()
-                .map(recomendacionMapper::convertirADTO)
-                .collect(Collectors.toList());
-    }
-
-    /**
-     * De entre los tipos cuyo rango incluye el score, devuelve el que tiene
-     * el rango más estrecho (scoreMaximo - scoreMinimo más pequeño), es decir,
-     * el más específico para esa puntuación concreta.
-     */
-    private TipoRecomendacionEntity seleccionarMasEspecifico(List<TipoRecomendacionEntity> candidatos) {
-        return candidatos.stream()
-                .min(Comparator.comparingInt(t -> t.getScoreMaximo() - t.getScoreMinimo()))
-                .orElse(null);
-    }
-
-    @Override
-    public List<RecomendacionResponseDTO> obtenerRecomendaciones(int idUsuario) {
-        return recomendacionRepository
-                .findByUsuarioIdOrderByFechaRecomendacionDesc(idUsuario)
-                .stream()
-                .map(recomendacionMapper::convertirADTO)
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public boolean eliminarRecomendacion(int idRecomendacion) {
-        RecomendacionEntity recomendacion = recomendacionRepository.findById(idRecomendacion).orElse(null);
-        if (recomendacion == null) {
-            return false;
+                return recomendacionRepository
+                                .findByUsuarioIdOrderByFechaRecomendacionDesc(idUsuario)
+                                .stream()
+                                .map(recomendacionMapper::convertirADTO)
+                                .collect(Collectors.toList());
         }
 
-        int idUsuario = recomendacion.getUsuario().getId();
-        List<RecomendacionEntity> historico = recomendacionRepository
-                .findByUsuarioIdOrderByFechaRecomendacionDesc(idUsuario);
+        @Override
+        public boolean eliminarRecomendacion(int idRecomendacion, String nickUsuario, String contrasena) {
 
-        boolean esLaVigente = !historico.isEmpty()
-                && historico.get(0).getId().equals(idRecomendacion);
+                loginService.verificar(nickUsuario, contrasena);
 
-        if (esLaVigente) {
-            // no se permite eliminar la recomendación vigente del usuario
-            return false;
+                RecomendacionEntity recomendacion = recomendacionRepository.findById(idRecomendacion).orElse(null);
+                if (recomendacion == null) {
+                        return false;
+                }
+
+                int idUsuario = recomendacion.getUsuario().getId();
+                List<RecomendacionEntity> historico = recomendacionRepository
+                                .findByUsuarioIdOrderByFechaRecomendacionDesc(idUsuario);
+
+                boolean esLaVigente = !historico.isEmpty()
+                                && historico.get(0).getId().equals(idRecomendacion);
+
+                if (esLaVigente) {
+                        return false;
+                }
+
+                recomendacionRepository.deleteById(idRecomendacion);
+                return true;
         }
-
-        recomendacionRepository.deleteById(idRecomendacion);
-        return true;
-    }
 }

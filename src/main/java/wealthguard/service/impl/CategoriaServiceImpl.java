@@ -12,6 +12,7 @@ import wealthguard.entity.CategoriaEntity;
 import wealthguard.mapper.CategoriaMapper;
 import wealthguard.repository.CategoriaRepository;
 import wealthguard.service.ICategoriaService;
+import wealthguard.service.LoginService;
 
 @Service
 public class CategoriaServiceImpl implements ICategoriaService {
@@ -22,35 +23,43 @@ public class CategoriaServiceImpl implements ICategoriaService {
     @Autowired
     private CategoriaMapper categoriaMapper;
 
+    @Autowired
+    private LoginService loginService;
+
     @Override
-    public boolean eliminarCategoria(int idCategoria) {
+    public boolean eliminarCategoria(int idCategoria, String nickUsuario, String contrasena) {
+
+        loginService.verificar(nickUsuario, contrasena);
 
         if (categoriaRepository.existsById(idCategoria)) {
             categoriaRepository.deleteById(idCategoria);
             return true;
         } else {
             return false;
-
         }
     }
 
     @Override
-    public CategoriaResponseDTO crearCategoria(CategoriaRequestDTO nombreCategoria) {
+    public CategoriaResponseDTO crearCategoria(CategoriaRequestDTO nombreCategoria, String nickUsuario,
+            String contrasena) {
+
+        loginService.verificar(nickUsuario, contrasena);
 
         CategoriaEntity categoriaEntidad = categoriaMapper.convertirAEntity(nombreCategoria);
 
         if (categoriaRepository.existsByNombre(categoriaEntidad.getNombre())) {
-            return null; // Ya existe una categoría global con el mismo nombre
+            return null;
         } else {
             CategoriaEntity categoriaGuardada = categoriaRepository.save(categoriaEntidad);
-            return categoriaMapper.convertirADTO(categoriaGuardada); // Retorna el DTO de la categoría creada
+            return categoriaMapper.convertirADTO(categoriaGuardada);
         }
-
     }
 
     @Override
-    public List<CategoriaResponseDTO> obtenerCategorias() {
-        
+    public List<CategoriaResponseDTO> obtenerCategorias(String nickUsuario, String contrasena) {
+
+        loginService.verificar(nickUsuario, contrasena);
+
         List<CategoriaEntity> categorias = categoriaRepository.listarCategorias();
 
         return categorias.stream()
@@ -59,19 +68,22 @@ public class CategoriaServiceImpl implements ICategoriaService {
     }
 
     @Override
-    public CategoriaResponseDTO editarCategoria(int idCategoria, CategoriaRequestDTO categoriaRequest) {
-        
-        CategoriaEntity categoriaEntidad = categoriaRepository.findById(idCategoria).orElseThrow(() -> new RuntimeException("Categoría no encontrada"));
+    public CategoriaResponseDTO editarCategoria(int idCategoria, CategoriaRequestDTO categoriaRequest,
+            String nickUsuario, String contrasena) {
+
+        loginService.verificar(nickUsuario, contrasena);
+
+        CategoriaEntity categoriaEntidad = categoriaRepository.findById(idCategoria)
+                .orElseThrow(() -> new RuntimeException("Categoría no encontrada"));
 
         CategoriaEntity categoriaActualizada = categoriaMapper.convertirAEntity(categoriaRequest);
-        categoriaActualizada.setId(categoriaEntidad.getId()); // Aseguramos que el ID se mantenga
+        categoriaActualizada.setId(categoriaEntidad.getId());
 
         if (categoriaRepository.existsByNombre(categoriaActualizada.getNombre())) {
-            return null; // Ya existe una categoría global con el mismo nombre
+            return null;
         } else {
             CategoriaEntity categoriaGuardada = categoriaRepository.save(categoriaActualizada);
-            return categoriaMapper.convertirADTO(categoriaGuardada); // Retorna el DTO de la categoría actualizada
+            return categoriaMapper.convertirADTO(categoriaGuardada);
         }
     }
-
 }
