@@ -26,7 +26,6 @@ import wealthguard.mapper.UsuarioMapper;
 import wealthguard.repository.ObjetivoRepository;
 import wealthguard.repository.PresupuestoRepository;
 import wealthguard.repository.RecomendacionRepository;
-import wealthguard.repository.ScoreFinancieroRepository;
 import wealthguard.repository.TransaccionRepository;
 import wealthguard.repository.UsuarioRepository;
 import wealthguard.service.IUsuarioService;
@@ -52,9 +51,6 @@ public class UsuarioServiceImpl implements IUsuarioService {
 
     @Autowired
     private ObjetivoRepository objetivoRepository;
-
-    @Autowired
-    private ScoreFinancieroRepository scoreFinancieroRepository;
 
     @Autowired
     private LoginService loginService;
@@ -165,7 +161,6 @@ public class UsuarioServiceImpl implements IUsuarioService {
         recomendacionRepository.deleteByUsuarioId(idUsuario);
         presupuestoRepository.deleteByUsuarioId(idUsuario);
         objetivoRepository.deleteByUsuarioId(idUsuario);
-        scoreFinancieroRepository.deleteByUsuarioId(idUsuario);
 
         usuarioRepository.deleteById(idUsuario);
         return true;
