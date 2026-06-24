@@ -3,7 +3,7 @@ INSERT INTO `usuario` (
   `foto_perfil`, `nick_usuario`, `nombre`, `password`, 
   `pregunta_seguridad`, `primer_apellido`, `respuesta_seguridad`, `segundo_apellido`
 ) VALUES 
-(0, 'juan@email.com', NOW(6), NULL, NULL, 'juan99', 'Juan', 'hash123', '¿Mascota?', 'Pérez', 'Toby', 'García');
+(0, 'juan@email.com', NOW(6), NULL, NULL, 'juan99', 'Juan', '$2a$10$Aia8kJzgB9.3ajywpLI4jOAxCvw4AQ6maWr5nYeUgI4WS2LDawixG', '¿Mascota?', 'Pérez', 'Toby', 'García');
 
 INSERT INTO `categoria` (`nombre`, `icono`) VALUES 
 ('Vivienda', 'home'),
