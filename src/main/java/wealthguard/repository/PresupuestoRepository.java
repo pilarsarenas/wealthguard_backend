@@ -45,4 +45,6 @@ public interface PresupuestoRepository extends JpaRepository<PresupuestoEntity, 
     @Transactional
     void deleteByUsuarioId(Integer usuarioId);
 
+    boolean existsByUsuarioIdAndCategoriaId(Integer idUsuario, Integer idCategoria);
+
 }

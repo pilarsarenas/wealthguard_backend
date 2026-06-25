@@ -39,6 +39,18 @@ public class PresupuestoServiceImpl implements IPresupuestoService {
         loginService.verificar(nickUsuario, contrasena);
 
         PresupuestoEntity nuevaEntidad = presupuestoMapper.convertirAEntity(presupuestoRequest);
+
+        if (nuevaEntidad.getUsuario() == null || nuevaEntidad.getCategoria() == null) {
+            throw new IllegalArgumentException("El presupuesto debe tener un usuario y una categoría válidos.");
+        }
+
+        int idUsuario = nuevaEntidad.getUsuario().getId();
+        int idCategoria = nuevaEntidad.getCategoria().getId();
+
+        if (presupuestoRepository.existsByUsuarioIdAndCategoriaId(idUsuario, idCategoria)) {
+            throw new IllegalArgumentException("Ya existe un presupuesto asignado a esta categoría para este usuario.");
+        }
+
         PresupuestoEntity entidadGuardada = presupuestoRepository.save(nuevaEntidad);
         return presupuestoMapper.convertirADTO(entidadGuardada);
     }
