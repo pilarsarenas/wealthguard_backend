@@ -50,9 +50,6 @@ public class UsuarioEntity {
     @Column(name = "fecha_ultimo_cambio_password")
     private LocalDateTime fechaUltimoCambioPassword;
 
-    @Column(name = "activo", nullable = false)
-    private Boolean activo = false;
-
     public Integer getId() {
         return id;
     }
@@ -147,14 +144,6 @@ public class UsuarioEntity {
 
     public void setFechaUltimoCambioPassword(LocalDateTime fechaUltimoCambioPassword) {
         this.fechaUltimoCambioPassword = fechaUltimoCambioPassword;
-    }
-
-    public Boolean getActivo() {
-        return activo;
-    }
-
-    public void setActivo(Boolean activo) {
-        this.activo = activo;
     }
 
 }

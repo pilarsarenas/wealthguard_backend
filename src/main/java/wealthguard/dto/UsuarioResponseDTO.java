@@ -43,9 +43,6 @@ public class UsuarioResponseDTO {
     @Schema(description = "Fecha y hora del último cambio de contraseña", example = "2024-03-10T14:00:00")
     private LocalDateTime fechaUltimoCambioPassword;
 
-    @Schema(description = "Indica si la cuenta del usuario está activa", example = "true")
-    private Boolean activo;
-
     public UsuarioResponseDTO() {
     }
 
@@ -143,14 +140,6 @@ public class UsuarioResponseDTO {
 
     public void setFechaUltimoCambioPassword(LocalDateTime fechaUltimoCambioPassword) {
         this.fechaUltimoCambioPassword = fechaUltimoCambioPassword;
-    }
-
-    public Boolean getActivo() {
-        return activo;
-    }
-
-    public void setActivo(Boolean activo) {
-        this.activo = activo;
     }
 
 }

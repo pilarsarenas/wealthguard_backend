@@ -90,7 +90,6 @@ public class UsuarioServiceImpl implements IUsuarioService {
         response.setNickUsuario(usuario.getNickUsuario());
         response.setNombre(usuario.getNombre());
         response.setEmail(usuario.getEmail());
-        response.setActivo(usuario.getActivo());
 
         return response;
     }
@@ -105,7 +104,6 @@ public class UsuarioServiceImpl implements IUsuarioService {
         usuario.setPassword(passwordEncoder.encode(usuarioRequestDTO.getPassword()));
         usuario.setFechaRegistro(LocalDateTime.now());
         usuario.setFechaUltimoCambioPassword(LocalDateTime.now());
-        usuario.setActivo(true);
 
         UsuarioEntity guardado = usuarioRepository.save(usuario);
         return usuarioMapper.convertirADTO(guardado);
@@ -132,7 +130,6 @@ public class UsuarioServiceImpl implements IUsuarioService {
         UsuarioEntity usuario = usuarioMapper.convertirAEntity(usuarioRequestDTO);
         usuario.setId(idUsuario);
         usuario.setFechaRegistro(existente.getFechaRegistro());
-        usuario.setActivo(existente.getActivo());
         usuario.setFechaUltimoCambioPassword(existente.getFechaUltimoCambioPassword());
         usuario.setPassword(existente.getPassword());
 
@@ -180,8 +177,7 @@ public class UsuarioServiceImpl implements IUsuarioService {
                 + usuario.getPrimerApellido() + ","
                 + (usuario.getSegundoApellido() != null ? usuario.getSegundoApellido() : "") + ","
                 + usuario.getEmail() + ","
-                + usuario.getFechaRegistro() + ","
-                + usuario.getActivo();
+                + usuario.getFechaRegistro();
 
         return csv.getBytes();
     }
